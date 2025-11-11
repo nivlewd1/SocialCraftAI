@@ -55,26 +55,29 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
       style={{
-        zIndex: 9999,
         position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
+        top: '0',
+        left: '0',
+        width: '100vw',
+        height: '100vh',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        zIndex: 9999,
+        padding: '1rem'
       }}
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-lg p-8 max-w-md w-full shadow-2xl"
         style={{
+          backgroundColor: 'white',
+          borderRadius: '0.5rem',
+          padding: '2rem',
           maxWidth: '28rem',
           width: '100%',
-          margin: '0 1rem'
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
         }}
         onClick={(e) => e.stopPropagation()}
       >

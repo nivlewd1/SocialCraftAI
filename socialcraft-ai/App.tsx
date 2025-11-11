@@ -14,10 +14,12 @@ import { useAuth } from './contexts/AuthContext';
 import { AuthModal } from './components/AuthModal';
 
 const App: React.FC = () => {
+    const [showAuthModal, setShowAuthModal] = useState(false);
+
     return (
         <HashRouter>
             <div className="min-h-screen flex flex-col">
-                <Header />
+                <Header onOpenAuth={() => setShowAuthModal(true)} />
                 <main className="flex-grow container mx-auto p-4 sm:p-6 lg:p-8 mt-16">
                     <Routes>
                         <Route path="/" element={<GeneratorView />} />
@@ -31,14 +33,14 @@ const App: React.FC = () => {
                     </Routes>
                 </main>
                 <Footer />
+                {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
             </div>
         </HashRouter>
     );
 };
 
-const Header: React.FC = () => {
+const Header: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => {
     const { user, signOut } = useAuth();
-    const [showAuthModal, setShowAuthModal] = useState(false);
 
     return (
         <header className="glass-card fixed top-0 left-0 right-0 z-50">
@@ -84,7 +86,7 @@ const Header: React.FC = () => {
                                 </div>
                             ) : (
                                 <button
-                                    onClick={() => setShowAuthModal(true)}
+                                    onClick={onOpenAuth}
                                     className="px-4 py-2 rounded-md text-sm font-medium bg-gradient-to-br from-[#8B9A8B] to-[#C4A484] text-white hover:opacity-90 transition-opacity"
                                 >
                                     Sign In
@@ -94,8 +96,6 @@ const Header: React.FC = () => {
                     </div>
                 </div>
             </div>
-
-            {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
         </header>
     );
 };
