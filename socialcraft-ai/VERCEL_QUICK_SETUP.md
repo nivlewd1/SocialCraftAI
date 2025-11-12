@@ -85,7 +85,7 @@ Set up `app.promptoptimizer.app` as your production domain in Vercel.
 
 ### 4️⃣ Update Supabase
 
-1. Open: https://app.supabase.com/project/eymamgnykuavpnvudxxs/auth/url-configuration
+1. Open: Supabase Dashboard → Your Project → Authentication → URL Configuration
 2. **Site URL:**
    ```
    https://app.promptoptimizer.app
@@ -107,17 +107,21 @@ Set up `app.promptoptimizer.app` as your production domain in Vercel.
 
 ```
 VITE_SUPABASE_URL
-Value: https://eymamgnykuavpnvudxxs.supabase.co
+Value: [Get from Supabase Dashboard → Settings → API]
 
 VITE_SUPABASE_ANON_KEY
-Value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5bWFtZ255a3VhdnBudnVkeHhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI4MzgwNzcsImV4cCI6MjA3ODQxNDA3N30.w9vWIxhZ9VQXnuHVPvgI4ifuMdzgqQUUkHoL5otj52M
+Value: [Get from Supabase Dashboard → Settings → API]
 
 GEMINI_API_KEY
-Value: AIzaSyCrCBuLRK8t24v7t5gqSj1OspdHLh0IykA
+Value: [Get from https://aistudio.google.com/app/apikey]
 
 VITE_GEMINI_API_KEY
-Value: AIzaSyCrCBuLRK8t24v7t5gqSj1OspdHLh0IykA
+Value: [Same as GEMINI_API_KEY]
 ```
+
+**Where to get these:**
+- Supabase URL & Key: https://app.supabase.com/project/_/settings/api
+- Gemini Key: https://aistudio.google.com/app/apikey
 
 3. **Save** each one
 

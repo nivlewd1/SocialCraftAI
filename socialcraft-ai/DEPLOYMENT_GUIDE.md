@@ -115,11 +115,15 @@ Vercel will display the DNS records you need. You'll add a **CNAME record**.
 2. Update or add these variables:
 
 ```env
-VITE_SUPABASE_URL=https://eymamgnykuavpnvudxxs.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5bWFtZ255a3VhdnBudnVkeHhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI4MzgwNzcsImV4cCI6MjA3ODQxNDA3N30.w9vWIxhZ9VQXnuHVPvgI4ifuMdzgqQUUkHoL5otj52M
-GEMINI_API_KEY=AIzaSyCrCBuLRK8t24v7t5gqSj1OspdHLh0IykA
-VITE_GEMINI_API_KEY=AIzaSyCrCBuLRK8t24v7t5gqSj1OspdHLh0IykA
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+GEMINI_API_KEY=your_gemini_api_key
+VITE_GEMINI_API_KEY=your_gemini_api_key
 ```
+
+**Get these values from:**
+- Supabase: Dashboard → Settings → API
+- Gemini: https://aistudio.google.com/app/apikey
 
 3. Make sure to select **Production** environment
 4. Click **Save**
