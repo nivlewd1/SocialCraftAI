@@ -5,20 +5,26 @@ import type { Database } from '../database.types';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Debug logging - TEMPORARY
-console.log('=== SUPABASE CONFIG DEBUG ===');
-console.log('URL:', supabaseUrl);
-console.log('Anon Key (first 20 chars):', supabaseAnonKey?.substring(0, 20));
+// More detailed debug logging
+console.log('=== SUPABASE CONFIG DETAILED DEBUG ===');
+console.log('VITE_SUPABASE_URL:', supabaseUrl);
+console.log('VITE_SUPABASE_ANON_KEY (first 20 chars):', supabaseAnonKey?.substring(0, 20));
 console.log('URL type:', typeof supabaseUrl);
 console.log('Anon Key type:', typeof supabaseAnonKey);
-console.log('============================');
 
-if (!supabaseUrl || !supabaseAnonKey) {
+if (typeof supabaseUrl !== 'string' || supabaseUrl.trim() === '') {
   throw new Error(
-    'Missing Supabase environment variables. Please check your .env file.\n' +
-    'Required: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY'
+    'Supabase URL is not a valid string. Please check your .env file and ensure VITE_SUPABASE_URL is set correctly.'
   );
 }
+
+if (typeof supabaseAnonKey !== 'string' || supabaseAnonKey.trim() === '') {
+  throw new Error(
+    'Supabase Anon Key is not a valid string. Please check your .env file and ensure VITE_SUPABASE_ANON_KEY is set correctly.'
+  );
+}
+console.log('======================================');
+
 
 // Create Supabase client with TypeScript types
 // The Database type will be auto-generated from your schema
