@@ -12,11 +12,10 @@ dist
 dist-ssr
 *.local
 
-# Environment variables
+# Environment variables - NEVER commit .env with secrets!
 .env
 .env.local
 .env.*.local
-.env.example
 
 # Editor directories and files
 .vscode/*
@@ -32,3 +31,8 @@ dist-ssr
 # .md files
 FIX_PRODUCTION_ERROR.md
 VERCEL_ENV_CHECK.md
+EDGE_FUNCTIONS_DEPLOYMENT.md
+STRIPE_SETUP_GUIDE.md
+
+# Supabase temporary files
+supabase/.temp/

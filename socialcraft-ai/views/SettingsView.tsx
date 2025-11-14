@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { User, Mail, Lock, Bell, Shield, CreditCard, Trash2, Download, Globe, CheckCircle, AlertTriangle } from 'lucide-react';
+import { useSubscription } from '../contexts/SubscriptionContext';
+import { PRICING_PLANS } from '../config/pricing';
+import { openCustomerPortal } from '../utils/stripe';
+import { User, Mail, Lock, Bell, Shield, CreditCard, Trash2, Download, Globe, CheckCircle, AlertTriangle, Sparkles, ArrowUpCircle, ExternalLink } from 'lucide-react';
 
 type SettingsTab = 'profile' | 'account' | 'notifications' | 'security' | 'billing' | 'danger';
 
@@ -43,25 +47,25 @@ const SettingsView: React.FC = () => {
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-deep-charcoal mb-2">
+        <h1 className="text-4xl font-bold font-serif text-deep-charcoal mb-2">
           Account <span className="gradient-text">Settings</span>
         </h1>
-        <p className="text-gray-600">Manage your profile, preferences, and subscription</p>
+        <p className="text-deep-charcoal">Manage your profile, preferences, and subscription</p>
       </div>
 
       {/* Message Alert */}
       {message && (
         <div
           className={`glass-card rounded-lg p-4 flex items-center ${
-            message.type === 'success' ? 'bg-green-50 border-2 border-green-200' : 'bg-red-50 border-2 border-red-200'
+            message.type === 'success' ? 'bg-sage-green/10 border-2 border-sage-green/20' : 'bg-status-error/10 border-2 border-status-error/20'
           }`}
         >
           {message.type === 'success' ? (
-            <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+            <CheckCircle className="h-5 w-5 text-sage-green mr-3" />
           ) : (
-            <AlertTriangle className="h-5 w-5 text-red-600 mr-3" />
+            <AlertTriangle className="h-5 w-5 text-status-error mr-3" />
           )}
-          <span className={message.type === 'success' ? 'text-green-800' : 'text-red-800'}>{message.text}</span>
+          <span className={message.type === 'success' ? 'text-deep-charcoal' : 'text-deep-charcoal'}>{message.text}</span>
         </div>
       )}
 
@@ -185,8 +189,8 @@ const ProfileSettings: React.FC<{
 }> = ({ displayName, setDisplayName, email, setEmail, onSubmit }) => (
   <div className="space-y-6">
     <div>
-      <h2 className="text-2xl font-bold text-deep-charcoal mb-2">Profile Information</h2>
-      <p className="text-gray-600">Update your profile details and avatar</p>
+      <h2 className="text-2xl font-bold font-serif text-deep-charcoal mb-2">Profile Information</h2>
+      <p className="text-deep-charcoal">Update your profile details and avatar</p>
     </div>
 
     <form onSubmit={onSubmit} className="space-y-6">
@@ -201,7 +205,7 @@ const ProfileSettings: React.FC<{
             <button type="button" className="btn-secondary px-4 py-2 rounded-lg text-sm">
               Upload New
             </button>
-            <p className="text-xs text-gray-500 mt-2">JPG, PNG or GIF. Max 2MB.</p>
+            <p className="text-xs text-deep-charcoal mt-2">JPG, PNG or GIF. Max 2MB.</p>
           </div>
         </div>
       </div>
@@ -228,7 +232,7 @@ const ProfileSettings: React.FC<{
           className="input-field w-full px-4 py-3 rounded-lg"
           placeholder="your.email@example.com"
         />
-        <p className="text-xs text-gray-500 mt-1">This email is used for sign in and notifications</p>
+        <p className="text-xs text-deep-charcoal mt-1">This email is used for sign in and notifications</p>
       </div>
 
       {/* Bio */}
@@ -239,7 +243,7 @@ const ProfileSettings: React.FC<{
           className="input-field w-full px-4 py-3 rounded-lg resize-none"
           placeholder="Tell us about yourself..."
         />
-        <p className="text-xs text-gray-500 mt-1">Brief description for your profile. Max 200 characters.</p>
+        <p className="text-xs text-deep-charcoal mt-1">Brief description for your profile. Max 200 characters.</p>
       </div>
 
       <button type="submit" className="btn-primary px-6 py-3 rounded-lg">
@@ -259,8 +263,8 @@ const AccountSettings: React.FC<{
 }> = ({ timezone, setTimezone, language, setLanguage, onSave }) => (
   <div className="space-y-6">
     <div>
-      <h2 className="text-2xl font-bold text-deep-charcoal mb-2">Account Preferences</h2>
-      <p className="text-gray-600">Manage your regional and display preferences</p>
+      <h2 className="text-2xl font-bold font-serif text-deep-charcoal mb-2">Account Preferences</h2>
+      <p className="text-deep-charcoal">Manage your regional and display preferences</p>
     </div>
 
     <div className="space-y-6">
@@ -332,8 +336,8 @@ const NotificationSettings: React.FC<{
 }) => (
   <div className="space-y-6">
     <div>
-      <h2 className="text-2xl font-bold text-deep-charcoal mb-2">Notification Preferences</h2>
-      <p className="text-gray-600">Manage how you receive updates and alerts</p>
+      <h2 className="text-2xl font-bold font-serif text-deep-charcoal mb-2">Notification Preferences</h2>
+      <p className="text-deep-charcoal">Manage how you receive updates and alerts</p>
     </div>
 
     <div className="space-y-6">
@@ -384,8 +388,8 @@ const SecuritySettings: React.FC<{
 }> = ({ onSubmit }) => (
   <div className="space-y-6">
     <div>
-      <h2 className="text-2xl font-bold text-deep-charcoal mb-2">Security Settings</h2>
-      <p className="text-gray-600">Manage your password and security preferences</p>
+      <h2 className="text-2xl font-bold font-serif text-deep-charcoal mb-2">Security Settings</h2>
+      <p className="text-deep-charcoal">Manage your password and security preferences</p>
     </div>
 
     <form onSubmit={onSubmit} className="space-y-6">
@@ -394,7 +398,7 @@ const SecuritySettings: React.FC<{
         <div className="flex items-start justify-between">
           <div>
             <h3 className="text-lg font-semibold text-deep-charcoal mb-2">Change Password</h3>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-deep-charcoal mb-4">
               We'll send you an email with instructions to reset your password
             </p>
           </div>
@@ -410,7 +414,7 @@ const SecuritySettings: React.FC<{
         <div className="flex items-start justify-between mb-4">
           <div>
             <h3 className="text-lg font-semibold text-deep-charcoal mb-2">Two-Factor Authentication</h3>
-            <p className="text-sm text-gray-600">Add an extra layer of security to your account</p>
+            <p className="text-sm text-deep-charcoal">Add an extra layer of security to your account</p>
           </div>
           <Shield className="h-6 w-6 text-sage-green" />
         </div>
@@ -441,70 +445,315 @@ const SecuritySettings: React.FC<{
 );
 
 // Billing Settings Component
-const BillingSettings: React.FC = () => (
-  <div className="space-y-6">
-    <div>
-      <h2 className="text-2xl font-bold text-deep-charcoal mb-2">Billing & Subscription</h2>
-      <p className="text-gray-600">Manage your subscription and payment methods</p>
-    </div>
+const BillingSettings: React.FC = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { subscription, loading } = useSubscription();
+  const [portalLoading, setPortalLoading] = useState(false);
 
-    {/* Current Plan */}
-    <div className="glass-card bg-gradient-to-br from-sage-green to-soft-blue rounded-2xl p-8 text-white">
-      <div className="flex items-start justify-between mb-6">
-        <div>
-          <h3 className="text-2xl font-bold mb-2">Free Plan</h3>
-          <p className="text-white/90">Currently on the free forever plan</p>
-        </div>
-        <CreditCard className="h-8 w-8" />
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sage-green"></div>
       </div>
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <div>
-          <div className="text-3xl font-bold">100</div>
-          <div className="text-sm text-white/80">Posts per month</div>
-        </div>
-        <div>
-          <div className="text-3xl font-bold">45</div>
-          <div className="text-sm text-white/80">Posts used</div>
-        </div>
-        <div>
-          <div className="text-3xl font-bold">55</div>
-          <div className="text-sm text-white/80">Posts remaining</div>
-        </div>
-      </div>
-      <button className="bg-white text-sage-green px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-all">
-        Upgrade to Pro
-      </button>
-    </div>
+    );
+  }
 
-    {/* Usage Statistics */}
-    <div>
-      <h3 className="text-lg font-semibold text-deep-charcoal mb-4">Usage This Month</h3>
-      <div className="grid md:grid-cols-3 gap-4">
-        <UsageCard label="Posts Generated" value="45" max="100" />
-        <UsageCard label="Trend Analyses" value="12" max="50" />
-        <UsageCard label="Media Created" value="8" max="25" />
-      </div>
-    </div>
-
-    {/* Payment Method */}
-    <div>
-      <h3 className="text-lg font-semibold text-deep-charcoal mb-4">Payment Method</h3>
-      <div className="glass-card bg-warm-gray rounded-xl p-6">
-        <p className="text-gray-600 mb-4">No payment method on file</p>
-        <button className="btn-secondary px-6 py-2 rounded-lg">
-          Add Payment Method
+  if (!subscription) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-600 mb-4">Unable to load subscription data</p>
+        <button
+          onClick={() => navigate('/pricing')}
+          className="btn-primary px-6 py-3 rounded-lg"
+        >
+          View Pricing Plans
         </button>
       </div>
+    );
+  }
+
+  const currentPlan = PRICING_PLANS.find(p => p.id === subscription.plan);
+  const isFreePlan = subscription.plan === 'free';
+  const isPaidPlan = !isFreePlan && subscription.plan !== 'enterprise';
+  const isEnterprise = subscription.plan === 'enterprise';
+
+  // Calculate usage percentage
+  const generationsLimit = subscription.generationsLimit === 'unlimited' ? 1000 : subscription.generationsLimit;
+  const usagePercentage = (subscription.generationsUsed / generationsLimit) * 100;
+  const remaining = generationsLimit - subscription.generationsUsed;
+
+  // Format period end date
+  const periodEndDate = subscription.currentPeriodEnd
+    ? new Date(subscription.currentPeriodEnd).toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric'
+      })
+    : null;
+
+  // Get status badge color
+  const getStatusColor = () => {
+    switch (subscription.subscriptionStatus) {
+      case 'active':
+      case 'trialing':
+        return 'bg-green-500';
+      case 'past_due':
+        return 'bg-yellow-500';
+      case 'canceled':
+        return 'bg-status-error';
+      default:
+        return 'bg-gray-500';
+    }
+  };
+
+  const getStatusText = () => {
+    switch (subscription.subscriptionStatus) {
+      case 'active':
+        return 'Active';
+      case 'trialing':
+        return 'Trial';
+      case 'past_due':
+        return 'Past Due';
+      case 'canceled':
+        return 'Canceled';
+      case 'incomplete':
+        return 'Incomplete';
+      default:
+        return subscription.subscriptionStatus || 'Active';
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold font-serif text-deep-charcoal mb-2">Billing & Subscription</h2>
+        <p className="text-deep-charcoal">Manage your subscription and payment methods</p>
+      </div>
+
+      {/* Current Plan Card */}
+      <div className={`glass-card rounded-2xl p-8 text-white ${
+        isFreePlan
+          ? 'bg-gradient-to-br from-gray-600 to-gray-700'
+          : 'bg-gradient-to-br from-sage-green to-soft-blue'
+      }`}>
+        <div className="flex items-start justify-between mb-6">
+          <div>
+            <div className="flex items-center space-x-3 mb-2">
+              <h3 className="text-2xl font-bold">{currentPlan?.name || 'Unknown Plan'}</h3>
+              {!isFreePlan && (
+                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor()} text-white`}>
+                  {getStatusText()}
+                </span>
+              )}
+            </div>
+            <p className="text-white/90">
+              {isFreePlan ? 'Free forever plan' : currentPlan?.description || 'Professional plan'}
+            </p>
+            {!isFreePlan && periodEndDate && subscription.subscriptionStatus !== 'canceled' && (
+              <p className="text-sm text-white/80 mt-2">
+                {subscription.subscriptionStatus === 'trialing' ? 'Trial ends' : 'Next billing'}: {periodEndDate}
+              </p>
+            )}
+            {subscription.subscriptionStatus === 'canceled' && periodEndDate && (
+              <p className="text-sm text-white/80 mt-2">
+                Access until: {periodEndDate}
+              </p>
+            )}
+          </div>
+          <CreditCard className="h-8 w-8" />
+        </div>
+
+        {/* Usage Stats */}
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div>
+            <div className="text-3xl font-bold">
+              {subscription.generationsLimit === 'unlimited' ? '∞' : generationsLimit}
+            </div>
+            <div className="text-sm text-white/80">Generations/month</div>
+          </div>
+          <div>
+            <div className="text-3xl font-bold">{subscription.generationsUsed}</div>
+            <div className="text-sm text-white/80">Used this month</div>
+          </div>
+          <div>
+            <div className="text-3xl font-bold">
+              {subscription.generationsLimit === 'unlimited' ? '∞' : remaining}
+            </div>
+            <div className="text-sm text-white/80">Remaining</div>
+          </div>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="mb-6">
+          <div className="w-full bg-white/20 rounded-full h-3">
+            <div
+              className="bg-white h-3 rounded-full transition-all"
+              style={{ width: `${Math.min(usagePercentage, 100)}%` }}
+            ></div>
+          </div>
+          <p className="text-xs text-white/70 mt-2">
+            {usagePercentage.toFixed(0)}% of monthly limit used
+          </p>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-wrap gap-3">
+          {isFreePlan && (
+            <button
+              onClick={() => navigate('/pricing')}
+              className="bg-white text-sage-green px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-all flex items-center space-x-2"
+            >
+              <ArrowUpCircle className="h-5 w-5" />
+              <span>Upgrade to Pro</span>
+            </button>
+          )}
+          {isPaidPlan && (
+            <>
+              <button
+                onClick={async () => {
+                  if (!user) return;
+                  setPortalLoading(true);
+                  try {
+                    await openCustomerPortal(user.id);
+                  } catch (error) {
+                    console.error('Portal error:', error);
+                    alert(error instanceof Error ? error.message : 'Failed to open customer portal');
+                  } finally {
+                    setPortalLoading(false);
+                  }
+                }}
+                disabled={portalLoading}
+                className="bg-white text-sage-green px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-all flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <CreditCard className="h-5 w-5" />
+                <span>{portalLoading ? 'Loading...' : 'Manage Subscription'}</span>
+              </button>
+              <button
+                onClick={() => navigate('/pricing')}
+                className="bg-white/20 text-white px-6 py-3 rounded-lg font-semibold hover:bg-white/30 transition-all flex items-center space-x-2"
+              >
+                <Sparkles className="h-5 w-5" />
+                <span>View All Plans</span>
+              </button>
+            </>
+          )}
+          {isEnterprise && (
+            <button
+              onClick={() => window.location.href = 'mailto:sales@socialcraftai.com?subject=Enterprise Support'}
+              className="bg-white text-sage-green px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-all flex items-center space-x-2"
+            >
+              <ExternalLink className="h-5 w-5" />
+              <span>Contact Support</span>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Plan Features */}
+      {currentPlan && (
+        <div>
+          <h3 className="text-lg font-semibold text-deep-charcoal mb-4">Your Plan Includes</h3>
+          <div className="grid md:grid-cols-2 gap-3">
+            {currentPlan.features.map((feature, idx) => (
+              <div key={idx} className="flex items-start space-x-2 text-sm">
+                <CheckCircle className="h-5 w-5 text-sage-green flex-shrink-0 mt-0.5" />
+                <span className="text-gray-700">{feature}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Payment Method (Phase 2) */}
+      {isPaidPlan && (
+        <div>
+          <h3 className="text-lg font-semibold text-deep-charcoal mb-4">Payment Method</h3>
+          <div className="glass-card bg-warm-gray rounded-xl p-6">
+            {subscription.stripeCustomerId ? (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <CreditCard className="h-5 w-5 text-sage-green" />
+                  <div>
+                    <p className="font-medium text-deep-charcoal">Card on file</p>
+                    <p className="text-sm text-gray-600">Manage via Stripe Customer Portal</p>
+                  </div>
+                </div>
+                <button
+                  onClick={async () => {
+                    if (!user) return;
+                    setPortalLoading(true);
+                    try {
+                      await openCustomerPortal(user.id);
+                    } catch (error) {
+                      console.error('Portal error:', error);
+                      alert(error instanceof Error ? error.message : 'Failed to open customer portal');
+                    } finally {
+                      setPortalLoading(false);
+                    }
+                  }}
+                  disabled={portalLoading}
+                  className="btn-secondary px-4 py-2 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {portalLoading ? 'Loading...' : 'Update'}
+                </button>
+              </div>
+            ) : (
+              <>
+                <p className="text-gray-600 mb-4">No payment method on file</p>
+                <button className="btn-secondary px-6 py-2 rounded-lg">
+                  Add Payment Method
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Billing History (Phase 2) */}
+      {isPaidPlan && (
+        <div>
+          <h3 className="text-lg font-semibold text-deep-charcoal mb-4">Billing History</h3>
+          <div className="glass-card bg-warm-gray rounded-xl p-6">
+            <p className="text-gray-600 text-sm">
+              Billing history will be available in Phase 2 via Stripe Customer Portal
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Upgrade CTA for Free Users */}
+      {isFreePlan && (
+        <div className="glass-card rounded-2xl p-8 bg-gradient-to-br from-sage-green/10 to-terracotta/10 border border-sage-green/20">
+          <div className="flex items-start space-x-4">
+            <Sparkles className="h-8 w-8 text-sage-green flex-shrink-0" />
+            <div className="flex-grow">
+              <h3 className="text-xl font-bold text-deep-charcoal mb-2">
+                Unlock More with Pro
+              </h3>
+              <p className="text-gray-700 mb-4">
+                Get 200 generations per month, advanced analytics, priority support, and more!
+              </p>
+              <button
+                onClick={() => navigate('/pricing')}
+                className="btn-primary px-6 py-3 rounded-lg"
+              >
+                View Pro Plans
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
-  </div>
-);
+  );
+};
 
 // Danger Zone Component
 const DangerZone: React.FC = () => (
   <div className="space-y-6">
     <div>
-      <h2 className="text-2xl font-bold text-deep-charcoal mb-2">Danger Zone</h2>
-      <p className="text-gray-600">Irreversible actions that affect your account</p>
+      <h2 className="text-2xl font-bold font-serif text-deep-charcoal mb-2">Danger Zone</h2>
+      <p className="text-deep-charcoal">Irreversible actions that affect your account</p>
     </div>
 
     <div className="space-y-4">
@@ -516,7 +765,7 @@ const DangerZone: React.FC = () => (
               <Download className="h-5 w-5 mr-2 text-soft-blue" />
               Export Your Data
             </h3>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-deep-charcoal mb-4">
               Download all your content, drafts, and analytics in a portable format
             </p>
             <button className="btn-secondary px-6 py-2 rounded-lg">
@@ -527,17 +776,17 @@ const DangerZone: React.FC = () => (
       </div>
 
       {/* Delete Account */}
-      <div className="border-2 border-red-200 bg-red-50 rounded-xl p-6">
+      <div className="border-2 border-status-error/20 bg-status-error/10 rounded-xl p-6">
         <div className="flex items-start justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-red-700 mb-2 flex items-center">
+            <h3 className="text-lg font-semibold text-status-error mb-2 flex items-center">
               <Trash2 className="h-5 w-5 mr-2" />
               Delete Account
             </h3>
-            <p className="text-sm text-red-600 mb-4">
+            <p className="text-sm text-status-error mb-4">
               Permanently delete your account and all associated data. This action cannot be undone.
             </p>
-            <button className="bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 transition-all">
+            <button className="bg-status-error text-white px-6 py-2 rounded-lg font-semibold hover:bg-status-error/80 transition-all">
               Delete My Account
             </button>
           </div>
@@ -557,7 +806,7 @@ const ToggleSetting: React.FC<{
   <div className="flex items-center justify-between p-4 glass-card bg-warm-gray rounded-lg">
     <div>
       <div className="font-medium text-deep-charcoal">{label}</div>
-      <div className="text-sm text-gray-600">{description}</div>
+      <div className="text-sm text-deep-charcoal">{description}</div>
     </div>
     <label className="relative inline-flex items-center cursor-pointer">
       <input
@@ -584,10 +833,10 @@ const SessionCard: React.FC<{
         {device}
         {current && <span className="ml-2 px-2 py-0.5 bg-sage-green text-white text-xs rounded-full">Current</span>}
       </div>
-      <div className="text-sm text-gray-600">{location} • {lastActive}</div>
+      <div className="text-sm text-deep-charcoal">{location} • {lastActive}</div>
     </div>
     {!current && (
-      <button className="text-sm text-red-600 hover:text-red-700 font-medium">
+      <button className="text-sm text-status-error hover:text-status-error/80 font-medium">
         Revoke
       </button>
     )}
@@ -604,9 +853,9 @@ const UsageCard: React.FC<{
 
   return (
     <div className="glass-card rounded-xl p-4">
-      <div className="text-sm text-gray-600 mb-2">{label}</div>
+      <div className="text-sm text-deep-charcoal mb-2">{label}</div>
       <div className="text-2xl font-bold text-deep-charcoal mb-2">
-        {value} <span className="text-sm font-normal text-gray-500">/ {max}</span>
+        {value} <span className="text-sm font-normal text-deep-charcoal">/ {max}</span>
       </div>
       <div className="w-full bg-warm-gray rounded-full h-2">
         <div

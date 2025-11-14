@@ -5,6 +5,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { AuthProvider } from './contexts/AuthContext';
+import { SubscriptionProvider } from './contexts/SubscriptionContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
 const rootElement = document.getElementById('root');
@@ -17,7 +18,9 @@ root.render(
   <React.StrictMode>
     <ErrorBoundary>
       <AuthProvider>
-        <App />
+        <SubscriptionProvider>
+          <App />
+        </SubscriptionProvider>
       </AuthProvider>
     </ErrorBoundary>
   </React.StrictMode>

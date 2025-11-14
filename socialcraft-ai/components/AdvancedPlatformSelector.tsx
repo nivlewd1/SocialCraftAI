@@ -43,32 +43,32 @@ const AdvancedPlatformSelector: React.FC<AdvancedPlatformSelectorProps> = ({ sel
                 const selectedFormat = selections[option.id]?.format || 'Auto';
 
                 return (
-                    <div key={option.id} className={`p-4 border rounded-lg transition-all duration-300 ${isSelected ? 'bg-white shadow-md border-[#8B9A8B]' : 'bg-warm-gray/30 border-gray-300'}`}>
+                    <div key={option.id} className={`p-4 border rounded-lg transition-all duration-300 ${isSelected ? 'bg-white shadow-md border-sage-green' : 'bg-warm-gray/30 border-warm-gray'}`}>
                         <button
                             type="button"
                             onClick={() => handlePlatformToggle(option.id)}
                             className="w-full flex items-center justify-between"
                         >
                             <div className="flex items-center space-x-3">
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${isSelected ? 'bg-[#8B9A8B] text-white' : 'bg-gray-200 text-deep-charcoal'}`}>
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${isSelected ? 'bg-sage-green text-white' : 'bg-warm-gray text-deep-charcoal'}`}>
                                     {option.icon}
                                 </div>
-                                <span className={`font-semibold transition-colors ${isSelected ? 'text-[#8B9A8B]' : 'text-deep-charcoal'}`}>{option.name}</span>
+                                <span className={`font-semibold transition-colors ${isSelected ? 'text-sage-green' : 'text-deep-charcoal'}`}>{option.name}</span>
                             </div>
-                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${isSelected ? 'border-[#8B9A8B] bg-[#8B9A8B]' : 'border-gray-400'}`}>
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${isSelected ? 'border-sage-green bg-sage-green' : 'border-warm-gray'}`}>
                                {isSelected && <div className="w-2 h-2 rounded-full bg-white"></div>}
                             </div>
                         </button>
 
                         <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isSelected && option.formats.length > 0 ? 'max-h-24 opacity-100' : 'max-h-0 opacity-0'}`}>
-                            <div className="mt-4 pt-3 border-t border-gray-200">
-                                <p className="text-xs font-medium text-gray-500 mb-2">Content Format</p>
+                            <div className="mt-4 pt-3 border-t border-warm-gray">
+                                <p className="text-xs font-medium text-deep-charcoal mb-2">Content Format</p>
                                 <div className="flex flex-wrap gap-2">
                                     {option.formats.map(format => (
                                         <button
                                             key={format}
                                             onClick={() => handleFormatChange(option.id, format)}
-                                            className={`px-2.5 py-1 text-xs font-medium rounded-full transition-colors ${selectedFormat === format ? 'bg-[#C4A484] text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}
+                                            className={`px-2.5 py-1 text-xs font-medium rounded-full transition-colors ${selectedFormat === format ? 'bg-terracotta text-white' : 'bg-warm-gray hover:bg-warm-gray/80 text-deep-charcoal'}`}
                                         >
                                             {format}
                                         </button>

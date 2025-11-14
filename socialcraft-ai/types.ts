@@ -83,7 +83,8 @@ export interface Playbook {
   platforms: Platform[];
   category: PlaybookCategory;
   content: string;
-  icon: React.ReactNode;
+  icon?: React.ReactNode; // Made optional to match requested version
+  successRate?: number; // Added property
 }
 
 // FIX: Replaced the incomplete custom interface with a type alias for the SDK's GenerateVideosOperation type.

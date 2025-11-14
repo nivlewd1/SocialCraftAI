@@ -12,11 +12,11 @@ const platformIcons: { [key in Platform]: React.ReactNode } = {
 };
 
 const platformColors: { [key in Platform]: string } = {
-    [Platform.Twitter]: 'bg-sky-500 text-white',
-    [Platform.LinkedIn]: 'bg-blue-700 text-white',
-    [Platform.Instagram]: 'bg-pink-600 text-white',
-    [Platform.TikTok]: 'bg-black text-white',
-    [Platform.Pinterest]: 'bg-red-600 text-white',
+    [Platform.Twitter]: 'bg-twitter text-white',
+    [Platform.LinkedIn]: 'bg-linkedin text-white',
+    [Platform.Instagram]: 'bg-instagram text-white',
+    [Platform.TikTok]: 'bg-tiktok text-white',
+    [Platform.Pinterest]: 'bg-terracotta text-white',
 };
 
 const ScheduleView: React.FC = () => {
@@ -75,10 +75,10 @@ const ScheduleView: React.FC = () => {
     return (
         <div className="space-y-8">
             <div className="text-center">
-                <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-                    Content <span className="gradient-text-indigo">Schedule</span>
+                <h1 className="text-4xl md:text-5xl font-extrabold font-serif tracking-tight">
+                    Content <span className="gradient-text">Schedule</span>
                 </h1>
-                <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
+                <p className="mt-4 max-w-2xl mx-auto text-lg text-deep-charcoal">
                     Your content calendar. View, manage, and track all your scheduled and published posts.
                 </p>
             </div>
@@ -88,7 +88,7 @@ const ScheduleView: React.FC = () => {
                     <div className="space-y-8">
                         {Object.entries(groupedPosts).map(([date, dayPosts]) => (
                             <div key={date}>
-                                <h2 className="font-bold text-lg text-deep-charcoal pb-2 mb-4 border-b-2 border-[#C4A484]">{date}</h2>
+                                <h2 className="font-bold text-lg text-deep-charcoal pb-2 mb-4 border-b-2 border-terracotta">{date}</h2>
                                 <div className="space-y-4">
                                     {dayPosts.map(post => (
                                         <div key={post.id} className="glass-card rounded-lg p-4 flex items-start space-x-4">
@@ -96,20 +96,20 @@ const ScheduleView: React.FC = () => {
                                                 {platformIcons[post.content.platform]}
                                             </div>
                                             <div className="flex-grow">
-                                                <p className="text-gray-700 text-sm">{post.content.primaryContent}</p>
+                                                <p className="text-deep-charcoal text-sm">{post.content.primaryContent}</p>
                                                 <div className="flex items-center text-xs text-gray-500 mt-2">
                                                     {post.status === 'scheduled' ? (
-                                                        <Clock size={14} className="mr-1.5 text-yellow-600"/>
+                                                        <Clock size={14} className="mr-1.5 text-terracotta"/>
                                                     ) : (
-                                                        <CheckCircle size={14} className="mr-1.5 text-green-600"/>
+                                                        <CheckCircle size={14} className="mr-1.5 text-sage-green"/>
                                                     )}
-                                                    <span className={`font-medium ${post.status === 'posted' ? 'text-green-700' : 'text-yellow-700'}`}>{post.status.charAt(0).toUpperCase() + post.status.slice(1)}</span>
+                                                    <span className={`font-medium ${post.status === 'posted' ? 'text-sage-green' : 'text-terracotta'}`}>{post.status.charAt(0).toUpperCase() + post.status.slice(1)}</span>
                                                     <span className="mx-2">|</span>
                                                     <span>{new Date(post.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                                 </div>
                                             </div>
                                             {post.status === 'scheduled' && (
-                                                <button onClick={() => handleDelete(post.id)} className="p-2 rounded-md hover:bg-red-100 text-red-500 transition-colors" title="Cancel Schedule">
+                                                <button onClick={() => handleDelete(post.id)} className="p-2 rounded-md hover:bg-status-error/10 text-status-error transition-colors" title="Cancel Schedule">
                                                     <Trash2 size={18} />
                                                 </button>
                                             )}
@@ -121,9 +121,9 @@ const ScheduleView: React.FC = () => {
                     </div>
                 ) : (
                     <div className="text-center py-16 px-6 glass-card rounded-lg">
-                        <Calendar size={48} className="mx-auto text-gray-400" />
+                        <Calendar size={48} className="mx-auto text-deep-charcoal" />
                         <h3 className="mt-4 text-xl font-semibold text-deep-charcoal">Your Schedule is Empty</h3>
-                        <p className="mt-2 text-gray-500">
+                        <p className="mt-2 text-deep-charcoal">
                             Generate some content and click the "Schedule" button to add posts to your calendar.
                         </p>
                     </div>

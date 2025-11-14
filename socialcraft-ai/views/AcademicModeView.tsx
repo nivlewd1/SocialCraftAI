@@ -16,11 +16,10 @@ const AcademicModeView: React.FC = () => {
     const [searchIntent, setSearchIntent] = useState<SearchIntent>('Informational');
     const [generatedContent, setGeneratedContent] = useState<GeneratedContent[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
 
     const handleGenerate = useCallback(async () => {
         if (!sourceContent.trim() || Object.keys(platformSelections).length === 0) {
-            setError('Please provide a paper abstract and select at least one platform.');
+            window.showNotification('Please provide a paper abstract and select at least one platform.', 'error');
             return;
         }
 
@@ -32,7 +31,7 @@ const AcademicModeView: React.FC = () => {
             const results = await generateViralContent(sourceContent, platformSelections, 'academic', tone, searchIntent, authorsVoice);
             setGeneratedContent(results);
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'An unknown error occurred.');
+            window.showNotification(err instanceof Error ? err.message : 'An unknown error occurred.', 'error');
         } finally {
             setIsLoading(false);
         }
@@ -41,10 +40,10 @@ const AcademicModeView: React.FC = () => {
     return (
         <div className="space-y-8">
             <div className="text-center">
-                <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-                    Academic <span className="gradient-text-cyan">Dissemination Mode</span>
+                <h1 className="text-4xl md:text-5xl font-extrabold font-serif tracking-tight">
+                    Academic <span className="gradient-text">Dissemination Mode</span>
                 </h1>
-                <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
+                <p className="mt-4 max-w-2xl mx-auto text-lg text-deep-charcoal">
                     Translate dense research papers into accessible social media content. Bridge the gap between academia and the public.
                 </p>
             </div>
@@ -56,7 +55,7 @@ const AcademicModeView: React.FC = () => {
                         value={sourceContent}
                         onChange={(e) => setSourceContent(e.target.value)}
                         placeholder="Paste your arXiv URL or the full abstract of your academic paper here..."
-                        className="w-full h-48 p-4 rounded-lg transition-all text-deep-charcoal placeholder-gray-500 resize-none input-field"
+                        className="w-full h-48 p-4 rounded-lg transition-all text-deep-charcoal placeholder-deep-charcoal resize-none input-field"
                     />
                 </div>
 
@@ -68,9 +67,9 @@ const AcademicModeView: React.FC = () => {
                         value={authorsVoice}
                         onChange={(e) => setAuthorsVoice(e.target.value)}
                         placeholder="Add a personal insight, the 'aha!' moment of the discovery, or the real-world implication of this research..."
-                        className="w-full h-24 p-4 rounded-lg transition-all text-deep-charcoal placeholder-gray-500 resize-none input-field"
+                        className="w-full h-24 p-4 rounded-lg transition-all text-deep-charcoal placeholder-deep-charcoal resize-none input-field"
                     />
-                     <p className="text-xs text-gray-500 mt-1">This helps humanize your research and demonstrate first-hand experience (E-E-A-T).</p>
+                     <p className="text-xs text-deep-charcoal mt-1">This helps humanize your research and demonstrate first-hand experience (E-E-A-T).</p>
                 </div>
 
 
@@ -89,12 +88,10 @@ const AcademicModeView: React.FC = () => {
                     </div>
                 </div>
                 
-                {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-
                 <button
                     onClick={handleGenerate}
                     disabled={isLoading}
-                    className="w-full flex items-center justify-center py-3 px-6 rounded-lg shadow-sm text-base font-medium text-white bg-[#8B9A8B] hover:bg-[#7a887a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8B9A8B] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                    className="w-full flex items-center justify-center py-3 px-6 rounded-lg shadow-sm text-base font-medium btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {isLoading ? (
                         <>

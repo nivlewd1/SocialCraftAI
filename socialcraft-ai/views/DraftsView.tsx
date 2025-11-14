@@ -9,8 +9,8 @@ const TabButton: React.FC<{ label: string; icon: React.ReactNode; isActive: bool
         onClick={onClick}
         className={`flex items-center space-x-2 px-4 py-3 font-medium text-sm transition-colors border-b-2 -mb-px ${
             isActive
-                ? 'border-[#C4A484] text-[#C4A484]'
-                : 'border-transparent text-gray-500 hover:text-deep-charcoal hover:border-gray-400'
+                ? 'border-terracotta text-terracotta'
+                : 'border-transparent text-deep-charcoal hover:text-sage-green hover:border-warm-gray'
         }`}
     >
         {icon}
@@ -70,10 +70,10 @@ const DraftsView: React.FC = () => {
     return (
         <div className="space-y-8">
             <div className="text-center">
-                <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-                    Content <span className="gradient-text-cyan">Library</span>
+                <h1 className="text-4xl md:text-5xl font-extrabold font-serif tracking-tight">
+                    Content <span className="gradient-text">Library</span>
                 </h1>
-                <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
+                <p className="mt-4 max-w-2xl mx-auto text-lg text-deep-charcoal">
                     Review, load, or delete your saved content drafts and generated media assets.
                 </p>
             </div>
@@ -92,7 +92,7 @@ const DraftsView: React.FC = () => {
                                     <div key={draft.id} className="glass-card rounded-lg p-4 flex items-center justify-between transition-shadow hover:shadow-md">
                                         <div className="flex-grow">
                                             <p className="font-semibold text-deep-charcoal truncate">{draft.title}</p>
-                                            <p className="text-sm text-gray-500 flex items-center">
+                                            <p className="text-sm text-deep-charcoal flex items-center">
                                                 <Clock size={14} className="mr-1.5" />
                                                 Saved on {formatDate(draft.createdAt)}
                                             </p>
@@ -100,21 +100,21 @@ const DraftsView: React.FC = () => {
                                         <div className="flex items-center space-x-2 ml-4">
                                              <button
                                                 onClick={() => setViewingDraft(draft)}
-                                                className="p-2 rounded-md hover:bg-gray-200 text-gray-600 transition-colors"
+                                                className="p-2 rounded-md hover:bg-warm-gray text-deep-charcoal transition-colors"
                                                 title="View Draft"
                                             >
                                                 <Eye size={18} />
                                             </button>
                                             <button
                                                 onClick={() => handleLoadDraft(draft)}
-                                                className="p-2 rounded-md hover:bg-gray-200 text-gray-600 transition-colors"
+                                                className="p-2 rounded-md hover:bg-warm-gray text-deep-charcoal transition-colors"
                                                 title="Load Draft"
                                             >
                                                 <Edit size={18} />
                                             </button>
                                             <button
                                                 onClick={() => setConfirmingDelete({ id: draft.id, type: 'content' })}
-                                                className="p-2 rounded-md hover:bg-red-100 text-red-500 transition-colors"
+                                                className="p-2 rounded-md hover:bg-status-error/10 text-status-error transition-colors"
                                                 title="Delete Draft"
                                             >
                                                 <Trash2 size={18} />
@@ -125,9 +125,9 @@ const DraftsView: React.FC = () => {
                             </div>
                         ) : (
                             <div className="text-center py-16 px-6 glass-card rounded-lg">
-                                <Save size={48} className="mx-auto text-gray-400" />
+                                <Save size={48} className="mx-auto text-deep-charcoal" />
                                 <h3 className="mt-4 text-xl font-semibold text-deep-charcoal">No Drafts Saved Yet</h3>
-                                <p className="mt-2 text-gray-500">
+                                <p className="mt-2 text-deep-charcoal">
                                     When you generate content, click the "Save as Draft" button to save it here for later.
                                 </p>
                             </div>
@@ -152,13 +152,13 @@ const DraftsView: React.FC = () => {
                                             </div>
                                         )}
                                         <div className="p-3">
-                                            <p className="text-xs text-gray-600 truncate" title={item.prompt}>{item.prompt}</p>
-                                            <p className="text-xs text-gray-400 mt-1">{formatDate(item.createdAt)}</p>
+                                            <p className="text-xs text-deep-charcoal truncate" title={item.prompt}>{item.prompt}</p>
+                                            <p className="text-xs text-deep-charcoal mt-1">{formatDate(item.createdAt)}</p>
                                         </div>
                                         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <button
                                                 onClick={() => setConfirmingDelete({ id: item.id, type: 'media' })}
-                                                className="p-2 rounded-full bg-black/50 hover:bg-red-500 text-white transition-colors"
+                                                className="p-2 rounded-full bg-black/50 hover:bg-status-error text-white transition-colors"
                                                 title="Delete Media"
                                             >
                                                 <Trash2 size={16} />
@@ -169,9 +169,9 @@ const DraftsView: React.FC = () => {
                             </div>
                         ) : (
                             <div className="text-center py-16 px-6 glass-card rounded-lg">
-                                <ImageIcon size={48} className="mx-auto text-gray-400" />
+                                <ImageIcon size={48} className="mx-auto text-deep-charcoal" />
                                 <h3 className="mt-4 text-xl font-semibold text-deep-charcoal">No Media Saved Yet</h3>
-                                <p className="mt-2 text-gray-500">
+                                <p className="mt-2 text-deep-charcoal">
                                     Go to the Media Studio, generate an image or video, and click "Save to Media" to store it here.
                                 </p>
                             </div>
@@ -184,9 +184,9 @@ const DraftsView: React.FC = () => {
             {confirmingDelete && (
                 <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4 animate-fade-in" onClick={() => setConfirmingDelete(null)}>
                     <div className="bg-warm-gray rounded-2xl p-8 shadow-2xl max-w-md w-full text-center" onClick={(e) => e.stopPropagation()}>
-                        <AlertTriangle className="mx-auto h-12 w-12 text-red-500" />
+                        <AlertTriangle className="mx-auto h-12 w-12 text-status-error" />
                         <h3 className="mt-4 text-xl font-bold text-deep-charcoal">Confirm Deletion</h3>
-                        <p className="mt-2 text-gray-600">Are you sure you want to delete this item? This action cannot be undone.</p>
+                        <p className="mt-2 text-deep-charcoal">Are you sure you want to delete this item? This action cannot be undone.</p>
                         <div className="mt-6 grid grid-cols-2 gap-4">
                             <button
                                 onClick={() => setConfirmingDelete(null)}
@@ -196,7 +196,7 @@ const DraftsView: React.FC = () => {
                             </button>
                             <button
                                 onClick={handleConfirmDelete}
-                                className="px-4 py-2.5 rounded-lg text-base font-medium bg-red-600 hover:bg-red-700 text-white transition-colors"
+                                className="px-4 py-2.5 rounded-lg text-base font-medium bg-status-error hover:bg-status-error/80 text-white transition-colors"
                             >
                                 Delete
                             </button>

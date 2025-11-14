@@ -1,18 +1,14 @@
-
-
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Platform, Playbook, PlaybookCategory } from '../types';
-// FIX: Replaced Pinterest with Pin as it is not an exported member of lucide-react.
 import { Search, Rocket, Lightbulb, Building2, Calendar, MessageCircle, Twitter, Linkedin, Instagram, Music, LayoutList, Film, Layers, Pin } from 'lucide-react';
 
 const platformIcons: { [key in Platform]: React.ReactNode } = {
-    [Platform.Twitter]: <Twitter size={16} className="text-gray-500" />,
-    [Platform.LinkedIn]: <Linkedin size={16} className="text-gray-500" />,
-    [Platform.Instagram]: <Instagram size={16} className="text-gray-500" />,
-    [Platform.TikTok]: <Music size={16} className="text-gray-500" />,
-    // FIX: Replaced Pinterest with Pin.
-    [Platform.Pinterest]: <Pin size={16} className="text-gray-500" />,
+    [Platform.Twitter]: <Twitter size={16} className="text-deep-charcoal" />,
+    [Platform.LinkedIn]: <Linkedin size={16} className="text-deep-charcoal" />,
+    [Platform.Instagram]: <Instagram size={16} className="text-deep-charcoal" />,
+    [Platform.TikTok]: <Music size={16} className="text-deep-charcoal" />,
+    [Platform.Pinterest]: <Pin size={16} className="text-deep-charcoal" />,
 };
 
 const playbooks: Playbook[] = [
@@ -33,6 +29,7 @@ Learn more: [Link]
 
 (✨ Pro-Tip: Our AI will also generate strategic replies to help you kickstart the conversation below!)`,
         icon: <Rocket className="text-white" />,
+        successRate: 94,
     },
     {
         title: "Contrarian View Thread",
@@ -48,6 +45,7 @@ What are your thoughts on this?
 
 (✨ Pro-Tip: Let our AI suggest some conversation starters to fuel the debate in the replies!)`,
         icon: <Lightbulb className="text-white" />,
+        successRate: 89,
     },
      {
         title: "LinkedIn Carousel Deep Dive",
@@ -67,6 +65,7 @@ Slide 8 (Call to Action): [Ask an engaging question and tell readers to comment 
 
 (✨ Pro-Tip: The AI will expand on these points to create a full, engaging carousel plan for you!)`,
         icon: <LayoutList className="text-white" />,
+        successRate: 91,
     },
      {
         title: "Instagram Educational Carousel",
@@ -84,6 +83,7 @@ Slide 6 (CTA): [Ask a question and remind them to SAVE this post!]
 
 (✨ Pro-Tip: The AI will generate a compelling caption and hashtags to go with your carousel plan!)`,
         icon: <Layers className="text-white" />,
+        successRate: 92,
     },
     {
         title: "Viral Instagram Reel Script",
@@ -100,6 +100,7 @@ Call to Action: [e.g., "Which myth surprised you the most? Let me know in the co
 
 (✨ Pro-Tip: The AI will flesh this out into a full script with an audio suggestion and an engagement-optimized caption.)`,
         icon: <Film className="text-white" />,
+        successRate: 88,
     },
      {
         title: "TikTok SEO Video Script",
@@ -117,6 +118,7 @@ Key Points to Cover:
 
 (✨ Pro-Tip: The AI will generate a full video script, SEO keywords, on-screen text suggestions, and an optimized caption based on this structure!)`,
         icon: <Search className="text-white" />,
+        successRate: 85,
     },
     {
         title: "SEO-Optimized Pinterest Pin",
@@ -132,8 +134,8 @@ Pin Title: [A catchy, keyword-rich title for your pin]
 Visual Idea: [Describe a high-quality vertical image with a text overlay. e.g., "A bright, clean desk with labeled organizers. Text overlay: 5 Genius Home Office Hacks"]
 
 (✨ Pro-Tip: The AI will generate a full pin title, a detailed description, and a list of SEO keywords based on your topic.)`,
-        // FIX: Replaced Pinterest with Pin.
         icon: <Pin className="text-white" />,
+        successRate: 83,
     },
     {
         title: "The Deep Dive Thread",
@@ -155,6 +157,7 @@ If this was helpful, repost it for others!
 
 (✨ Pro-Tip: The AI will generate follow-up questions for you to post in the replies!)`,
         icon: <Lightbulb className="text-white" />,
+        successRate: 87,
     },
     {
         title: "Behind-the-Scenes Update",
@@ -163,6 +166,7 @@ If this was helpful, repost it for others!
         category: PlaybookCategory.CompanyNews,
         content: "A little behind-the-scenes look at how we [Action, e.g., 'prepare for a new product launch']! 🎬\n\nIt takes a team effort, a lot of coffee, and a passion for [Your Industry]. So proud of what we're building.\n\n#CompanyCulture #BehindTheScenes #[YourIndustry]",
         icon: <Building2 className="text-white" />,
+        successRate: 79,
     },
     {
         title: "Upcoming Event Teaser",
@@ -171,6 +175,7 @@ If this was helpful, repost it for others!
         category: PlaybookCategory.EventPromotion,
         content: "🗓️ Save the date! Something big is coming on [Date].\n\nWe're bringing together experts to discuss [Event Topic]. Get ready to learn, connect, and be inspired.\n\nRegistration opens soon. Drop a 🚀 if you're excited!",
         icon: <Calendar className="text-white" />,
+        successRate: 81,
     },
     {
         title: "Two-Sided Question",
@@ -179,37 +184,35 @@ If this was helpful, repost it for others!
         category: PlaybookCategory.Engagement,
         content: "Quick poll for all the [Your Target Audience] out there:\n\nWhen it comes to [Topic], are you team:\n\n❤️ [Option A]\n🔁 [Option B]\n\nLet me know in the comments! 👇",
         icon: <MessageCircle className="text-white" />,
+        successRate: 86,
     }
 ];
 
 const categoryColors: { [key in PlaybookCategory]: string } = {
-    [PlaybookCategory.ProductLaunch]: 'bg-blue-100 text-blue-800',
-    [PlaybookCategory.ThoughtLeadership]: 'bg-purple-100 text-purple-800',
-    [PlaybookCategory.CompanyNews]: 'bg-green-100 text-green-800',
-    [PlaybookCategory.EventPromotion]: 'bg-yellow-100 text-yellow-800',
-    [PlaybookCategory.Engagement]: 'bg-pink-100 text-pink-800',
+    [PlaybookCategory.ProductLaunch]: 'bg-soft-blue/20 text-soft-blue',
+    [PlaybookCategory.ThoughtLeadership]: 'bg-sage-green/20 text-sage-green',
+    [PlaybookCategory.CompanyNews]: 'bg-warm-gray text-deep-charcoal',
+    [PlaybookCategory.EventPromotion]: 'bg-terracotta/20 text-terracotta',
+    [PlaybookCategory.Engagement]: 'bg-soft-blue/20 text-soft-blue',
 }
 
 const categoryIcons: { [key in PlaybookCategory]: { icon: React.ReactNode; bg: string } } = {
-    [PlaybookCategory.ProductLaunch]: { icon: <Rocket size={18} className="text-white" />, bg: "bg-blue-500"},
-    [PlaybookCategory.ThoughtLeadership]: { icon: <Lightbulb size={18} className="text-white" />, bg: "bg-purple-500"},
-    [PlaybookCategory.CompanyNews]: { icon: <Building2 size={18} className="text-white" />, bg: "bg-green-500"},
-    [PlaybookCategory.EventPromotion]: { icon: <Calendar size={18} className="text-white" />, bg: "bg-yellow-500"},
-    [PlaybookCategory.Engagement]: { icon: <MessageCircle size={18} className="text-white" />, bg: "bg-pink-500"},
+    [PlaybookCategory.ProductLaunch]: { icon: <Rocket size={18} className="text-white" />, bg: "bg-soft-blue"},
+    [PlaybookCategory.ThoughtLeadership]: { icon: <Lightbulb size={18} className="text-white" />, bg: "bg-sage-green"},
+    [PlaybookCategory.CompanyNews]: { icon: <Building2 size={18} className="text-deep-charcoal" />, bg: "bg-warm-gray"},
+    [PlaybookCategory.EventPromotion]: { icon: <Calendar size={18} className="text-white" />, bg: "bg-terracotta"},
+    [PlaybookCategory.Engagement]: { icon: <MessageCircle size={18} className="text-white" />, bg: "bg-soft-blue"},
 }
 
-// Add a specific icon for the new playbook if its category doesn't fit well
 const customIcons: { [title: string]: { icon: React.ReactNode; bg: string } } = {
-    "LinkedIn Carousel Deep Dive": { icon: <LayoutList size={18} className="text-white" />, bg: "bg-purple-500" },
-    "Instagram Educational Carousel": { icon: <Layers size={18} className="text-white" />, bg: "bg-purple-500" },
-    "Viral Instagram Reel Script": { icon: <Film size={18} className="text-white" />, bg: "bg-pink-500" },
-    "TikTok SEO Video Script": { icon: <Search size={18} className="text-white" />, bg: "bg-teal-500" },
-    // FIX: Replaced Pinterest with Pin.
-    "SEO-Optimized Pinterest Pin": { icon: <Pin size={18} className="text-white" />, bg: "bg-red-600" },
+    "LinkedIn Carousel Deep Dive": { icon: <LayoutList size={18} className="text-white" />, bg: "bg-sage-green" },
+    "Instagram Educational Carousel": { icon: <Layers size={18} className="text-white" />, bg: "bg-sage-green" },
+    "Viral Instagram Reel Script": { icon: <Film size={18} className="text-white" />, bg: "bg-soft-blue" },
+    "TikTok SEO Video Script": { icon: <Search size={18} className="text-white" />, bg: "bg-terracotta" },
+    "SEO-Optimized Pinterest Pin": { icon: <Pin size={18} className="text-white" />, bg: "bg-terracotta" },
 };
 
-
-const PlaybooksView: React.FC = () => {
+const TemplatesView: React.FC = () => {
     const navigate = useNavigate();
     const [platformFilter, setPlatformFilter] = useState<Platform | 'All'>('All');
     const [categoryFilter, setCategoryFilter] = useState<PlaybookCategory | 'All'>('All');
@@ -219,21 +222,19 @@ const PlaybooksView: React.FC = () => {
         return playbooks.filter(playbook => {
             const matchesPlatform = platformFilter === 'All' || playbook.platforms.includes(platformFilter);
             const matchesCategory = categoryFilter === 'All' || playbook.category === categoryFilter;
-            const matchesSearch = searchTerm === '' || 
-                                  playbook.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+            const matchesSearch = searchTerm === '' ||
+                                  playbook.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                                   playbook.description.toLowerCase().includes(searchTerm.toLowerCase());
             return matchesPlatform && matchesCategory && matchesSearch;
-        }).sort((a, b) => { // Keep threads, carousels, and reels at the top
-            const aIsSpecial = a.title.includes('Thread') || a.title.includes('Carousel') || a.title.includes('Reel') || a.title.includes('SEO') || a.title.includes('Pin');
-            const bIsSpecial = b.title.includes('Thread') || b.title.includes('Carousel') || b.title.includes('Reel') || b.title.includes('SEO') || b.title.includes('Pin');
-            if (aIsSpecial && !bIsSpecial) return -1;
-            if (!aIsSpecial && bIsSpecial) return 1;
-            return 0;
+        }).sort((a, b) => {
+            const aRate = a.successRate || 0;
+            const bRate = b.successRate || 0;
+            return bRate - aRate;
         });
     }, [platformFilter, categoryFilter, searchTerm]);
-    
+
     const handleUsePlaybook = (content: string) => {
-        navigate('/', { state: { playbookContent: content } });
+        navigate('/generator', { state: { playbookContent: content } });
     };
 
     const allCategories = ['All', ...Object.values(PlaybookCategory)];
@@ -242,19 +243,19 @@ const PlaybooksView: React.FC = () => {
     return (
         <div className="space-y-8">
             <div className="text-center">
-                <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-                    Viral Content <span className="gradient-text-indigo">Playbooks</span>
+                <h1 className="text-4xl md:text-5xl font-extrabold font-serif tracking-tight">
+                    Viral Content <span className="gradient-text">Playbooks</span>
                 </h1>
-                <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
+                <p className="mt-4 max-w-2xl mx-auto text-lg text-deep-charcoal">
                     Kickstart your content creation with proven, high-engagement playbooks for every platform and goal.
                 </p>
             </div>
-            
+
             <div className="sticky top-16 z-10 bg-[#F8F6F3]/80 backdrop-blur-sm py-4">
               <div className="max-w-5xl mx-auto space-y-4">
                   <div className="relative">
-                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <input 
+                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-deep-charcoal" />
+                      <input
                           type="text"
                           placeholder="Search playbooks by title or description..."
                           value={searchTerm}
@@ -265,8 +266,16 @@ const PlaybooksView: React.FC = () => {
                   <div className="flex flex-wrap gap-2">
                        <span className="text-sm font-semibold self-center pr-2">Category:</span>
                        {allCategories.map(cat => (
-                           <button key={cat} onClick={() => setCategoryFilter(cat as any)} className={`px-3 py-1 text-sm font-medium rounded-full transition-colors ${categoryFilter === cat ? 'bg-[#8B9A8B] text-white' : 'bg-white hover:bg-gray-200'}`}>
+                           <button key={cat} onClick={() => setCategoryFilter(cat as any)} className={`px-3 py-1 text-sm font-medium rounded-full transition-colors ${categoryFilter === cat ? 'bg-sage-green text-white' : 'bg-white hover:bg-warm-gray'}`}>
                                {cat}
+                           </button>
+                       ))}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                       <span className="text-sm font-semibold self-center pr-2">Platform:</span>
+                       {allPlatforms.map(platform => (
+                           <button key={platform} onClick={() => setPlatformFilter(platform as any)} className={`px-3 py-1 text-sm font-medium rounded-full transition-colors ${platformFilter === platform ? 'bg-sage-green text-white' : 'bg-white hover:bg-warm-gray'}`}>
+                               {platform}
                            </button>
                        ))}
                   </div>
@@ -282,18 +291,26 @@ const PlaybooksView: React.FC = () => {
                                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${iconInfo.bg}`}>
                                     {iconInfo.icon}
                                 </div>
-                                <h3 className="font-bold text-lg text-deep-charcoal mb-2">{playbook.title}</h3>
-                                <p className="text-gray-600 text-sm mb-4">{playbook.description}</p>
+                                <h3 className="font-bold font-serif text-lg text-deep-charcoal mb-2">{playbook.title}</h3>
+                                <p className="text-deep-charcoal text-sm mb-4">{playbook.description}</p>
                             </div>
                             <div className="mt-auto">
-                                <div className="flex justify-between items-center">
-                                    <div className="flex items-center space-x-3">
-                                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-md ${categoryColors[playbook.category]}`}>{playbook.category}</span>
-                                        <div className="flex space-x-2">
-                                            {playbook.platforms.map(p => <span key={p} title={p}>{platformIcons[p]}</span>)}
-                                        </div>
+                                <div className="flex justify-between items-center mb-3">
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-md ${categoryColors[playbook.category]}`}>{playbook.category}</span>
+                                        {playbook.successRate && (
+                                            <span className="flex items-center text-xs font-semibold text-sage-green">
+                                                <span className="w-2 h-2 bg-sage-green rounded-full mr-1.5"></span>
+                                                {playbook.successRate}% success
+                                            </span>
+                                        )}
                                     </div>
-                                    <button onClick={() => handleUsePlaybook(playbook.content)} className="text-sm font-semibold text-[#8B9A8B] hover:text-[#7a887a]">
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <div className="flex space-x-2">
+                                        {playbook.platforms.map(p => <span key={p} title={p}>{platformIcons[p]}</span>)}
+                                    </div>
+                                    <button onClick={() => handleUsePlaybook(playbook.content)} className="text-sm font-semibold text-sage-green hover:text-terracotta">
                                         Use Playbook
                                     </button>
                                 </div>
@@ -303,7 +320,7 @@ const PlaybooksView: React.FC = () => {
                 })}
             </div>
             {filteredPlaybooks.length === 0 && (
-                <div className="text-center py-12 text-gray-500">
+                <div className="text-center py-12 text-deep-charcoal">
                     <p className="font-semibold">No playbooks found.</p>
                     <p>Try adjusting your search or filters.</p>
                 </div>
@@ -312,4 +329,4 @@ const PlaybooksView: React.FC = () => {
     );
 };
 
-export default PlaybooksView;
+export default TemplatesView;

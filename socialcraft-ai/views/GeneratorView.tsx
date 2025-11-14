@@ -26,7 +26,6 @@ const GeneratorView: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
 
     const [isFindingTrends, setIsFindingTrends] = useState(false);
-    const [trendError, setTrendError] = useState<string | null>(null);
     const [trendResults, setTrendResults] = useState<TrendAnalysisResult | null>(null);
 
     useEffect(() => {
@@ -48,7 +47,7 @@ const GeneratorView: React.FC = () => {
 
     const handleFindTrends = useCallback(async () => {
         if (!sourceContent.trim()) {
-            setTrendError('Please provide a topic, text, or URL to research.');
+            window.showNotification('Please provide a topic, text, or URL to research.', 'error');
             return;
         }
 
@@ -61,7 +60,7 @@ const GeneratorView: React.FC = () => {
             const results = await findTrends(sourceContent);
             setTrendResults(results);
         } catch (err) {
-            setTrendError(err instanceof Error ? err.message : 'An unknown error occurred during trend analysis.');
+            window.showNotification(err instanceof Error ? err.message : 'An unknown error occurred during trend analysis.', 'error');
         } finally {
             setIsFindingTrends(false);
         }
@@ -75,7 +74,7 @@ const GeneratorView: React.FC = () => {
 
     const handleGenerate = useCallback(async () => {
         if (!sourceContent.trim() || Object.keys(platformSelections).length === 0) {
-            setError('Please provide content and select at least one platform.');
+            window.showNotification('Please provide content and select at least one platform.', 'error');
             return;
         }
 
@@ -88,7 +87,7 @@ const GeneratorView: React.FC = () => {
             const results = await generateViralContent(sourceContent, platformSelections, 'general', tone, searchIntent, authorsVoice);
             setGeneratedContent(results);
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'An unknown error occurred.');
+            window.showNotification(err instanceof Error ? err.message : 'An unknown error occurred.', 'error');
         } finally {
             setIsLoading(false);
         }
@@ -97,10 +96,10 @@ const GeneratorView: React.FC = () => {
     return (
         <div className="space-y-8">
             <div className="text-center">
-                <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-                    AI Content <span className="gradient-text-indigo">Generation Engine</span>
+                <h1 className="text-4xl md:text-5xl font-extrabold font-serif tracking-tight">
+                    AI Content <span className="gradient-text">Generation Engine</span>
                 </h1>
-                <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
+                <p className="mt-4 max-w-2xl mx-auto text-lg text-deep-charcoal">
                     Input any text or URL, research real-time trends, and let our AI craft posts engineered for maximum engagement.
                 </p>
             </div>
@@ -112,7 +111,7 @@ const GeneratorView: React.FC = () => {
                         value={sourceContent}
                         onChange={(e) => setSourceContent(e.target.value)}
                         placeholder="Paste your article, blog post, URL, or just a simple idea here..."
-                        className="w-full h-40 p-4 rounded-lg transition-all text-deep-charcoal placeholder-gray-500 resize-none input-field"
+                        className="w-full placeholder-deep-charcoal resize-none input-field"
                     />
                 </div>
 
@@ -124,9 +123,9 @@ const GeneratorView: React.FC = () => {
                         value={authorsVoice}
                         onChange={(e) => setAuthorsVoice(e.target.value)}
                         placeholder="Add a personal anecdote, unique perspective, or a specific data point from your own experience to demonstrate E-E-A-T..."
-                        className="w-full h-24 p-4 rounded-lg transition-all text-deep-charcoal placeholder-gray-500 resize-none input-field"
+                        className="w-full h-24 p-4 rounded-lg transition-all text-deep-charcoal placeholder-deep-charcoal resize-none input-field"
                     />
-                     <p className="text-xs text-gray-500 mt-1">This helps the AI create more trustworthy, authoritative content that showcases your unique expertise.</p>
+                     <p className="text-xs text-deep-charcoal mt-1">This helps the AI create more trustworthy, authoritative content that showcases your unique expertise.</p>
                 </div>
 
 
@@ -145,13 +144,12 @@ const GeneratorView: React.FC = () => {
                     </div>
                 </div>
                 
-                {error && <p className="text-red-500 text-sm text-center">{error}</p>}
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-gray-200 pt-6">
                     <button
                         onClick={handleFindTrends}
                         disabled={isFindingTrends || isLoading}
-                        className="w-full flex items-center justify-center py-3 px-6 rounded-lg shadow-sm text-base font-medium text-white bg-[#8B9A8B] hover:bg-[#7a887a] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                        className="w-full flex items-center justify-center py-3 px-6 rounded-lg shadow-sm text-base font-medium btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isFindingTrends ? (
                             <>
@@ -185,12 +183,11 @@ const GeneratorView: React.FC = () => {
                 </div>
             </div>
             
-            {trendError && <p className="text-red-500 text-sm text-center mt-4 max-w-4xl mx-auto">{trendError}</p>}
             
             {isFindingTrends && (
                  <div className="flex justify-center items-center h-60">
                     <Spinner />
-                    <span className="ml-4 text-lg text-gray-600">Analyzing live web data...</span>
+                    <span className="ml-4 text-lg text-deep-charcoal">Analyzing live web data...</span>
                 </div>
             )}
 

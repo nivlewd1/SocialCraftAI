@@ -15,9 +15,15 @@ export default {
         'deep-charcoal': '#2C2C2C',
         'soft-blue': '#A8B8C8',
         'warm-white': '#FEFEFE',
+        'twitter': '#1DA1F2',
+        'linkedin': '#0077B5',
+        'instagram': '#E4405F',
+        'tiktok': '#000000',
+        'status-error': '#ef4444',
       },
       fontFamily: {
         'sans': ['Inter', 'system-ui', 'sans-serif'],
+        'serif': ['Playfair Display', 'serif'],
         'mono': ['SF Mono', 'Monaco', 'monospace'],
       },
       spacing: {

@@ -24,8 +24,8 @@ const SearchIntentSelector: React.FC<SearchIntentSelectorProps> = ({ selectedInt
                     onClick={() => onIntentChange(option.id)}
                     className={`group relative text-left p-3 border rounded-lg transition-all duration-200 flex flex-col justify-between h-full ${
                         selectedIntent === option.id
-                            ? 'border-[#8B9A8B] bg-[#8B9A8B]/10 text-[#8B9A8B] font-semibold'
-                            : 'bg-warm-gray/30 border-gray-300 text-deep-charcoal hover:border-[#8B9A8B]'
+                            ? 'border-sage-green bg-sage-green/10 text-sage-green font-semibold'
+                            : 'bg-warm-gray/30 border-warm-gray text-deep-charcoal hover:border-sage-green'
                     }`}
                     title={option.description}
                 >
@@ -33,7 +33,7 @@ const SearchIntentSelector: React.FC<SearchIntentSelectorProps> = ({ selectedInt
                         {option.icon}
                         <span className="font-medium text-sm">{option.label}</span>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">{option.description}</p>
+                    <p className="text-xs text-deep-charcoal mt-1">{option.description}</p>
                 </button>
             ))}
         </div>

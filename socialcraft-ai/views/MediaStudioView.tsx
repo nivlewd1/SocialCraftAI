@@ -38,10 +38,10 @@ const MediaStudioView: React.FC = () => {
     return (
         <div className="space-y-8">
             <div className="text-center">
-                <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-                    Media <span className="gradient-text-indigo">Studio</span>
+                <h1 className="text-4xl md:text-5xl font-extrabold font-serif tracking-tight">
+                    Media <span className="gradient-text">Studio</span>
                 </h1>
-                <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
+                <p className="mt-4 max-w-2xl mx-auto text-lg text-deep-charcoal">
                     Create or edit stunning visuals and videos from simple text prompts and your own images.
                 </p>
             </div>
@@ -75,8 +75,8 @@ const TabButton: React.FC<{ label: string; icon: React.ReactNode; isActive: bool
         onClick={onClick}
         className={`flex items-center space-x-2 px-4 py-3 font-medium text-sm transition-colors border-b-2 ${
             isActive
-                ? 'border-[#C4A484] text-[#C4A484]'
-                : 'border-transparent text-gray-500 hover:text-deep-charcoal hover:border-gray-400'
+                ? 'border-terracotta text-terracotta'
+                : 'border-transparent text-deep-charcoal hover:text-sage-green hover:border-warm-gray'
         }`}
     >
         {icon}
@@ -90,7 +90,7 @@ const ImagePreview: React.FC<{ src: string; name: string; onRemove: () => void; 
         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
              <button
                 onClick={onRemove}
-                className="p-1.5 rounded-full bg-white/80 hover:bg-white text-red-500"
+                className="p-1.5 rounded-full bg-white/80 hover:bg-white text-status-error"
                 title="Remove image"
             >
                 <X size={16} />
@@ -186,7 +186,7 @@ const ImageGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder={uploadedImage ? "Describe the edits you want to make..." : "e.g., A robot holding a red skateboard."}
-                className="w-full h-24 p-4 rounded-lg text-deep-charcoal placeholder-gray-500 resize-none input-field"
+                className="w-full h-24 p-4 rounded-lg text-deep-charcoal placeholder-deep-charcoal resize-none input-field"
             />
              <div className="space-y-2">
                  <label className="block text-sm font-medium text-deep-charcoal">Upload an Image to Edit (Optional)</label>
@@ -198,9 +198,9 @@ const ImageGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
                     />
                  ) : (
                     <label className="w-full flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-warm-gray/50 transition-colors">
-                        <UploadCloud className="h-8 w-8 text-gray-400" />
-                        <span className="mt-2 text-sm text-gray-500">Click to upload or drag and drop</span>
-                        <span className="text-xs text-gray-400">PNG, JPG, WEBP (Max {MAX_FILE_SIZE_MB}MB)</span>
+                        <UploadCloud className="h-8 w-8 text-deep-charcoal" />
+                        <span className="mt-2 text-sm text-deep-charcoal">Click to upload or drag and drop</span>
+                        <span className="text-xs text-deep-charcoal">PNG, JPG, WEBP (Max {MAX_FILE_SIZE_MB}MB)</span>
                         <input type="file" className="hidden" accept={ALLOWED_IMAGE_TYPES.join(',')} onChange={handleFileChange} />
                     </label>
                  )}
@@ -211,7 +211,7 @@ const ImageGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
                     <label className="block text-sm font-medium text-deep-charcoal mb-2">Aspect Ratio:</label>
                     <div className="grid grid-cols-5 gap-2">
                         {(['1:1', '16:9', '9:16', '4:3', '3:4'] as AspectRatioImage[]).map(ar => (
-                             <button key={ar} onClick={() => setAspectRatio(ar)} disabled={!!uploadedImage} className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${aspectRatio === ar ? 'bg-[#8B9A8B] text-white' : 'bg-white hover:bg-gray-200'} disabled:cursor-not-allowed`}>
+                             <button key={ar} onClick={() => setAspectRatio(ar)} disabled={!!uploadedImage} className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${aspectRatio === ar ? 'bg-sage-green text-white' : 'bg-white hover:bg-warm-gray'} disabled:cursor-not-allowed`}>
                                 {ar}
                             </button>
                         ))}
@@ -234,21 +234,20 @@ const ImageGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
                      <h3 className="text-lg font-semibold text-deep-charcoal mb-4">Result</h3>
                      <img src={generatedImage} alt={prompt} className="rounded-lg w-full object-contain mb-4" />
                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <a
-                            href={generatedImage}
-                            download={`socialcraft-ai-${new Date().getTime()}.jpeg`}
-                            className="w-full flex items-center justify-center py-2.5 px-5 rounded-lg shadow-sm text-base font-medium text-white bg-[#8B9A8B] hover:bg-[#7a887a] transition-all"
-                         >
-                            <Download className="mr-2 h-5 w-5" /> Download
-                         </a>
-                         <button
-                            onClick={handleSaveImage}
-                            disabled={saveStatus !== 'idle'}
-                            className="w-full flex items-center justify-center py-2.5 px-5 rounded-lg shadow-sm text-base font-medium text-[#8B9A8B] bg-white border border-[#8B9A8B] hover:bg-gray-100 disabled:opacity-50 transition-all"
-                         >
-                            {saveStatus === 'saved' ? <><Check className="mr-2 h-5 w-5 text-green-500" /> Saved</> : <><Save className="mr-2 h-5 w-5" /> Save to Media</>}
-                         </button>
-                     </div>
+                                                 <a
+                                                    href={generatedImage}
+                                                    download={`socialcraft-ai-${new Date().getTime()}.jpeg`}
+                                                    className="w-full flex items-center justify-center py-2.5 px-5 rounded-lg shadow-sm text-base font-medium btn-secondary"
+                                                 >
+                                                    <Download className="mr-2 h-5 w-5" /> Download
+                                                 </a>
+                                                 <button
+                                                    onClick={handleSaveImage}
+                                                    disabled={saveStatus !== 'idle'}
+                                                    className="w-full flex items-center justify-center py-2.5 px-5 rounded-lg shadow-sm text-base font-medium text-sage-green bg-white border border-sage-green hover:bg-warm-gray disabled:opacity-50 transition-all"
+                                                 >
+                                                    {saveStatus === 'saved' ? <><Check className="mr-2 h-5 w-5 text-sage-green" /> Saved</> : <><Save className="mr-2 h-5 w-5" /> Save to Media</>}
+                                                 </button>                     </div>
                 </div>
             )}
         </div>
@@ -422,16 +421,16 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
     return (
         <div className="glass-card rounded-2xl p-8 space-y-6">
             {!hasApiKey ? (
-                <div className="text-center p-6 bg-yellow-50 border-l-4 border-yellow-400">
-                    <KeyRound className="mx-auto h-12 w-12 text-yellow-500" />
-                    <h3 className="mt-2 text-lg font-semibold text-yellow-800">Video Generation Requires an API Key</h3>
-                    <p className="mt-2 text-sm text-yellow-700">
+                <div className="text-center p-6 bg-warm-gray border-l-4 border-terracotta">
+                    <KeyRound className="mx-auto h-12 w-12 text-terracotta" />
+                    <h3 className="mt-2 text-lg font-semibold text-deep-charcoal">Video Generation Requires an API Key</h3>
+                    <p className="mt-2 text-sm text-deep-charcoal">
                         To use the Veo video generation model, you must select an API key associated with a project that has billing enabled.
                     </p>
-                    <p className="mt-1 text-xs text-yellow-600">
+                    <p className="mt-1 text-xs text-deep-charcoal">
                         For more details, see the <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" rel="noopener noreferrer" className="underline font-medium">billing documentation</a>.
                     </p>
-                    <button onClick={handleSelectKey} className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-yellow-600 hover:bg-yellow-700">
+                    <button onClick={handleSelectKey} className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-terracotta hover:bg-terracotta/80">
                         Select API Key
                     </button>
                 </div>
@@ -441,7 +440,7 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
                         placeholder="e.g., A neon hologram of a cat driving at top speed"
-                        className="w-full h-24 p-4 rounded-lg text-deep-charcoal placeholder-gray-500 resize-none input-field"
+                        className="w-full h-24 p-4 rounded-lg text-deep-charcoal placeholder-deep-charcoal resize-none input-field"
                     />
                     <div className="space-y-2">
                         <label className="block text-sm font-medium text-deep-charcoal">Upload Reference Images (Optional, up to 5)</label>
@@ -452,9 +451,9 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
                         </div>
                         {uploadedImages.length < 5 && (
                              <label className="w-full flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-warm-gray/50 transition-colors">
-                                <UploadCloud className="h-8 w-8 text-gray-400" />
-                                <span className="mt-2 text-sm text-gray-500">Click to upload or drag and drop</span>
-                                <span className="text-xs text-gray-400">PNG, JPG, WEBP (Max {MAX_FILE_SIZE_MB}MB)</span>
+                                <UploadCloud className="h-8 w-8 text-deep-charcoal" />
+                                <span className="mt-2 text-sm text-deep-charcoal">Click to upload or drag and drop</span>
+                                <span className="text-xs text-deep-charcoal">PNG, JPG, WEBP (Max {MAX_FILE_SIZE_MB}MB)</span>
                                 <input type="file" multiple className="hidden" accept={ALLOWED_IMAGE_TYPES.join(',')} onChange={handleFilesChange} />
                             </label>
                         )}
@@ -465,7 +464,7 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
                             <label className="block text-sm font-medium text-deep-charcoal mb-2">Aspect Ratio:</label>
                             <div className="grid grid-cols-2 gap-2">
                                 {(['16:9', '9:16'] as AspectRatioVideo[]).map(ar => (
-                                     <button key={ar} onClick={() => setAspectRatio(ar)} disabled={isMultiImageMode} className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${aspectRatio === ar ? 'bg-[#8B9A8B] text-white' : 'bg-white hover:bg-gray-200'} disabled:cursor-not-allowed`}>
+                                     <button key={ar} onClick={() => setAspectRatio(ar)} disabled={isMultiImageMode} className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${aspectRatio === ar ? 'bg-sage-green text-white' : 'bg-white hover:bg-warm-gray'} disabled:cursor-not-allowed`}>
                                         {ar}
                                     </button>
                                 ))}
@@ -475,7 +474,7 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
                             <label className="block text-sm font-medium text-deep-charcoal mb-2">Resolution:</label>
                             <div className="grid grid-cols-2 gap-2">
                                 {(['720p', '1080p'] as ResolutionVideo[]).map(res => (
-                                     <button key={res} onClick={() => setResolution(res)} disabled={isMultiImageMode} className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${resolution === res ? 'bg-[#8B9A8B] text-white' : 'bg-white hover:bg-gray-200'} disabled:cursor-not-allowed`}>
+                                     <button key={res} onClick={() => setResolution(res)} disabled={isMultiImageMode} className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${resolution === res ? 'bg-sage-green text-white' : 'bg-white hover:bg-warm-gray'} disabled:cursor-not-allowed`}>
                                         {res}
                                     </button>
                                 ))}
@@ -483,11 +482,11 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
                         </div>
                     </div>
                     {isMultiImageMode && (
-                        <div className="text-center text-sm text-blue-700 bg-blue-50 p-3 rounded-md border border-blue-200">
+                        <div className="text-center text-soft-blue bg-soft-blue/10 p-3 rounded-md border border-soft-blue/20">
                             Multi-image mode is active. Resolution is locked to 720p and aspect ratio to 16:9. A descriptive prompt is required.
                         </div>
                     )}
-                    {error && <p className="text-red-500 text-sm text-center flex items-center justify-center"><AlertTriangle size={16} className="mr-2"/>{error}</p>}
+                    {error && <p className="text-status-error text-sm text-center flex items-center justify-center"><AlertTriangle size={16} className="mr-2"/>{error}</p>}
                     <button
                         onClick={handleGenerate}
                         disabled={isLoading}
@@ -508,16 +507,16 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
                             download={`socialcraft-ai-video-${new Date().getTime()}.mp4`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-full flex items-center justify-center py-2.5 px-5 rounded-lg shadow-sm text-base font-medium text-white bg-[#8B9A8B] hover:bg-[#7a887a] transition-all"
+                            className="w-full flex items-center justify-center py-2.5 px-5 rounded-lg shadow-sm text-base font-medium btn-secondary"
                          >
                             <Download className="mr-2 h-5 w-5" /> Download Video
                          </a>
                          <button
                             onClick={handleSaveVideo}
                             disabled={saveStatus !== 'idle'}
-                            className="w-full flex items-center justify-center py-2.5 px-5 rounded-lg shadow-sm text-base font-medium text-[#8B9A8B] bg-white border border-[#8B9A8B] hover:bg-gray-100 disabled:opacity-50 transition-all"
+                            className="w-full flex items-center justify-center py-2.5 px-5 rounded-lg shadow-sm text-base font-medium text-sage-green bg-white border border-sage-green hover:bg-warm-gray disabled:opacity-50 transition-all"
                          >
-                            {saveStatus === 'saved' ? <><Check className="mr-2 h-5 w-5 text-green-500" /> Saved</> : <><Save className="mr-2 h-5 w-5" /> Save to Media</>}
+                            {saveStatus === 'saved' ? <><Check className="mr-2 h-5 w-5 text-sage-green" /> Saved</> : <><Save className="mr-2 h-5 w-5" /> Save to Media</>}
                          </button>
                      </div>
                 </div>
