@@ -125,157 +125,305 @@ const GettingStartedDocs = () => (
 );
 
 const FeaturesDocs = () => (
-    <div className="space-y-8">
+    <div className="space-y-12">
         <div>
-            <h1 className="text-3xl font-bold font-display text-deep-charcoal">Features Guide</h1>
-            <p className="text-gray-600 mt-2">A deep dive into all of SocialCraft AI's powerful features.</p>
+            <h1 className="text-4xl font-bold font-display text-deep-charcoal">Features Guide</h1>
+            <p className="text-gray-600 mt-3 text-lg">A detailed walkthrough of SocialCraft AI's powerful toolset.</p>
         </div>
 
-        {/* Core Features */}
-        <section className="space-y-6">
-            <h2 className="text-2xl font-bold text-deep-charcoal border-b pb-2">Core Features</h2>
-            <div className="space-y-4">
+        {/* Content Generator */}
+        <section>
+            <h2 className="text-3xl font-bold text-deep-charcoal border-b-2 border-terracotta pb-3 mb-6">The Content Generator</h2>
+            <div className="space-y-8">
+                <p className="text-gray-700">The Content Generator is the core of SocialCraft AI, transforming your ideas, links, or existing content into engaging social media posts. Here’s how to use it step-by-step:</p>
+                
                 <div>
-                    <h3 className="text-xl font-semibold text-deep-charcoal">Content Generator</h3>
-                    <p className="text-gray-700 mt-1">
-                        The heart of SocialCraft AI. Simply input a topic, choose your desired platform, tone, and intent, and our AI will craft compelling social media content in seconds.
+                    <h3 className="text-xl font-semibold text-deep-charcoal mb-2">Step 1: Provide Your Source Content</h3>
+                    <p className="text-gray-700">
+                        Start by entering your content into the "Your Source Content" text area. This can be:
+                    </p>
+                    <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1 pl-4">
+                        <li>A simple idea or topic (e.g., "the benefits of remote work").</li>
+                        <li>A URL to a blog post, article, or product page.</li>
+                        <li>The full text of an article or document you've written.</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 className="text-xl font-semibold text-deep-charcoal mb-2">Step 2: Add Your Author's Voice (Optional but Recommended)</h3>
+                    <p className="text-gray-700">
+                        This is where you can inject your unique expertise and personality. In the "Author's Voice & Experience" box, add a personal story, a specific data point you've found, or a unique perspective. This helps our AI demonstrate E-E-A-T (Experience, Expertise, Authoritativeness, and Trustworthiness), making your content more credible and engaging.
                     </p>
                 </div>
+
                 <div>
-                    <h3 className="text-xl font-semibold text-deep-charcoal">Platform Selector</h3>
-                    <p className="text-gray-700 mt-1">
-                        Tailor your content for specific platforms. Choose from a simple list or use the advanced selector to fine-tune settings for platforms like Twitter, LinkedIn, Instagram, and more.
+                    <h3 className="text-xl font-semibold text-deep-charcoal mb-2">Step 3: Select Platforms and Formats</h3>
+                    <p className="text-gray-700">
+                        Choose the social media platforms you want to generate content for. You can select one or more. For platforms like LinkedIn and Instagram, you can also specify a format, such as "Carousel" or "Reel," to get content tailored to that specific format. If you're not sure, just leave it as "Auto."
                     </p>
                 </div>
+
                 <div>
-                    <h3 className="text-xl font-semibold text-deep-charcoal">Tone Selector</h3>
-                    <p className="text-gray-700 mt-1">
-                        Match your brand's voice perfectly. Select from a wide range of tones, such as Professional, Casual, Humorous, or Enthusiastic, to ensure your message resonates with your audience.
+                    <h3 className="text-xl font-semibold text-deep-charcoal mb-2">Step 4: Choose a Tone and Search Intent</h3>
+                    <p className="text-gray-700">
+                        Select a tone that matches your brand's voice. Are you professional, funny, or inspirational? You can also optimize your content for a specific search intent. For example, select "Informational" if you're explaining a concept, or "Transactional" if you're trying to drive a sale.
                     </p>
                 </div>
+
                 <div>
-                    <h3 className="text-xl font-semibold text-deep-charcoal">Search Intent Selector</h3>
-                    <p className="text-gray-700 mt-1">
-                        Optimize your content for search engines and user intent. Choose from intents like Informational, Commercial, or Transactional to align your content with your marketing goals.
+                    <h3 className="text-xl font-semibold text-deep-charcoal mb-2">Step 5: Research and Generate</h3>
+                    <p className="text-gray-700">
+                        You have two options:
                     </p>
+                    <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1 pl-4">
+                        <li><strong>Research Topic:</strong> Click this to have the AI find trending topics, articles, and discussions related to your source content. You can then use these trends to create more relevant and timely posts.</li>
+                        <li><strong>Generate Posts:</strong> When you're ready, click this button. The AI will take all your inputs and generate a set of social media posts for the platforms you selected.</li>
+                    </ul>
                 </div>
+
                 <div>
-                    <h3 className="text-xl font-semibold text-deep-charcoal">Drafts</h3>
-                    <p className="text-gray-700 mt-1">
-                        Never lose a great idea. Save your generated content to drafts, where you can review, edit, and organize your posts before scheduling or publishing them.
+                    <h3 className="text-xl font-semibold text-deep-charcoal mb-2">Step 6: Review and Use Your Content</h3>
+                    <p className="text-gray-700">
+                        The generated posts will appear in the "Results" section. From here, you can:
+                    </p>
+                    <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1 pl-4">
+                        <li>Edit the content directly.</li>
+                        <li>Save the posts to your Drafts to work on later.</li>
+                        <li>Schedule the posts to be published at a future date.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 className="text-3xl font-bold text-deep-charcoal border-b-2 border-terracotta pb-3 mb-6">The Content Library</h2>
+            <div className="space-y-8">
+                <p className="text-gray-700">The Content Library is your personal space to store and manage all your creative assets. It's divided into two sections: Content Drafts and Saved Media.</p>
+
+                <div>
+                    <h3 className="text-xl font-semibold text-deep-charcoal mb-2">Content Drafts</h3>
+                    <p className="text-gray-700">
+                        Never lose a great idea. When you generate content you like, click the "Save as Draft" button in the Results section. This will save the entire session—your source content, author's voice, platform selections, and the generated results—to your Content Drafts.
+                    </p>
+                    <p className="text-gray-700 mt-2">
+                        From the Content Library, you can:
+                    </p>
+                    <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1 pl-4">
+                        <li><strong>View:</strong> Click the eye icon to open a preview of the draft, including all the original settings and results.</li>
+                        <li><strong>Load:</strong> Click the pencil icon to load the draft back into the Content Generator. This is useful if you want to regenerate the content with different settings or make tweaks.</li>
+                        <li><strong>Delete:</strong> Click the trash can icon to permanently remove the draft.</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 className="text-xl font-semibold text-deep-charcoal mb-2">Saved Media</h3>
+                    <p className="text-gray-700">
+                        In the Media Studio, you can generate images and videos. When you create something you want to keep, click "Save to Media." This will add it to your Saved Media library. You can then view your saved media and delete anything you no longer need.
                     </p>
                 </div>
             </div>
         </section>
 
-        {/* Advanced Features */}
-        <section className="space-y-6">
-            <h2 className="text-2xl font-bold text-deep-charcoal border-b pb-2">Advanced Features</h2>
+        <section>
+            <h2 className="text-3xl font-bold text-deep-charcoal border-b-2 border-terracotta pb-3 mb-6">The Content Schedule</h2>
+            <div className="space-y-8">
+                <p className="text-gray-700">The Content Schedule is your command center for planning and automating your social media presence. It provides a clear calendar view of all your scheduled and published posts.</p>
+
+                <div>
+                    <h3 className="text-xl font-semibold text-deep-charcoal mb-2">How to Schedule a Post</h3>
+                    <p className="text-gray-700">
+                        After generating content, click the "Schedule" button on any post in the Results section. This will open the Scheduling Modal, where you have two options:
+                    </p>
+                    <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1 pl-4">
+                        <li><strong>AI-Suggested Times:</strong> Our AI analyzes your target platform and suggests optimal time slots for maximum engagement. Simply click on a suggested time to schedule your post.</li>
+                        <li><strong>Custom Time:</strong> If you have a specific time in mind, use the date and time picker to select your desired publication time, then click "Schedule."</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 className="text-xl font-semibold text-deep-charcoal mb-2">Managing Your Calendar</h3>
+                    <p className="text-gray-700">
+                        Navigate to the "Schedule" page to see your full content calendar. Posts are grouped by date for clarity.
+                    </p>
+                    <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1 pl-4">
+                        <li><strong>Scheduled Posts:</strong> These posts are marked with a clock icon and are waiting to be "published." You can cancel a scheduled post by clicking the trash can icon.</li>
+                        <li><strong>Posted Posts:</strong> Once the scheduled time passes, the post's status will automatically change to "Posted" and the icon will change to a checkmark. This creates a historical record of your content.</li>
+                    </ul>
+                    <p className="text-gray-700 mt-2">
+                        <strong>Note:</strong> This is a simulation. The posts are not actually published to the social media platforms. This feature is for planning and organizational purposes.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 className="text-3xl font-bold text-deep-charcoal border-b-2 border-terracotta pb-3 mb-6">TrendSpotter</h2>
             <div className="space-y-4">
+                <p className="text-gray-700">Stay ahead of the curve with TrendSpotter, our real-time trend analysis tool. You can access this feature in two ways:</p>
+                <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1 pl-4">
+                    <li><strong>From the Generator:</strong> Click the "Research Topic" button to find trends related to your source content.</li>
+                    <li><strong>From the Trends Page:</strong> Navigate to the "Trends" page for a dedicated trend analysis tool.</li>
+                </ul>
+                <p className="text-gray-700 mt-2">
+                    Simply enter a topic, URL, or piece of text, and the AI will analyze live web data to provide you with:
+                </p>
+                <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1 pl-4">
+                    <li>An overall summary of the current conversation around your topic.</li>
+                    <li>A list of specific, actionable trends with descriptions.</li>
+                    <li>Related keywords to help you with SEO.</li>
+                    <li>A list of the sources used for the analysis.</li>
+                </ul>
+                <p className="text-gray-700 mt-2">
+                    From the Generator, you can click "Use Trend" to automatically populate your source content with the trend information, allowing you to quickly create relevant and timely posts.
+                </p>
+            </div>
+        </section>
+
+        <section>
+            <h2 className="text-3xl font-bold text-deep-charcoal border-b-2 border-terracotta pb-3 mb-6">Analytics Dashboard</h2>
+            <div className="space-y-4">
+                <p className="text-gray-700">
+                    Our Analytics Dashboard is currently in development. Soon, you'll be able to track the performance of your content, monitor engagement metrics, and gain valuable insights into your social media strategy—all without leaving SocialCraft AI.
+                </p>
+            </div>
+        </section>
+
+        <section>
+            <h2 className="text-3xl font-bold text-deep-charcoal border-b-2 border-terracotta pb-3 mb-6">Media Studio</h2>
+            <div className="space-y-8">
+                <p className="text-gray-700">The Media Studio is your creative hub for generating and editing stunning visuals and videos. It's divided into two main sections: Image Generation & Editing and Video Generation.</p>
+
                 <div>
-                    <h3 className="text-xl font-semibold text-deep-charcoal">Analytics Dashboard</h3>
-                    <p className="text-gray-700 mt-1">
-                        Track your content's performance. Our analytics dashboard provides key metrics on engagement, reach, and other important KPIs to help you refine your social media strategy.
+                    <h3 className="text-xl font-semibold text-deep-charcoal mb-2">Image Generation & Editing</h3>
+                    <p className="text-gray-700">
+                        Create unique images from scratch or edit your own photos with the power of AI.
+                    </p>
+                    <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1 pl-4">
+                        <li><strong>To generate a new image:</strong> Enter a descriptive prompt (e.g., "A futuristic cityscape at sunset"), choose an aspect ratio, and click "Generate Image."</li>
+                        <li><strong>To edit an existing image:</strong> Upload your image (JPEG, PNG, or WEBP, up to 5MB), then enter a prompt describing the changes you want to make (e.g., "make the sky look like a Van Gogh painting").</li>
+                    </ul>
+                    <p className="text-gray-700 mt-2">
+                        Once your image is generated, you can download it or save it to your Content Library.
                     </p>
                 </div>
+
                 <div>
-                    <h3 className="text-xl font-semibold text-deep-charcoal">Trend Analysis</h3>
-                    <p className="text-gray-700 mt-1">
-                        Stay ahead of the curve. Discover trending topics and hashtags relevant to your industry, allowing you to create timely and relevant content that captures audience attention.
+                    <h3 className="text-xl font-semibold text-deep-charcoal mb-2">Video Generation</h3>
+                    <p className="text-gray-700">
+                        Bring your ideas to life with AI-powered video generation.
+                    </p>
+                    <p className="text-gray-700 mt-2">
+                        <strong>Important:</strong> Video generation is a powerful feature that requires a Google AI Studio API key with billing enabled. You will be prompted to select your key the first time you use this feature.
+                    </p>
+                    <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1 pl-4">
+                        <li><strong>From a prompt:</strong> Enter a descriptive prompt (e.g., "A high-speed chase through a neon-lit city"), choose an aspect ratio and resolution, and click "Generate Video."</li>
+                        <li><strong>From images:</strong> Upload up to 5 reference images and provide a prompt to guide the video generation process. This is great for creating slideshows or animating a sequence of events.</li>
+                    </ul>
+                    <p className="text-gray-700 mt-2">
+                        Video generation can take a few minutes. Once complete, you can download your video or save it to your Content Library.
                     </p>
                 </div>
-                <div>
-                    <h3 className="text-xl font-semibold text-deep-charcoal">Media Studio</h3>
-                    <p className="text-gray-700 mt-1">
-                        Create stunning visuals for your posts. The Media Studio helps you design and generate images, videos, and other rich media to accompany your text-based content.
-                    </p>
-                </div>
-                <div>
-                    <h3 className="text-xl font-semibold text-deep-charcoal">Scheduling</h3>
-                    <p className="text-gray-700 mt-1">
-                        Plan your content calendar in advance. Schedule your posts to be published at optimal times, ensuring consistent engagement with your audience without the need for manual posting.
-                    </p>
-                </div>
-                <div>
-                    <h3 className="text-xl font-semibold text-deep-charcoal">Templates & Playbooks</h3>
-                    <p className="text-gray-700 mt-1">
-                        Streamline your content creation process. Use pre-built templates for common post types or create your own playbooks—strategic sequences of content—to automate your campaigns.
-                    </p>
-                </div>
-                <div>
-                    <h3 className="text-xl font-semibold text-deep-charcoal">Academic Mode</h3>
-                    <p className="text-gray-700 mt-1">
-                        Generate high-quality, well-researched content for academic or professional audiences. This mode ensures your content is formal, well-structured, and includes citations if needed.
-                    </p>
-                </div>
-                <div>
-                    <h3 className="text-xl font-semibold text-deep-charcoal">Originality Review</h3>
-                    <p className="text-gray-700 mt-1">
-                        Ensure your content is unique. Our originality checker scans your generated text for plagiarism, giving you confidence that your posts are authentic and original.
-                    </p>
-                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 className="text-3xl font-bold text-deep-charcoal border-b-2 border-terracotta pb-3 mb-6">Playbooks</h2>
+            <div className="space-y-4">
+                <p className="text-gray-700">
+                    Kickstart your content creation with Playbooks—proven, high-engagement templates for various platforms and goals.
+                </p>
+                <p className="text-gray-700 mt-2">
+                    To use a playbook:
+                </p>
+                <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1 pl-4">
+                    <li>Navigate to the "Playbooks" page.</li>
+                    <li>Browse the available playbooks, or use the search and filter options to find one that meets your needs.</li>
+                    <li>Click "Use Playbook." This will take you to the Content Generator and pre-fill the source content with the playbook's template.</li>
+                    <li>Fill in the bracketed information (e.g., "[Your Product]") in the source content, and then generate your posts as usual.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2 className="text-3xl font-bold text-deep-charcoal border-b-2 border-terracotta pb-3 mb-6">Coming Soon</h2>
+            <div className="space-y-4">
+                <p className="text-gray-700">
+                    We're always working on new features to help you create amazing content. Here's a sneak peek at what's coming next:
+                </p>
+                <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1 pl-4">
+                    <li><strong>Academic Mode:</strong> A specialized mode for generating high-quality, well-researched content for academic or professional audiences.</li>
+                    <li><strong>Originality Review:</strong> An integrated tool to scan your generated content for plagiarism, ensuring your posts are authentic and original.</li>
+                </ul>
             </div>
         </section>
     </div>
 );
 
 const PlatformsDocs = () => (
-    <div className="space-y-8">
+    <div className="space-y-12">
         <div>
-            <h1 className="text-3xl font-bold font-display text-deep-charcoal">Platform Guides</h1>
-            <p className="text-gray-600 mt-2">Best practices and tips for optimizing your content on each social media platform.</p>
+            <h1 className="text-4xl font-bold font-display text-deep-charcoal">Platform Guides</h1>
+            <p className="text-gray-600 mt-3 text-lg">Master each social media platform with tailored strategies and SocialCraft AI features.</p>
         </div>
 
-        <section className="space-y-6">
-            <div className="p-6 rounded-lg border border-gray-200">
-                <h3 className="text-xl font-semibold text-deep-charcoal">Twitter/X</h3>
-                <p className="text-gray-700 mt-2">
-                    Ideal for short, impactful updates, and engaging in real-time conversations.
-                </p>
-                <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1">
-                    <li>Keep tweets concise and focused (under 280 characters).</li>
-                    <li>Use relevant hashtags to increase visibility.</li>
-                    <li>Create threads for longer-form storytelling.</li>
-                    <li>Engage with trending topics and conversations in your niche.</li>
+        <section>
+            <h2 className="text-3xl font-bold text-deep-charcoal border-b-2 border-terracotta pb-3 mb-6">Twitter/X</h2>
+            <div className="space-y-4">
+                <p className="text-gray-700">Twitter/X thrives on concise, impactful messages and real-time engagement. Use SocialCraft AI to craft viral tweets and engaging threads.</p>
+                <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1 pl-4">
+                    <li><strong>Content Generator:</strong> Input a topic and select "Twitter/X" to generate short, punchy tweets or multi-part threads. Experiment with "Urgent" or "Funny" tones.</li>
+                    <li><strong>Playbooks:</strong> Explore playbooks like "Problem/Agitate/Solve Thread" or "Contrarian View Thread" to structure compelling narratives that capture attention.</li>
+                    <li><strong>TrendSpotter:</strong> Use the TrendSpotter to identify trending hashtags and topics, then generate content around them for maximum visibility.</li>
                 </ul>
             </div>
+        </section>
 
-            <div className="p-6 rounded-lg border border-gray-200">
-                <h3 className="text-xl font-semibold text-deep-charcoal">LinkedIn</h3>
-                <p className="text-gray-700 mt-2">
-                    The premier platform for professional networking, industry insights, and B2B marketing.
-                </p>
-                <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1">
-                    <li>Maintain a professional and authoritative tone.</li>
-                    <li>Share valuable industry insights, case studies, and company news.</li>
-                    <li>Use professional headshots and high-quality images.</li>
-                    <li>Engage with comments to foster a professional community.</li>
+        <section>
+            <h2 className="text-3xl font-bold text-deep-charcoal border-b-2 border-terracotta pb-3 mb-6">LinkedIn</h2>
+            <div className="space-y-4">
+                <p className="text-gray-700">LinkedIn is your professional stage. Use SocialCraft AI to establish thought leadership, share industry insights, and connect with peers.</p>
+                <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1 pl-4">
+                    <li><strong>Content Generator:</strong> Select "LinkedIn" and choose formats like "Text" for articles or "Carousel" for detailed reports. Opt for a "Professional" or "Authoritative" tone.</li>
+                    <li><strong>Playbooks:</strong> Leverage playbooks such as "LinkedIn Carousel Deep Dive" or "The Deep Dive Thread" to break down complex topics and showcase your expertise.</li>
+                    <li><strong>Media Studio:</strong> Generate professional images or infographics in the Media Studio to accompany your LinkedIn posts, enhancing visual appeal.</li>
                 </ul>
             </div>
+        </section>
 
-            <div className="p-6 rounded-lg border border-gray-200">
-                <h3 className="text-xl font-semibold text-deep-charcoal">Instagram</h3>
-                <p className="text-gray-700 mt-2">
-                    A visual-first platform perfect for showcasing brand personality, products, and services.
-                </p>
-                <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1">
-                    <li>Focus on high-quality, visually appealing images and videos.</li>
-                    <li>Utilize Stories and Reels for more dynamic and engaging content.</li>
-                    <li>Write compelling captions that tell a story or ask a question.</li>
-                    <li>Use a mix of popular and niche hashtags to expand your reach.</li>
+        <section>
+            <h2 className="text-3xl font-bold text-deep-charcoal border-b-2 border-terracotta pb-3 mb-6">Instagram</h2>
+            <div className="space-y-4">
+                <p className="text-gray-700">Instagram is all about visual storytelling. SocialCraft AI helps you create captivating images, engaging videos, and compelling captions.</p>
+                <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1 pl-4">
+                    <li><strong>Media Studio:</strong> Design stunning images or short videos directly within the Media Studio. Experiment with different aspect ratios for posts, Stories, or Reels.</li>
+                    <li><strong>Content Generator:</strong> Generate creative captions for your visuals by selecting "Instagram." Use "Inspirational" or "Conversational" tones.</li>
+                    <li><strong>Playbooks:</strong> Utilize playbooks like "Instagram Educational Carousel" or "Viral Instagram Reel Script" to plan your visual content strategy and maximize engagement.</li>
                 </ul>
             </div>
+        </section>
 
-            <div className="p-6 rounded-lg border border-gray-200">
-                <h3 className="text-xl font-semibold text-deep-charcoal">TikTok</h3>
-                <p className="text-gray-700 mt-2">
-                    Dominated by short-form video content, ideal for creative, entertaining, and trend-focused marketing.
-                </p>
-                <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1">
-                    <li>Create short, attention-grabbing videos (15-60 seconds).</li>
-                    <li>Incorporate trending sounds and effects to boost visibility.</li>
-                    <li>Be authentic, creative, and don't be afraid to show personality.</li>
-                    <li>Engage with your audience through comments and duets.</li>
+        <section>
+            <h2 className="text-3xl font-bold text-deep-charcoal border-b-2 border-terracotta pb-3 mb-6">TikTok</h2>
+            <div className="space-y-4">
+                <p className="text-gray-700">TikTok is the platform for short, entertaining, and trend-driven video content. SocialCraft AI helps you tap into viral trends and create engaging scripts.</p>
+                <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1 pl-4">
+                    <li><strong>Media Studio:</strong> Generate short, dynamic videos using the Video Generator, perfect for TikTok's fast-paced environment.</li>
+                    <li><strong>Content Generator:</strong> Input your video idea and select "TikTok" to get script suggestions, catchy hooks, and relevant hashtags.</li>
+                    <li><strong>Playbooks:</strong> Use the "TikTok SEO Video Script" playbook to optimize your content for TikTok's search algorithm and increase discoverability.</li>
+                    <li><strong>TrendSpotter:</strong> Quickly identify audio trends and challenges to integrate into your TikTok content for higher reach.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2 className="text-3xl font-bold text-deep-charcoal border-b-2 border-terracotta pb-3 mb-6">Pinterest</h2>
+            <div className="space-y-4">
+                <p className="text-gray-700">Pinterest acts as a visual search engine, where users discover ideas and inspiration. Optimize your pins for discoverability with SocialCraft AI.</p>
+                <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1 pl-4">
+                    <li><strong>Media Studio:</strong> Create visually appealing "Idea Pins" or "Standard Pins" with the Image Generator, focusing on high-quality, vertical imagery.</li>
+                    <li><strong>Content Generator:</strong> Select "Pinterest" to generate keyword-rich titles and descriptions that improve your pin's search ranking.</li>
+                    <li><strong>Playbooks:</strong> Use the "SEO-Optimized Pinterest Pin" playbook to structure your pins for maximum visibility and traffic.</li>
+                    <li><strong>TrendSpotter:</strong> Research popular topics and keywords on Pinterest to inform your pin creation and attract a wider audience.</li>
                 </ul>
             </div>
         </section>
