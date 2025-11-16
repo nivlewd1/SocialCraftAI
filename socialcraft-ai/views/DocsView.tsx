@@ -166,8 +166,30 @@ const FeaturesDocs = () => (
                 <div>
                     <h3 className="text-xl font-semibold text-deep-charcoal mb-2">Step 4: Choose a Tone and Search Intent</h3>
                     <p className="text-gray-700">
-                        Select a tone that matches your brand's voice. Are you professional, funny, or inspirational? You can also optimize your content for a specific search intent. For example, select "Informational" if you're explaining a concept, or "Transactional" if you're trying to drive a sale.
+                        <strong>Tone:</strong> Select a tone that best matches your brand's voice and the message you want to convey. Our AI can generate content in various tones, including:
                     </p>
+                    <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1 pl-4">
+                        <li><strong>Auto:</strong> Let the AI determine the most suitable tone based on your source content and platform selection.</li>
+                        <li><strong>Professional:</strong> Formal and authoritative, ideal for business communications.</li>
+                        <li><strong>Funny:</strong> Humorous and light-hearted, great for engaging a casual audience.</li>
+                        <li><strong>Educational:</strong> Informative and clear, perfect for explaining complex topics.</li>
+                        <li><strong>Inspirational:</strong> Uplifting and motivating, designed to encourage and empower.</li>
+                        <li><strong>Conversational:</strong> Friendly and approachable, like talking to a friend.</li>
+                        <li><strong>Authoritative:</strong> Confident and expert, establishing credibility.</li>
+                        <li><strong>Urgent:</strong> Creates a sense of immediacy, often used for calls to action.</li>
+                        <li><strong>Sentimental:</strong> Evokes emotions and personal connection.</li>
+                        <li><strong>Crass:</strong> Edgy and provocative (use with caution and audience awareness).</li>
+                        <li><strong>Novel:</strong> Unique and creative, for out-of-the-box content.</li>
+                    </ul>
+                    <p className="text-gray-700 mt-2">
+                        <strong>Search Intent:</strong> Optimize your content for how users search online. This helps the AI tailor the message to meet specific audience needs:
+                    </p>
+                    <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1 pl-4">
+                        <li><strong>Auto-Detect:</strong> The AI will analyze your content to infer the most appropriate search intent.</li>
+                        <li><strong>Informational:</strong> For content that aims to explain a topic, answer questions, or provide facts (e.g., "How to...").</li>
+                        <li><strong>Commercial:</strong> For content where users are researching products or services with the intent to buy (e.g., "Best laptops for...").</li>
+                        <li><strong>Transactional:</strong> For content designed to drive a specific action, like a purchase, sign-up, or download (e.g., "Buy now," "Sign up for free trial").</li>
+                    </ul>
                 </div>
 
                 <div>
@@ -345,14 +367,47 @@ const FeaturesDocs = () => (
         </section>
 
         <section>
-            <h2 className="text-3xl font-bold text-deep-charcoal border-b-2 border-terracotta pb-3 mb-6">Coming Soon</h2>
+            <h2 className="text-3xl font-bold text-deep-charcoal border-b-2 border-terracotta pb-3 mb-6">Academic Mode</h2>
             <div className="space-y-4">
                 <p className="text-gray-700">
-                    We're always working on new features to help you create amazing content. Here's a sneak peek at what's coming next:
+                    The Academic Mode is a specialized tool designed to help researchers and academics translate complex papers into accessible social media content. It bridges the gap between scholarly work and public understanding, making your research more digestible and shareable.
+                </p>
+                <p className="text-gray-700 mt-2">
+                    <strong>How to use Academic Mode:</strong>
                 </p>
                 <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1 pl-4">
-                    <li><strong>Academic Mode:</strong> A specialized mode for generating high-quality, well-researched content for academic or professional audiences.</li>
-                    <li><strong>Originality Review:</strong> An integrated tool to scan your generated content for plagiarism, ensuring your posts are authentic and original.</li>
+                    <li>Navigate to the <a href="/academic-mode" className="text-terracotta hover:underline">Academic Mode</a> page.</li>
+                    <li><strong>Your Research Abstract/URL:</strong> In the designated text area, paste your arXiv URL or the full abstract of your academic paper. The AI will analyze this content to extract key findings and concepts.</li>
+                    <li><strong>Researcher's Perspective (Optional):</strong> This crucial step allows you to inject your unique expertise and personal connection to the research. Add personal insights, the "aha!" moment of your discovery, or the real-world implications of your research. This helps humanize the content and demonstrates E-E-A-T (Experience, Expertise, Authoritativeness, and Trustworthiness), making your dissemination more impactful.</li>
+                    <li><strong>Select Platforms & Formats:</strong> Choose the social media platforms (e.g., Twitter/X for concise summaries, LinkedIn for professional discussions) and desired formats for your content.</li>
+                    <li><strong>Select Tone & Search Intent:</strong> The default tone is "Educational" and search intent is "Informational," which are typically ideal for academic dissemination. However, you can adjust these as needed to suit your specific communication goals.</li>
+                    <li>Click "Analyze & Generate Posts." The AI will then craft social media content tailored for public dissemination, maintaining accuracy while enhancing accessibility.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2 className="text-3xl font-bold text-deep-charcoal border-b-2 border-terracotta pb-3 mb-6">Originality Review</h2>
+            <div className="space-y-4">
+                <p className="text-gray-700">
+                    While SocialCraft AI is a powerful tool for content generation, ensuring the originality and unique value of your posts is paramount. The Originality Review feature provides a user-guided checklist to help you critically assess your AI-assisted content.
+                </p>
+                <p className="text-gray-700 mt-2">
+                    <strong>How to use Originality Review:</strong>
+                </p>
+                <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1 pl-4">
+                    <li>After generating content in the <a href="/generator" className="text-terracotta hover:underline">Content Generator</a> or <a href="/academic-mode" className="text-terracotta hover:underline">Academic Mode</a>, navigate to the "Results" section.</li>
+                    <li>On each generated content card, you will find a "Review for Originality" button. Click this button to open the Originality Review modal.</li>
+                    <li>The modal presents a checklist of questions designed to prompt your critical thinking. These questions encourage you to consider:
+                        <ul className="list-disc list-inside text-gray-600 mt-1 space-y-1 pl-4">
+                            <li>Whether the post offers a new perspective.</li>
+                            <li>If you've added your own original analysis or insights.</li>
+                            <li>If the content is significantly more than just a summary of the source.</li>
+                            <li>If key facts have been verified.</li>
+                            <li>If the content provides real value to your audience.</li>
+                        </ul>
+                    </li>
+                    <li>Review each point carefully. This manual review process is essential for creating "people-first" content that is authentic, trustworthy, and truly valuable.</li>
                 </ul>
             </div>
         </section>
