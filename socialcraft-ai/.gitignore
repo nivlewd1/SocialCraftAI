@@ -35,6 +35,7 @@ EDGE_FUNCTIONS_DEPLOYMENT.md
 STRIPE_SETUP_GUIDE.md
 LEGAL_AND_INFO_PAGES_GUIDE.md
 _!DOCTYPE.txt
+FIX_APPLIED.md
 
 # Supabase temporary files
 supabase/.temp/
