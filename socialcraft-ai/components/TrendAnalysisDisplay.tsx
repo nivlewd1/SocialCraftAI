@@ -11,25 +11,25 @@ const TrendAnalysisDisplay: React.FC<TrendAnalysisDisplayProps> = ({ results, on
     return (
         <div className="max-w-4xl mx-auto mt-8 animate-fade-in space-y-8 glass-card rounded-2xl p-8">
             <div className="text-center border-b pb-4 border-warm-gray">
-                 <h2 className="text-2xl font-bold font-serif text-deep-charcoal flex items-center justify-center">
+                 <h2 className="text-2xl font-bold font-display text-deep-charcoal flex items-center justify-center">
                     <TrendingUp className="mr-3 h-7 w-7 text-sage-green" />
                     Trend Analysis Results
                  </h2>
             </div>
             {/* Overall Summary Card */}
             <div>
-                 <h3 className="text-xl font-bold font-serif text-deep-charcoal mb-2">Overall Summary</h3>
+                 <h3 className="text-xl font-bold font-display text-deep-charcoal mb-2">Overall Summary</h3>
                  <p className="text-deep-charcoal leading-relaxed bg-warm-gray/50 p-4 rounded-lg border border-warm-gray">{results.overallSummary}</p>
             </div>
 
             {/* Identified Trends */}
             <div>
-                 <h3 className="text-xl font-bold font-serif text-deep-charcoal mb-4 flex items-center"><Lightbulb className="mr-2 h-5 w-5 text-terracotta" />Identified Trends</h3>
+                 <h3 className="text-xl font-bold font-display text-deep-charcoal mb-4 flex items-center"><Lightbulb className="mr-2 h-5 w-5 text-terracotta" />Identified Trends</h3>
                  <div className="space-y-4">
                     {results.identifiedTrends.map((trend, index) => (
                         <div key={index} className="glass-card rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                              <div className="flex-grow">
-                                <h4 className="font-semibold font-serif text-deep-charcoal">{trend.trendTitle}</h4>
+                                <h4 className="font-semibold font-display text-deep-charcoal">{trend.trendTitle}</h4>
                                 <p className="text-sm text-deep-charcoal mt-1">{trend.description}</p>
                              </div>
                              <button
@@ -48,7 +48,7 @@ const TrendAnalysisDisplay: React.FC<TrendAnalysisDisplayProps> = ({ results, on
             {/* Related Keywords & Sources */}
              <div className="grid md:grid-cols-2 gap-8">
                  <div>
-                    <h3 className="text-xl font-bold font-serif text-deep-charcoal mb-4 flex items-center"><Search className="mr-2 h-5 w-5 text-soft-blue"/>Related Keywords</h3>
+                    <h3 className="text-xl font-bold font-display text-deep-charcoal mb-4 flex items-center"><Search className="mr-2 h-5 w-5 text-soft-blue"/>Related Keywords</h3>
                      <div className="flex flex-wrap gap-2">
                         {results.relatedKeywords.map((keyword, index) => (
                              <span key={index} className="px-2.5 py-1 text-sm font-medium text-white bg-soft-blue rounded-full">
@@ -58,7 +58,7 @@ const TrendAnalysisDisplay: React.FC<TrendAnalysisDisplayProps> = ({ results, on
                     </div>
                  </div>
                  <div>
-                    <h3 className="text-xl font-bold font-serif text-deep-charcoal mb-4 flex items-center"><LinkIcon className="mr-2 h-5 w-5 text-sage-green"/>Sources</h3>
+                    <h3 className="text-xl font-bold font-display text-deep-charcoal mb-4 flex items-center"><LinkIcon className="mr-2 h-5 w-5 text-sage-green"/>Sources</h3>
                      <ul className="space-y-2">
                          {results.sources.map((source) => (
 // FIX: Removed duplicate 'key' attribute and used 'source.uri' as the unique key.

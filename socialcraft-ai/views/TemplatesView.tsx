@@ -1,7 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import { Platform, Playbook, PlaybookCategory } from '../types';
 import { Search, Rocket, Lightbulb, Building2, Calendar, MessageCircle, Twitter, Linkedin, Instagram, Music, LayoutList, Film, Layers, Pin } from 'lucide-react';
+
+interface TemplatesViewProps {
+  onOpenAuth: () => void;
+}
 
 const platformIcons: { [key in Platform]: React.ReactNode } = {
     [Platform.Twitter]: <Twitter size={16} className="text-deep-charcoal" />,
@@ -212,7 +217,8 @@ const customIcons: { [title: string]: { icon: React.ReactNode; bg: string } } = 
     "SEO-Optimized Pinterest Pin": { icon: <Pin size={18} className="text-white" />, bg: "bg-terracotta" },
 };
 
-const TemplatesView: React.FC = () => {
+const TemplatesView: React.FC<TemplatesViewProps> = ({ onOpenAuth }) => {
+    const { user } = useAuth();
     const navigate = useNavigate();
     const [platformFilter, setPlatformFilter] = useState<Platform | 'All'>('All');
     const [categoryFilter, setCategoryFilter] = useState<PlaybookCategory | 'All'>('All');
@@ -234,7 +240,11 @@ const TemplatesView: React.FC = () => {
     }, [platformFilter, categoryFilter, searchTerm]);
 
     const handleUsePlaybook = (content: string) => {
-        navigate('/generator', { state: { playbookContent: content } });
+        if (user) {
+            navigate('/generator', { state: { playbookContent: content } });
+        } else {
+            onOpenAuth();
+        }
     };
 
     const allCategories = ['All', ...Object.values(PlaybookCategory)];
@@ -243,7 +253,7 @@ const TemplatesView: React.FC = () => {
     return (
         <div className="space-y-8">
             <div className="text-center">
-                <h1 className="text-4xl md:text-5xl font-extrabold font-serif tracking-tight">
+                <h1 className="text-4xl md:text-5xl font-extrabold font-display tracking-tight">
                     Viral Content <span className="gradient-text">Playbooks</span>
                 </h1>
                 <p className="mt-4 max-w-2xl mx-auto text-lg text-deep-charcoal">
@@ -291,7 +301,7 @@ const TemplatesView: React.FC = () => {
                                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${iconInfo.bg}`}>
                                     {iconInfo.icon}
                                 </div>
-                                <h3 className="font-bold font-serif text-lg text-deep-charcoal mb-2">{playbook.title}</h3>
+                                <h3 className="font-bold font-display text-lg text-deep-charcoal mb-2">{playbook.title}</h3>
                                 <p className="text-deep-charcoal text-sm mb-4">{playbook.description}</p>
                             </div>
                             <div className="mt-auto">

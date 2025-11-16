@@ -23,7 +23,7 @@ const OriginalityReviewModal: React.FC<OriginalityReviewModalProps> = ({ isOpen,
         <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4 animate-fade-in" onClick={onClose}>
             <div className="bg-warm-gray rounded-2xl p-8 shadow-2xl max-w-lg w-full" onClick={(e) => e.stopPropagation()}>
                 <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-xl font-bold font-serif text-deep-charcoal">Content Originality & Value Review</h3>
+                    <h3 className="text-xl font-bold font-display text-deep-charcoal">Content Originality & Value Review</h3>
                      <button
                         onClick={onClose}
                         className="p-2 rounded-full bg-warm-gray hover:bg-warm-gray/80 text-deep-charcoal transition-colors"

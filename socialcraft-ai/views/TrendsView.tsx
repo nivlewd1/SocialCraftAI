@@ -33,7 +33,7 @@ const TrendsView: React.FC = () => {
     return (
         <div className="space-y-8">
             <div className="text-center">
-                <h1 className="text-4xl md:text-5xl font-extrabold font-serif tracking-tight">
+                <h1 className="text-4xl md:text-5xl font-extrabold font-display tracking-tight">
                     Real-Time <span className="gradient-text">TrendSpotter</span>
                 </h1>
                 <p className="mt-4 max-w-2xl mx-auto text-lg text-deep-charcoal">
@@ -74,13 +74,13 @@ const TrendsView: React.FC = () => {
                 <div className="max-w-4xl mx-auto mt-8 animate-fade-in space-y-8">
                     {/* Overall Summary Card */}
                     <div className="glass-card rounded-lg p-6">
-                         <h3 className="text-xl font-bold font-serif text-deep-charcoal mb-2">Overall Summary</h3>
+                         <h3 className="text-xl font-bold font-display text-deep-charcoal mb-2">Overall Summary</h3>
                          <p className="text-deep-charcoal leading-relaxed">{trendResults.overallSummary}</p>
                     </div>
 
                     {/* Identified Trends */}
                     <div>
-                         <h3 className="text-xl font-bold font-serif text-deep-charcoal mb-4 flex items-center"><Lightbulb className="mr-2 h-5 w-5 text-terracotta" />Identified Trends</h3>
+                         <h3 className="text-xl font-bold font-display text-deep-charcoal mb-4 flex items-center"><Lightbulb className="mr-2 h-5 w-5 text-terracotta" />Identified Trends</h3>
                          <div className="grid md:grid-cols-2 gap-4">
                             {trendResults.identifiedTrends.map((trend, index) => (
                                 <div key={index} className="glass-card rounded-lg p-4">
@@ -94,7 +94,7 @@ const TrendsView: React.FC = () => {
                     {/* Related Keywords & Sources */}
                      <div className="grid md:grid-cols-2 gap-8">
                          <div>
-                            <h3 className="text-xl font-bold font-serif text-deep-charcoal mb-4 flex items-center"><Search className="mr-2 h-5 w-5 text-soft-blue"/>Related Keywords</h3>
+                            <h3 className="text-xl font-bold font-display text-deep-charcoal mb-4 flex items-center"><Search className="mr-2 h-5 w-5 text-soft-blue"/>Related Keywords</h3>
                              <div className="flex flex-wrap gap-2">
                                 {trendResults.relatedKeywords.map((keyword, index) => (
                                      <span key={index} className="px-2.5 py-1 text-sm font-medium text-white bg-soft-blue rounded-full">
@@ -104,7 +104,7 @@ const TrendsView: React.FC = () => {
                             </div>
                          </div>
                          <div>
-                            <h3 className="text-xl font-bold font-serif text-deep-charcoal mb-4 flex items-center"><LinkIcon className="mr-2 h-5 w-5 text-sage-green"/>Sources</h3>
+                            <h3 className="text-xl font-bold font-display text-deep-charcoal mb-4 flex items-center"><LinkIcon className="mr-2 h-5 w-5 text-sage-green"/>Sources</h3>
                              <ul className="space-y-2">
                                  {trendResults.sources.map((source, index) => (
                                      <li key={index} className="text-sm">

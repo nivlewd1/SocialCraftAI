@@ -63,7 +63,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold font-serif text-deep-charcoal">
+          <h2 className="text-2xl font-bold font-display text-deep-charcoal">
             {isSignUp ? 'Create Account' : 'Sign In'}
           </h2>
           <button

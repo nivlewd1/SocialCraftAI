@@ -38,7 +38,7 @@ const MediaStudioView: React.FC = () => {
     return (
         <div className="space-y-8">
             <div className="text-center">
-                <h1 className="text-4xl md:text-5xl font-extrabold font-serif tracking-tight">
+                <h1 className="text-4xl md:text-5xl font-extrabold font-display tracking-tight">
                     Media <span className="gradient-text">Studio</span>
                 </h1>
                 <p className="mt-4 max-w-2xl mx-auto text-lg text-deep-charcoal">

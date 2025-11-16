@@ -47,7 +47,7 @@ const SettingsView: React.FC = () => {
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold font-serif text-deep-charcoal mb-2">
+        <h1 className="text-4xl font-bold font-display text-deep-charcoal mb-2">
           Account <span className="gradient-text">Settings</span>
         </h1>
         <p className="text-deep-charcoal">Manage your profile, preferences, and subscription</p>
@@ -189,7 +189,7 @@ const ProfileSettings: React.FC<{
 }> = ({ displayName, setDisplayName, email, setEmail, onSubmit }) => (
   <div className="space-y-6">
     <div>
-      <h2 className="text-2xl font-bold font-serif text-deep-charcoal mb-2">Profile Information</h2>
+      <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-2">Profile Information</h2>
       <p className="text-deep-charcoal">Update your profile details and avatar</p>
     </div>
 
@@ -263,7 +263,7 @@ const AccountSettings: React.FC<{
 }> = ({ timezone, setTimezone, language, setLanguage, onSave }) => (
   <div className="space-y-6">
     <div>
-      <h2 className="text-2xl font-bold font-serif text-deep-charcoal mb-2">Account Preferences</h2>
+      <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-2">Account Preferences</h2>
       <p className="text-deep-charcoal">Manage your regional and display preferences</p>
     </div>
 
@@ -336,7 +336,7 @@ const NotificationSettings: React.FC<{
 }) => (
   <div className="space-y-6">
     <div>
-      <h2 className="text-2xl font-bold font-serif text-deep-charcoal mb-2">Notification Preferences</h2>
+      <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-2">Notification Preferences</h2>
       <p className="text-deep-charcoal">Manage how you receive updates and alerts</p>
     </div>
 
@@ -388,7 +388,7 @@ const SecuritySettings: React.FC<{
 }> = ({ onSubmit }) => (
   <div className="space-y-6">
     <div>
-      <h2 className="text-2xl font-bold font-serif text-deep-charcoal mb-2">Security Settings</h2>
+      <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-2">Security Settings</h2>
       <p className="text-deep-charcoal">Manage your password and security preferences</p>
     </div>
 
@@ -527,7 +527,7 @@ const BillingSettings: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold font-serif text-deep-charcoal mb-2">Billing & Subscription</h2>
+        <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-2">Billing & Subscription</h2>
         <p className="text-deep-charcoal">Manage your subscription and payment methods</p>
       </div>
 
@@ -752,7 +752,7 @@ const BillingSettings: React.FC = () => {
 const DangerZone: React.FC = () => (
   <div className="space-y-6">
     <div>
-      <h2 className="text-2xl font-bold font-serif text-deep-charcoal mb-2">Danger Zone</h2>
+      <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-2">Danger Zone</h2>
       <p className="text-deep-charcoal">Irreversible actions that affect your account</p>
     </div>
 

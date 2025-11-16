@@ -1,6 +1,5 @@
-/* Import Playfair Display and Inter fonts from Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+/* Import Manrope and Inter fonts from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -36,9 +35,64 @@ body {
     transition: all 0.3s ease;
 }
 
-.glass-card:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+
+.glass-card:hover {                                                                                       
+
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);                                                           
+
 }
+
+
+
+/* --- Feature Card Redesign --- */
+
+.feature-card {
+
+    background-color: var(--warm-white);
+
+    border: 1px solid rgba(139, 154, 139, 0.15); /* Using sage-green with low opacity */
+
+    border-radius: 1.5rem; /* rounded-3xl */
+
+    transition: all 0.3s ease-out;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+
+}
+
+.feature-card:hover {
+
+    transform: translateY(-8px) scale(1.02);
+
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+
+    border-color: rgba(139, 154, 139, 0.3); /* Using sage-green with higher opacity */
+
+}
+
+.feature-icon-wrapper {
+
+    background: linear-gradient(135deg, var(--warm-gray), #F5F3F0); /* warm-gray gradient */
+
+    border-radius: 1rem; /* rounded-2xl */
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 1rem;
+
+}
+
+.feature-icon-wrapper i {
+
+    stroke: var(--sage-green);
+
+}
+
 
 /* Gradient Text Effects */
 .gradient-text {
@@ -78,22 +132,24 @@ body {
 
 /* Button Styles */
 .btn-primary {
-    background: var(--terracotta);
+    background-image: linear-gradient(to right, var(--sage-green) 0%, var(--terracotta) 50%, var(--sage-green) 100%);
+    background-size: 200% auto;
     color: white;
-    transition: all 0.3s ease;
     font-weight: 600;
+    border-radius: 9999px;
+    transition: all 0.4s ease;
+    box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.1);
 }
 
 .btn-primary:hover:not(:disabled) {
-    background: #B8956F;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(196, 164, 132, 0.3);
+    background-position: right center;
+    box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
 }
 
 .btn-primary:active:not(:disabled) {
     transform: translateY(0);
 }
-
 .btn-secondary {
     background: transparent;
     color: var(--sage-green);

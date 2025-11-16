@@ -13,10 +13,16 @@ import SettingsView from './views/SettingsView';
 import PricingView from './views/PricingView';
 import CheckoutSuccessView from './views/CheckoutSuccessView';
 import CheckoutCancelView from './views/CheckoutCancelView';
+import TermsOfServiceView from './views/TermsOfServiceView';
+import PrivacyPolicyView from './views/PrivacyPolicyView';
+import AboutView from './views/AboutView';
+import DocsView from './views/DocsView';
+import PlaybooksView from './views/PlaybooksView';
 import { BrainCircuit, BookOpen, BarChart3, LayoutGrid, Film, Library, TrendingUp, Calendar, User, LogOut, Settings } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 import { AuthModal } from './components/AuthModal';
 import { AnalyticsDashboard } from './components/AnalyticsDashboard';
+import Footer from './components/Footer';
 
 const AppContent: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => {
     const location = useLocation();
@@ -30,7 +36,8 @@ const AppContent: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => {
                     <Route path="/" element={<LandingView onOpenAuth={onOpenAuth} />} />
                     <Route path="/generator" element={<GeneratorView />} />
                     <Route path="/academic" element={<AcademicModeView />} />
-                    <Route path="/playbooks" element={<TemplatesView />} />
+                    <Route path="/templates" element={<TemplatesView onOpenAuth={onOpenAuth} />} />
+                    <Route path="/playbooks" element={<PlaybooksView onOpenAuth={onOpenAuth} />} />
                     <Route path="/media" element={<MediaStudioView />} />
                     <Route path="/analytics" element={<AnalyticsDashboard />} />
                     <Route path="/drafts" element={<DraftsView />} />
@@ -40,6 +47,10 @@ const AppContent: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => {
                     <Route path="/pricing" element={<PricingView />} />
                     <Route path="/checkout/success" element={<CheckoutSuccessView />} />
                     <Route path="/checkout/cancel" element={<CheckoutCancelView />} />
+                    <Route path="/terms" element={<TermsOfServiceView />} />
+                    <Route path="/privacy" element={<PrivacyPolicyView />} />
+                    <Route path="/about" element={<AboutView />} />
+                    <Route path="/docs" element={<DocsView />} />
                 </Routes>
             </main>
             <Footer />
@@ -75,7 +86,7 @@ const LandingHeader: React.FC<{ onOpenAuth: () => void; isLandingPage: boolean }
                         <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-sage-green to-terracotta flex items-center justify-center">
                                <span className="text-white font-bold text-base">SC</span>
                             </div>
-                            <span className="text-xl font-bold font-serif text-deep-charcoal">
+                            <span className="text-xl font-bold font-display text-deep-charcoal">
                                 SocialCraft AI
                             </span>
                         </NavLink>
@@ -104,7 +115,7 @@ const LandingHeader: React.FC<{ onOpenAuth: () => void; isLandingPage: boolean }
                         <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-sage-green to-terracotta flex items-center justify-center">
                            <span className="text-white font-bold text-base">SC</span>
                         </div>
-                        <span className="text-xl font-bold font-serif text-deep-charcoal">
+                        <span className="text-xl font-bold font-display text-deep-charcoal">
                             SocialCraft AI
                         </span>
                     </NavLink>
@@ -176,15 +187,5 @@ const NavItem: React.FC<{ to: string; icon: React.ReactNode; label: string }> = 
         <span>{label}</span>
     </NavLink>
 );
-
-const Footer: React.FC = () => {
-    return (
-        <footer className="bg-deep-charcoal text-warm-white">
-            <div className="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-sm">
-                <p>&copy; {new Date().getFullYear()} SocialCraft AI. Algorithmic-Driven Social Media Automation.</p>
-            </div>
-        </footer>
-    );
-};
 
 export default App;

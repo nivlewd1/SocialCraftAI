@@ -43,7 +43,7 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
                 <span className="text-sm font-medium text-deep-charcoal">Algorithm-Optimized Content Engine</span>
               </div>
 
-              <h1 className="text-5xl lg:text-7xl font-extrabold font-serif text-deep-charcoal leading-tight">
+              <h1 className="text-5xl lg:text-7xl font-extrabold font-display text-deep-charcoal leading-tight">
                 Create Content That{' '}
                 <span className="relative inline-block">
                   <span className="gradient-text">Gets Discovered</span>
@@ -349,7 +349,7 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
       <section id="features" className="py-24 bg-white">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl lg:text-5xl font-bold font-serif text-deep-charcoal">
+            <h2 className="text-4xl lg:text-5xl font-bold font-display text-deep-charcoal">
               Algorithm-Powered <span className="gradient-text">Content Engine</span>
             </h2>
             <p className="text-xl text-deep-charcoal max-w-3xl mx-auto leading-relaxed">
@@ -404,7 +404,7 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
       <section className="py-24 bg-gradient-to-br from-warm-gray to-warm-white">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl lg:text-5xl font-bold font-serif text-deep-charcoal">
+            <h2 className="text-4xl lg:text-5xl font-bold font-display text-deep-charcoal">
               From Idea to <span className="gradient-text">Maximum Visibility</span>
             </h2>
             <p className="text-xl text-deep-charcoal max-w-3xl mx-auto leading-relaxed">
@@ -421,7 +421,7 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
                     <span className="text-2xl">✨</span>
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-bold font-serif text-deep-charcoal mb-2">Input: Any Content Source</h3>
+                    <h3 className="font-bold font-display text-deep-charcoal mb-2">Input: Any Content Source</h3>
                     <p className="text-sm text-deep-charcoal">URL, text, research paper, or product description</p>
                     <div className="mt-3 p-3 bg-warm-gray rounded-lg">
                       <p className="text-xs text-gray-700 line-clamp-3">Example: "Launching a new AI-powered project management tool that helps teams collaborate 3x faster..."</p>
@@ -445,7 +445,7 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
                     <Sparkles className="h-6 w-6 text-white" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-bold font-serif text-deep-charcoal mb-2">Output: Algorithm-Optimized Content</h3>
+                    <h3 className="font-bold font-display text-deep-charcoal mb-2">Output: Algorithm-Optimized Content</h3>
                     <div className="space-y-2">
                       <div className="p-3 bg-soft-blue/10 rounded-lg border-l-4 border-soft-blue">
                         <p className="text-xs font-medium text-soft-blue/80">Twitter Thread (Engagement-optimized)</p>
@@ -492,7 +492,7 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
       <section id="platforms" className="py-24 bg-white">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl lg:text-5xl font-bold font-serif text-deep-charcoal">
+            <h2 className="text-4xl lg:text-5xl font-bold font-display text-deep-charcoal">
               Master Every <span className="gradient-text">Platform Algorithm</span>
             </h2>
             <p className="text-xl text-deep-charcoal max-w-3xl mx-auto leading-relaxed">
@@ -565,7 +565,7 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
       <section className="py-24 bg-gradient-to-br from-warm-gray to-warm-white">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl lg:text-5xl font-bold font-serif text-deep-charcoal">
+            <h2 className="text-4xl lg:text-5xl font-bold font-display text-deep-charcoal">
               Complete <span className="gradient-text">Discovery Toolkit</span>
             </h2>
             <p className="text-xl text-deep-charcoal max-w-3xl mx-auto leading-relaxed">
@@ -605,7 +605,7 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
       <section className="py-24 bg-white">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl lg:text-5xl font-bold font-serif text-deep-charcoal">
+            <h2 className="text-4xl lg:text-5xl font-bold font-display text-deep-charcoal">
               Analyze <span className="gradient-text">Performance</span>
             </h2>
             <p className="text-xl text-deep-charcoal max-w-3xl mx-auto leading-relaxed">
@@ -730,7 +730,7 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
         </div>
         <div className="container mx-auto px-6 text-center relative z-10">
           <div className="max-w-4xl mx-auto space-y-8">
-            <h2 className="text-4xl lg:text-5xl font-bold font-serif text-white">
+            <h2 className="text-4xl lg:text-5xl font-bold font-display text-white">
               Ready to Get Discovered on Every Platform?
             </h2>
             <p className="text-xl text-white/90 leading-relaxed">
@@ -785,11 +785,11 @@ const FeatureCard: React.FC<{
   description: string;
   features?: string[];
 }> = ({ icon, iconColor, title, description, features = [] }) => (
-  <div className="glass-card rounded-2xl p-8 hover-lift bg-white group">
+  <div className="feature-card p-8 group">
     <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${iconColor} flex items-center justify-center mb-6 text-white shadow-medium group-hover:scale-110 transition-transform`}>
       {icon}
     </div>
-    <h3 className="text-2xl font-bold font-serif text-deep-charcoal mb-4">{title}</h3>
+    <h3 className="text-2xl font-bold font-display text-deep-charcoal mb-4">{title}</h3>
     <p className="text-deep-charcoal mb-6 leading-relaxed">{description}</p>
     {features.length > 0 && (
       <ul className="space-y-3">
@@ -812,11 +812,11 @@ const PlatformCard: React.FC<{
   description: string;
   features: string[];
 }> = ({ platform, color, icon, description, features }) => (
-  <div className="glass-card rounded-2xl p-6 hover-lift bg-white group">
+  <div className="feature-card p-6 group">
     <div className={`w-14 h-14 ${color} rounded-xl flex items-center justify-center mb-6 text-white font-bold text-2xl shadow-medium group-hover:scale-110 transition-transform`}>
       {icon}
     </div>
-    <h3 className="text-xl font-bold font-serif text-deep-charcoal mb-3">{platform}</h3>
+    <h3 className="text-xl font-bold font-display text-deep-charcoal mb-3">{platform}</h3>
     <p className="text-sm text-deep-charcoal mb-6 leading-relaxed">{description}</p>
     <ul className="space-y-2">
       {features.map((feature, index) => (
@@ -835,12 +835,12 @@ const BenefitItem: React.FC<{
   title: string;
   description: string;
 }> = ({ icon, title, description }) => (
-  <div className="flex items-start space-x-4 p-6 glass-card rounded-xl bg-white hover-lift">
+  <div className="flex items-start space-x-4 p-6 feature-card">
     <div className="w-12 h-12 rounded-xl bg-warm-gray flex items-center justify-center flex-shrink-0">
       {icon}
     </div>
     <div>
-      <h4 className="font-bold font-serif text-deep-charcoal mb-2">{title}</h4>
+      <h4 className="font-bold font-display text-deep-charcoal mb-2">{title}</h4>
       <p className="text-sm text-deep-charcoal leading-relaxed">{description}</p>
     </div>
   </div>

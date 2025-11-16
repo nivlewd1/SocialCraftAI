@@ -23,7 +23,7 @@ export default {
       },
       fontFamily: {
         'sans': ['Inter', 'system-ui', 'sans-serif'],
-        'serif': ['Playfair Display', 'serif'],
+        'display': ['Manrope', 'sans-serif'],
         'mono': ['SF Mono', 'Monaco', 'monospace'],
       },
       spacing: {

@@ -57,7 +57,7 @@ const SchedulingModal: React.FC<SchedulingModalProps> = ({ content, onClose, onS
                     <X size={20} />
                 </button>
                 <div className="p-8">
-                    <h2 className="text-2xl font-bold font-serif text-deep-charcoal mb-2">Schedule Post</h2>
+                    <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-2">Schedule Post</h2>
                     <p className="text-sm text-deep-charcoal mb-4">Add this content for {content.platform} to your calendar.</p>
                     
                     <div className="bg-white rounded-lg p-3 border border-warm-gray max-h-32 overflow-y-auto mb-6">
@@ -65,7 +65,7 @@ const SchedulingModal: React.FC<SchedulingModalProps> = ({ content, onClose, onS
                     </div>
 
                     <div>
-                        <h3 className="text-md font-semibold font-serif text-deep-charcoal mb-3 flex items-center">
+                        <h3 className="text-md font-semibold font-display text-deep-charcoal mb-3 flex items-center">
                             <Sparkles size={16} className="mr-2 text-terracotta" />
                             AI-Suggested Times
                         </h3>
@@ -83,7 +83,7 @@ const SchedulingModal: React.FC<SchedulingModalProps> = ({ content, onClose, onS
                          </div>
                     </div>
                      <div>
-                        <h3 className="text-md font-semibold font-serif text-deep-charcoal mb-3 flex items-center">
+                        <h3 className="text-md font-semibold font-display text-deep-charcoal mb-3 flex items-center">
                              <Calendar size={16} className="mr-2 text-deep-charcoal" />
                             Or Pick a Custom Time
                         </h3>

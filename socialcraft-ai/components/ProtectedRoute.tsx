@@ -29,7 +29,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-warm-gray">
         <div className="text-center">
-          <h2 className="text-2xl font-bold font-serif text-deep-charcoal mb-4">
+          <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-4">
             Authentication Required
           </h2>
           <p className="text-deep-charcoal mb-6">

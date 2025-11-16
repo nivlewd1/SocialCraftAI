@@ -32,13 +32,13 @@ const DraftViewerModal: React.FC<DraftViewerModalProps> = ({ draft, onClose }) =
                 </button>
                 <div className="p-8">
                     <div className="mb-6 pb-4 border-b border-warm-gray">
-                        <h2 className="text-2xl font-bold font-serif text-deep-charcoal truncate">{draft.title}</h2>
+                        <h2 className="text-2xl font-bold font-display text-deep-charcoal truncate">{draft.title}</h2>
                         <p className="text-sm text-deep-charcoal">Saved on {formatDate(draft.createdAt)}</p>
                     </div>
 
                     <div className="space-y-6">
                         <div>
-                            <h3 className="text-lg font-semibold font-serif text-deep-charcoal mb-2">Original Source Content</h3>
+                            <h3 className="text-lg font-semibold font-display text-deep-charcoal mb-2">Original Source Content</h3>
                             <div className="bg-white rounded-lg p-4 border border-warm-gray max-h-40 overflow-y-auto">
                                 <p className="text-deep-charcoal whitespace-pre-wrap font-sans text-base">{draft.sourceContent}</p>
                             </div>
@@ -46,7 +46,7 @@ const DraftViewerModal: React.FC<DraftViewerModalProps> = ({ draft, onClose }) =
                         
                         {draft.authorsVoice && (
                              <div>
-                                <h3 className="text-lg font-semibold font-serif text-deep-charcoal mb-2">Author's Voice & Experience</h3>
+                                <h3 className="text-lg font-semibold font-display text-deep-charcoal mb-2">Author's Voice & Experience</h3>
                                 <div className="bg-white rounded-lg p-4 border border-warm-gray max-h-40 overflow-y-auto">
                                     <p className="text-deep-charcoal whitespace-pre-wrap font-sans text-base">{draft.authorsVoice}</p>
                                 </div>
@@ -54,7 +54,7 @@ const DraftViewerModal: React.FC<DraftViewerModalProps> = ({ draft, onClose }) =
                         )}
 
                         <div>
-                             <h3 className="text-lg font-semibold font-serif text-deep-charcoal mb-4">Generated Content</h3>
+                             <h3 className="text-lg font-semibold font-display text-deep-charcoal mb-4">Generated Content</h3>
                              <ResultsDisplay
                                 results={draft.results}
                                 sourceContent={draft.sourceContent}

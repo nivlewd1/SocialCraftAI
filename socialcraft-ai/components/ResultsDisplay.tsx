@@ -328,7 +328,7 @@ const ContentCard: React.FC<{ content: GeneratedContent, onSchedule: () => void,
 
              {/* E-E-A-T Analysis */}
             <div>
-                <h4 className="font-semibold font-serif text-deep-charcoal mb-2 flex items-center"><Info className="h-4 w-4 mr-2 text-soft-blue" />Content Analysis</h4>
+                <h4 className="font-semibold font-display text-deep-charcoal mb-2 flex items-center"><Info className="h-4 w-4 mr-2 text-soft-blue" />Content Analysis</h4>
                 <div className="bg-soft-blue/10 p-4 rounded-lg border border-soft-blue/20 space-y-3">
                     <div>
                         <p className="font-bold text-deep-charcoal text-sm">Audience Value:</p>
@@ -378,7 +378,7 @@ const ContentCard: React.FC<{ content: GeneratedContent, onSchedule: () => void,
             {/* LinkedIn Carousel */}
             {isLinkedInCarousel && (
                  <div>
-                    <h4 className="font-semibold font-serif text-deep-charcoal mb-3 flex items-center">
+                    <h4 className="font-semibold font-display text-deep-charcoal mb-3 flex items-center">
                         <LayoutList className="h-4 w-4 mr-2 text-soft-blue" />
                         Carousel Slides
                     </h4>
@@ -398,7 +398,7 @@ const ContentCard: React.FC<{ content: GeneratedContent, onSchedule: () => void,
             {/* Instagram Carousel */}
             {isInstagramCarousel && (
                  <div>
-                    <h4 className="font-semibold font-serif text-deep-charcoal mb-3 flex items-center">
+                    <h4 className="font-semibold font-display text-deep-charcoal mb-3 flex items-center">
                         <Layers className="h-4 w-4 mr-2 text-terracotta" />
                         Carousel Slides
                     </h4>
@@ -418,7 +418,7 @@ const ContentCard: React.FC<{ content: GeneratedContent, onSchedule: () => void,
              {/* Instagram Reel Script */}
                          {isInstagramReel && (
                              <div>
-                                <h4 className="font-semibold font-serif text-deep-charcoal mb-3 flex items-center">
+                                <h4 className="font-semibold font-display text-deep-charcoal mb-3 flex items-center">
                                     <Film className="h-4 w-4 mr-2 text-sage-green" />
                                     Reel Script
                                 </h4>
@@ -451,7 +451,7 @@ const ContentCard: React.FC<{ content: GeneratedContent, onSchedule: () => void,
             {/* TikTok Script */}
             {isTikTokScript && (
                 <div>
-                    <h4 className="font-semibold font-serif text-deep-charcoal mb-3 flex items-center">
+                    <h4 className="font-semibold font-display text-deep-charcoal mb-3 flex items-center">
                         <Film className="h-4 w-4 mr-2 text-soft-blue" />
                         TikTok Video Script
                     </h4>
@@ -481,7 +481,7 @@ const ContentCard: React.FC<{ content: GeneratedContent, onSchedule: () => void,
                     </div>
 
                     <div className="mt-6">
-                         <h4 className="font-semibold font-serif text-deep-charcoal mb-3 flex items-center">
+                         <h4 className="font-semibold font-display text-deep-charcoal mb-3 flex items-center">
                             <Search className="h-4 w-4 mr-2 text-soft-blue" />
                             TikTok SEO Strategy
                         </h4>
@@ -512,7 +512,7 @@ const ContentCard: React.FC<{ content: GeneratedContent, onSchedule: () => void,
             {/* Pinterest Pin Plan */}
             {isPinterestPin && (
                 <div>
-                    <h4 className="font-semibold font-serif text-deep-charcoal mb-3 flex items-center">
+                    <h4 className="font-semibold font-display text-deep-charcoal mb-3 flex items-center">
                         <Pin className="h-4 w-4 mr-2 text-terracotta" />
                         Pinterest Pin Plan
                     </h4>
@@ -554,7 +554,7 @@ const ContentCard: React.FC<{ content: GeneratedContent, onSchedule: () => void,
             {/* LinkedIn Poll */}
             {isLinkedInPoll && (
                  <div>
-                    <h4 className="font-semibold font-serif text-deep-charcoal mb-3 flex items-center">
+                    <h4 className="font-semibold font-display text-deep-charcoal mb-3 flex items-center">
                         <Vote className="h-4 w-4 mr-2 text-soft-blue" />
                         Poll Details
                     </h4>
@@ -574,7 +574,7 @@ const ContentCard: React.FC<{ content: GeneratedContent, onSchedule: () => void,
             {/* Twitter Engagement Strategy */}
             {content.platform === Platform.Twitter && content.engagementStrategy && content.engagementStrategy.length > 0 && (
                  <div>
-                    <h4 className="font-semibold font-serif text-deep-charcoal mb-2 flex items-center">
+                    <h4 className="font-semibold font-display text-deep-charcoal mb-2 flex items-center">
                         <MessageSquare className="h-4 w-4 mr-2 text-soft-blue" />
                         Conversation Starter <span className="text-xs font-medium text-white bg-soft-blue px-2 py-0.5 ml-2 rounded-full">NEW</span>
                     </h4>
@@ -592,7 +592,7 @@ const ContentCard: React.FC<{ content: GeneratedContent, onSchedule: () => void,
             {/* LinkedIn Engagement & Link Strategy */}
             {content.platform === Platform.LinkedIn && content.firstComment && (
                 <div>
-                   <h4 className="font-semibold font-serif text-deep-charcoal mb-2 flex items-center">
+                   <h4 className="font-semibold font-display text-deep-charcoal mb-2 flex items-center">
                        <MessageSquare className="h-4 w-4 mr-2 text-soft-blue" />
                        Engagement & Link Strategy
                    </h4>
@@ -619,7 +619,7 @@ const ContentCard: React.FC<{ content: GeneratedContent, onSchedule: () => void,
             
             <div className="grid md:grid-cols-2 gap-6">
                  <div>
-                    <h4 className="font-semibold font-serif text-deep-charcoal mb-2">Variations</h4>
+                    <h4 className="font-semibold font-display text-deep-charcoal mb-2">Variations</h4>
                     <div className="space-y-3">
                         {content.variations.map((variation, index) => (
                             <p key={index} className="text-sm p-3 bg-warm-gray/50 rounded-md border border-warm-gray text-deep-charcoal">
@@ -630,7 +630,7 @@ const ContentCard: React.FC<{ content: GeneratedContent, onSchedule: () => void,
                 </div>
 
                 <div>
-                    <h4 className="font-semibold font-serif text-deep-charcoal mb-2">Hashtags</h4>
+                    <h4 className="font-semibold font-display text-deep-charcoal mb-2">Hashtags</h4>
                     <div className="flex flex-wrap gap-2">
                         {content.hashtags.map((tag, index) => (
                             <span key={index} className="px-2.5 py-1 text-sm text-white bg-sage-green rounded-full">
@@ -642,7 +642,7 @@ const ContentCard: React.FC<{ content: GeneratedContent, onSchedule: () => void,
             </div>
 
             <div>
-                <h4 className="font-semibold font-serif text-deep-charcoal mb-2 flex items-center"><Lightbulb className="h-4 w-4 mr-2 text-terracotta" />Optimization Tips</h4>
+                <h4 className="font-semibold font-display text-deep-charcoal mb-2 flex items-center"><Lightbulb className="h-4 w-4 mr-2 text-terracotta" />Optimization Tips</h4>
                 <ul className="space-y-2 list-inside">
                     {content.optimizationTips.map((tip, index) => (
                         <li key={index} className="text-sm text-deep-charcoal flex">
