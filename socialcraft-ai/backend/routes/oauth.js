@@ -2,18 +2,33 @@ const express = require('express');
 const axios = require('axios');
 const router = express.Router();
 const { saveSocialToken, getAllSocialTokens, deleteSocialToken } = require('../services/socialAuthService');
+const { verifySupabaseToken } = require('../middleware/supabaseAuth');
 
 // --- LinkedIn OAuth ---
 router.get('/linkedin', (req, res) => {
+    // Get JWT token from state parameter (passed from frontend)
+    const { state } = req.query;
     const scope = 'openid profile w_member_social'; // Basic permissions
-    const url = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${process.env.LINKEDIN_CLIENT_ID}&redirect_uri=${process.env.LINKEDIN_REDIRECT_URI}&scope=${scope}`;
+    const url = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${process.env.LINKEDIN_CLIENT_ID}&redirect_uri=${process.env.LINKEDIN_REDIRECT_URI}&scope=${scope}&state=${encodeURIComponent(state || '')}`;
     res.redirect(url);
 });
 
 router.get('/linkedin/callback', async (req, res) => {
-    const { code } = req.query;
-    const userId = req.user.id;
+    const { code, state } = req.query;
+
     try {
+        // Verify JWT token from state parameter
+        const supabase = require('../config/supabase');
+        const { data: { user }, error: authError } = await supabase.auth.getUser(state);
+
+        if (authError || !user) {
+            console.error('Authentication error:', authError);
+            return res.status(401).send('Authentication failed. Please try connecting again.');
+        }
+
+        const userId = user.id;
+
+        // Exchange authorization code for access token
         const response = await axios.post('https://www.linkedin.com/oauth/v2/accessToken', null, {
             params: {
                 grant_type: 'authorization_code',
@@ -34,10 +49,34 @@ router.get('/linkedin/callback', async (req, res) => {
             scopes: ['openid', 'profile', 'w_member_social']
         });
 
-        res.send('LinkedIn connected successfully! You can close this window.');
+        // Send success message and close popup
+        res.send(`
+            <html>
+                <body>
+                    <h2>LinkedIn connected successfully!</h2>
+                    <p>You can close this window.</p>
+                    <script>
+                        window.opener.postMessage({ type: 'oauth_success', platform: 'linkedin' }, window.location.origin);
+                        setTimeout(() => window.close(), 1000);
+                    </script>
+                </body>
+            </html>
+        `);
     } catch (error) {
         console.error('LinkedIn OAuth Error:', error.response?.data || error.message);
-        res.status(500).send('Failed to connect LinkedIn account.');
+        res.send(`
+            <html>
+                <body>
+                    <h2>Failed to connect LinkedIn account</h2>
+                    <p>Error: ${error.message}</p>
+                    <p>You can close this window.</p>
+                    <script>
+                        window.opener.postMessage({ type: 'oauth_error', platform: 'linkedin', error: '${error.message}' }, window.location.origin);
+                        setTimeout(() => window.close(), 3000);
+                    </script>
+                </body>
+            </html>
+        `);
     }
 });
 
@@ -131,24 +170,27 @@ router.get('/tiktok/callback', async (req, res) => {
 /**
  * GET /api/oauth/connected
  * List all connected social media accounts for the authenticated user
+ * PROTECTED ROUTE - requires authentication
  */
-router.get('/connected', async (req, res) => {
+router.get('/connected', verifySupabaseToken, async (req, res) => {
     const userId = req.user.id;
     try {
         const accounts = await getAllSocialTokens(userId);
 
         // Don't send actual tokens to frontend - only metadata
         const safeAccounts = accounts.map(acc => ({
+            id: acc.id,
+            user_id: acc.user_id,
             platform: acc.platform,
             platform_username: acc.platform_username,
             platform_user_id: acc.platform_user_id,
-            connected_at: acc.created_at,
+            created_at: acc.created_at,
             updated_at: acc.updated_at,
-            expires_at: acc.token_expires_at,
+            token_expires_at: acc.token_expires_at,
             scopes: acc.scopes
         }));
 
-        res.json(safeAccounts);
+        res.json({ accounts: safeAccounts });
     } catch (error) {
         console.error('Error fetching connected accounts:', error);
         res.status(500).json({ message: 'Failed to fetch connected accounts' });
@@ -158,8 +200,9 @@ router.get('/connected', async (req, res) => {
 /**
  * DELETE /api/oauth/:platform
  * Disconnect a social media account
+ * PROTECTED ROUTE - requires authentication
  */
-router.delete('/:platform', async (req, res) => {
+router.delete('/:platform', verifySupabaseToken, async (req, res) => {
     const userId = req.user.id;
     const { platform } = req.params;
 
