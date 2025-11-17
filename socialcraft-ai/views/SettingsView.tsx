@@ -4,9 +4,10 @@ import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../contexts/SubscriptionContext';
 import { PRICING_PLANS } from '../config/pricing';
 import { openCustomerPortal } from '../utils/stripe';
-import { User, Mail, Lock, Bell, Shield, CreditCard, Trash2, Download, Globe, CheckCircle, AlertTriangle, Sparkles, ArrowUpCircle, ExternalLink } from 'lucide-react';
+import { User, Mail, Lock, Bell, Shield, CreditCard, Trash2, Download, Globe, CheckCircle, AlertTriangle, Sparkles, ArrowUpCircle, ExternalLink, Link2 } from 'lucide-react';
+import IntegrationsSettings from '../components/IntegrationsSettings';
 
-type SettingsTab = 'profile' | 'account' | 'notifications' | 'security' | 'billing' | 'danger';
+type SettingsTab = 'profile' | 'account' | 'notifications' | 'security' | 'billing' | 'integrations' | 'danger';
 
 const SettingsView: React.FC = () => {
   const { user } = useAuth();
@@ -104,6 +105,12 @@ const SettingsView: React.FC = () => {
               onClick={() => setActiveTab('billing')}
             />
             <TabButton
+              icon={<Link2 size={18} />}
+              label="Integrations"
+              active={activeTab === 'integrations'}
+              onClick={() => setActiveTab('integrations')}
+            />
+            <TabButton
               icon={<Trash2 size={18} />}
               label="Danger Zone"
               active={activeTab === 'danger'}
@@ -150,6 +157,8 @@ const SettingsView: React.FC = () => {
             {activeTab === 'security' && <SecuritySettings onSubmit={handleChangePassword} />}
 
             {activeTab === 'billing' && <BillingSettings />}
+
+            {activeTab === 'integrations' && <IntegrationsSettings />}
 
             {activeTab === 'danger' && <DangerZone />}
           </div>
