@@ -84,8 +84,12 @@ router.get('/linkedin/callback', async (req, res) => {
 router.get('/instagram', (req, res) => {
     // Get JWT token from state parameter (passed from frontend)
     const { state } = req.query;
-    const scope = 'instagram_business_basic,instagram_business_content_publish';
-    const url = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${process.env.INSTAGRAM_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.INSTAGRAM_REDIRECT_URI)}&scope=${scope}&response_type=code&state=${encodeURIComponent(state || '')}&config_id=${process.env.INSTAGRAM_CONFIG_ID || ''}`;
+
+    // Include Facebook Page permissions needed to access Instagram Business accounts
+    const scope = 'pages_show_list,pages_read_engagement,instagram_basic,instagram_content_publish';
+
+    const url = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${process.env.INSTAGRAM_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.INSTAGRAM_REDIRECT_URI)}&scope=${scope}&response_type=code&state=${encodeURIComponent(state || '')}`;
+
     res.redirect(url);
 });
 
