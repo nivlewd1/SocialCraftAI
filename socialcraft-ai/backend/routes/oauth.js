@@ -82,41 +82,112 @@ router.get('/linkedin/callback', async (req, res) => {
 
 // --- Instagram OAuth ---
 router.get('/instagram', (req, res) => {
-    const scope = 'user_profile,user_media';
-    const url = `https://api.instagram.com/oauth/authorize?client_id=${process.env.INSTAGRAM_CLIENT_ID}&redirect_uri=${process.env.INSTAGRAM_REDIRECT_URI}&scope=${scope}&response_type=code`;
+    // Get JWT token from state parameter (passed from frontend)
+    const { state } = req.query;
+    const scope = 'instagram_business_basic,instagram_business_content_publish';
+    const url = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${process.env.INSTAGRAM_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.INSTAGRAM_REDIRECT_URI)}&scope=${scope}&response_type=code&state=${encodeURIComponent(state || '')}&config_id=${process.env.INSTAGRAM_CONFIG_ID || ''}`;
     res.redirect(url);
 });
 
 router.get('/instagram/callback', async (req, res) => {
-    const { code } = req.query;
-    const userId = req.user.id;
+    const { code, state } = req.query;
+
     try {
-        const params = new URLSearchParams();
-        params.append('client_id', process.env.INSTAGRAM_CLIENT_ID);
-        params.append('client_secret', process.env.INSTAGRAM_CLIENT_SECRET);
-        params.append('grant_type', 'authorization_code');
-        params.append('redirect_uri', process.env.INSTAGRAM_REDIRECT_URI);
-        params.append('code', code);
+        // Verify JWT token from state parameter
+        const supabase = require('../config/supabase');
+        const { data: { user }, error: authError } = await supabase.auth.getUser(state);
 
-        const response = await axios.post('https://api.instagram.com/oauth/access_token', params);
+        if (authError || !user) {
+            console.error('Authentication error:', authError);
+            return res.status(401).send('Authentication failed. Please try connecting again.');
+        }
 
-        // Save token to database
-        await saveSocialToken(userId, 'instagram', {
-            access_token: response.data.access_token,
-            platform_user_id: response.data.user_id || null,
-            expires_at: response.data.expires_in
-                ? new Date(Date.now() + response.data.expires_in * 1000).toISOString()
-                : null,
-            scopes: ['user_profile', 'user_media'],
-            metadata: {
-                user_id: response.data.user_id
+        const userId = user.id;
+
+        // Exchange authorization code for access token
+        const tokenUrl = 'https://graph.facebook.com/v18.0/oauth/access_token';
+        const response = await axios.get(tokenUrl, {
+            params: {
+                client_id: process.env.INSTAGRAM_CLIENT_ID,
+                client_secret: process.env.INSTAGRAM_CLIENT_SECRET,
+                redirect_uri: process.env.INSTAGRAM_REDIRECT_URI,
+                code: code
             }
         });
 
-        res.send('Instagram connected successfully! You can close this window.');
+        const accessToken = response.data.access_token;
+
+        // Get Instagram account info
+        let instagramUserId = null;
+        let instagramUsername = null;
+        try {
+            const accountsResponse = await axios.get('https://graph.facebook.com/v18.0/me/accounts', {
+                params: {
+                    access_token: accessToken,
+                    fields: 'instagram_business_account'
+                }
+            });
+
+            if (accountsResponse.data.data && accountsResponse.data.data.length > 0) {
+                const igAccountId = accountsResponse.data.data[0].instagram_business_account?.id;
+                if (igAccountId) {
+                    const igResponse = await axios.get(`https://graph.facebook.com/v18.0/${igAccountId}`, {
+                        params: {
+                            access_token: accessToken,
+                            fields: 'id,username'
+                        }
+                    });
+                    instagramUserId = igResponse.data.id;
+                    instagramUsername = igResponse.data.username;
+                }
+            }
+        } catch (igError) {
+            console.error('Error fetching Instagram account info:', igError.response?.data || igError.message);
+        }
+
+        // Save token to database
+        await saveSocialToken(userId, 'instagram', {
+            access_token: accessToken,
+            refresh_token: null,
+            platform_user_id: instagramUserId,
+            platform_username: instagramUsername,
+            expires_at: response.data.expires_in
+                ? new Date(Date.now() + response.data.expires_in * 1000).toISOString()
+                : null,
+            scopes: ['instagram_business_basic', 'instagram_business_content_publish'],
+            metadata: {
+                token_type: response.data.token_type
+            }
+        });
+
+        // Send success message and close popup
+        res.send(`
+            <html>
+                <body>
+                    <h2>Instagram connected successfully!</h2>
+                    <p>You can close this window.</p>
+                    <script>
+                        window.opener.postMessage({ type: 'oauth_success', platform: 'instagram' }, window.location.origin);
+                        setTimeout(() => window.close(), 1000);
+                    </script>
+                </body>
+            </html>
+        `);
     } catch (error) {
         console.error('Instagram OAuth Error:', error.response?.data || error.message);
-        res.status(500).send('Failed to connect Instagram account.');
+        res.send(`
+            <html>
+                <body>
+                    <h2>Failed to connect Instagram account</h2>
+                    <p>Error: ${error.message}</p>
+                    <p>You can close this window.</p>
+                    <script>
+                        window.opener.postMessage({ type: 'oauth_error', platform: 'instagram', error: '${error.message}' }, window.location.origin);
+                        setTimeout(() => window.close(), 3000);
+                    </script>
+                </body>
+            </html>
+        `);
     }
 });
 
