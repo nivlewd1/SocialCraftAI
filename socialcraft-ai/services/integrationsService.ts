@@ -144,8 +144,12 @@ export const integrationsService = {
       // Listen for OAuth completion message from popup
       return new Promise((resolve, reject) => {
         const messageListener = (event: MessageEvent) => {
-          // Verify message origin
-          if (event.origin !== window.location.origin) return;
+          // Verify message origin - must be from backend or current origin
+          const backendOrigin = new URL(BACKEND_URL).origin;
+          if (event.origin !== window.location.origin && event.origin !== backendOrigin) {
+            console.log('Ignoring message from untrusted origin:', event.origin);
+            return;
+          }
 
           if (event.data.type === 'oauth_success' && event.data.platform === platform) {
             window.removeEventListener('message', messageListener);

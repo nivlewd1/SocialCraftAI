@@ -56,7 +56,7 @@ router.get('/linkedin/callback', async (req, res) => {
                     <h2>LinkedIn connected successfully!</h2>
                     <p>You can close this window.</p>
                     <script>
-                        window.opener.postMessage({ type: 'oauth_success', platform: 'linkedin' }, window.location.origin);
+                        window.opener.postMessage({ type: 'oauth_success', platform: 'linkedin' }, '*');
                         setTimeout(() => window.close(), 1000);
                     </script>
                 </body>
@@ -71,7 +71,7 @@ router.get('/linkedin/callback', async (req, res) => {
                     <p>Error: ${error.message}</p>
                     <p>You can close this window.</p>
                     <script>
-                        window.opener.postMessage({ type: 'oauth_error', platform: 'linkedin', error: '${error.message}' }, window.location.origin);
+                        window.opener.postMessage({ type: 'oauth_error', platform: 'linkedin', error: '${error.message}' }, '*');
                         setTimeout(() => window.close(), 3000);
                     </script>
                 </body>
@@ -171,7 +171,7 @@ router.get('/instagram/callback', async (req, res) => {
                     <h2>Instagram connected successfully!</h2>
                     <p>You can close this window.</p>
                     <script>
-                        window.opener.postMessage({ type: 'oauth_success', platform: 'instagram' }, window.location.origin);
+                        window.opener.postMessage({ type: 'oauth_success', platform: 'instagram' }, '*');
                         setTimeout(() => window.close(), 1000);
                     </script>
                 </body>
@@ -186,7 +186,7 @@ router.get('/instagram/callback', async (req, res) => {
                     <p>Error: ${error.message}</p>
                     <p>You can close this window.</p>
                     <script>
-                        window.opener.postMessage({ type: 'oauth_error', platform: 'instagram', error: '${error.message}' }, window.location.origin);
+                        window.opener.postMessage({ type: 'oauth_error', platform: 'instagram', error: '${error.message}' }, '*');
                         setTimeout(() => window.close(), 3000);
                     </script>
                 </body>
