@@ -13,8 +13,8 @@ app.use(cors()); // Allow requests from the frontend
 app.use(express.json()); // Parse JSON bodies
 
 // Routes
-// OAuth routes now verify Supabase tokens instead of custom JWT
-app.use('/api/oauth', verifySupabaseToken, oauthRoutes);
+// OAuth routes - authentication handled per-route basis
+app.use('/api/oauth', oauthRoutes);
 app.use('/api/analytics', verifySupabaseToken, analyticsRoutes);
 
 // Health check endpoint
