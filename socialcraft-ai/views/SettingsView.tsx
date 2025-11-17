@@ -435,18 +435,19 @@ const SecuritySettings: React.FC<{
       {/* Active Sessions */}
       <div>
         <h3 className="text-lg font-semibold text-deep-charcoal mb-4">Active Sessions</h3>
-        <div className="space-y-3">
-          <SessionCard
-            device="Chrome on Windows"
-            location="New York, USA"
-            lastActive="Current session"
-            current
-          />
-          <SessionCard
-            device="Safari on iPhone"
-            location="New York, USA"
-            lastActive="2 hours ago"
-          />
+        <div className="glass-card bg-warm-gray rounded-xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <div className="font-medium text-deep-charcoal flex items-center">
+                Current Browser Session
+                <span className="ml-2 px-2 py-0.5 bg-sage-green text-white text-xs rounded-full">Active</span>
+              </div>
+              <div className="text-sm text-deep-charcoal mt-1">You are currently signed in</div>
+            </div>
+          </div>
+          <p className="text-sm text-deep-charcoal">
+            Advanced session management (view all devices, remote sign out) will be available in a future update.
+          </p>
         </div>
       </div>
     </form>
