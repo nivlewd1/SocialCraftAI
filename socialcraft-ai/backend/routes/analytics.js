@@ -3,15 +3,21 @@ const router = express.Router();
 const { getLinkedInData } = require('../services/linkedin');
 const { getInstagramData } = require('../services/instagram');
 const { getTikTokData } = require('../services/tiktok');
-
-// This should be a database in a real application.
-const userTokens = {}; 
+const { getAllSocialTokens } = require('../services/socialAuthService'); 
 
 router.get('/', async (req, res) => {
     const userId = req.user.id;
-    const tokens = userTokens[userId] || {};
 
     try {
+        // Fetch connected accounts from database
+        const connectedAccounts = await getAllSocialTokens(userId);
+
+        // Convert to tokens object for easy access
+        const tokens = connectedAccounts.reduce((acc, account) => {
+            acc[account.platform] = account.access_token;
+            return acc;
+        }, {});
+
         // Fetch data from all connected platforms concurrently
         const [linkedInData, instagramData, tikTokData] = await Promise.all([
             tokens.linkedin ? getLinkedInData(tokens.linkedin) : Promise.resolve({ engagement: 0 }),
