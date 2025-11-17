@@ -198,45 +198,114 @@ router.get('/instagram/callback', async (req, res) => {
 
 // --- TikTok OAuth ---
 router.get('/tiktok', (req, res) => {
-    const scope = 'user.info.basic,video.list';
-    const csrfState = Math.random().toString(36).substring(2);
-    res.cookie('csrfState', csrfState, { maxAge: 60000 });
-    const url = `https://www.tiktok.com/v2/auth/authorize/?client_key=${process.env.TIKTOK_CLIENT_KEY}&scope=${scope}&response_type=code&redirect_uri=${process.env.TIKTOK_REDIRECT_URI}&state=${csrfState}`;
+    // Get JWT token from state parameter (passed from frontend)
+    const { state } = req.query;
+
+    // TikTok scopes for user info and video publishing
+    const scope = 'user.info.basic,video.publish,video.list';
+
+    const url = `https://www.tiktok.com/v2/auth/authorize/?client_key=${process.env.TIKTOK_CLIENT_KEY}&scope=${scope}&response_type=code&redirect_uri=${encodeURIComponent(process.env.TIKTOK_REDIRECT_URI)}&state=${encodeURIComponent(state || '')}`;
+
     res.redirect(url);
 });
 
 router.get('/tiktok/callback', async (req, res) => {
-    const { code } = req.query;
-    const userId = req.user.id;
+    const { code, state } = req.query;
+
     try {
-        const response = await axios.post('https://open.tiktokapis.com/v2/oauth/token/', null, {
-            params: {
+        // Verify JWT token from state parameter
+        const supabase = require('../config/supabase');
+        const { data: { user }, error: authError } = await supabase.auth.getUser(state);
+
+        if (authError || !user) {
+            console.error('Authentication error:', authError);
+            return res.status(401).send('Authentication failed. Please try connecting again.');
+        }
+
+        const userId = user.id;
+
+        // Exchange authorization code for access token
+        const tokenResponse = await axios.post('https://open.tiktokapis.com/v2/oauth/token/',
+            new URLSearchParams({
                 client_key: process.env.TIKTOK_CLIENT_KEY,
                 client_secret: process.env.TIKTOK_CLIENT_SECRET,
-                code,
+                code: code,
                 grant_type: 'authorization_code',
                 redirect_uri: process.env.TIKTOK_REDIRECT_URI
+            }),
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
             }
-        });
+        );
+
+        const accessToken = tokenResponse.data.access_token;
+        const openId = tokenResponse.data.open_id;
+
+        // Get TikTok user info
+        let tiktokUsername = null;
+        try {
+            const userInfoResponse = await axios.get('https://open.tiktokapis.com/v2/user/info/', {
+                params: {
+                    fields: 'open_id,union_id,avatar_url,display_name'
+                },
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+
+            if (userInfoResponse.data?.data?.user) {
+                tiktokUsername = userInfoResponse.data.data.user.display_name;
+            }
+        } catch (userInfoError) {
+            console.error('Error fetching TikTok user info:', userInfoError.response?.data || userInfoError.message);
+        }
 
         // Save token to database
         await saveSocialToken(userId, 'tiktok', {
-            access_token: response.data.access_token,
-            refresh_token: response.data.refresh_token || null,
-            expires_at: response.data.expires_in
-                ? new Date(Date.now() + response.data.expires_in * 1000).toISOString()
+            access_token: accessToken,
+            refresh_token: tokenResponse.data.refresh_token || null,
+            platform_user_id: openId,
+            platform_username: tiktokUsername,
+            expires_at: tokenResponse.data.expires_in
+                ? new Date(Date.now() + tokenResponse.data.expires_in * 1000).toISOString()
                 : null,
-            scopes: response.data.scope ? response.data.scope.split(',') : ['user.info.basic', 'video.list'],
+            scopes: tokenResponse.data.scope ? tokenResponse.data.scope.split(',') : ['user.info.basic', 'video.publish', 'video.list'],
             metadata: {
-                open_id: response.data.open_id,
-                token_type: response.data.token_type
+                open_id: openId,
+                token_type: tokenResponse.data.token_type
             }
         });
 
-        res.send('TikTok connected successfully! You can close this window.');
+        // Send success message and close popup
+        res.send(`
+            <html>
+                <body>
+                    <h2>TikTok connected successfully!</h2>
+                    <p>You can close this window.</p>
+                    <script>
+                        window.opener.postMessage({ type: 'oauth_success', platform: 'tiktok' }, '*');
+                        setTimeout(() => window.close(), 1000);
+                    </script>
+                </body>
+            </html>
+        `);
     } catch (error) {
         console.error('TikTok OAuth Error:', error.response?.data || error.message);
-        res.status(500).send('Failed to connect TikTok account.');
+        res.send(`
+            <html>
+                <body>
+                    <h2>Failed to connect TikTok account</h2>
+                    <p>Error: ${error.message}</p>
+                    <p>You can close this window.</p>
+                    <script>
+                        window.opener.postMessage({ type: 'oauth_error', platform: 'tiktok', error: '${error.message}' }, '*');
+                        setTimeout(() => window.close(), 3000);
+                    </script>
+                </body>
+            </html>
+        `);
     }
 });
 
