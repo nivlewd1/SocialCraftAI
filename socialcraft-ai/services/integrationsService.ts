@@ -53,11 +53,11 @@ export const AVAILABLE_PLATFORMS: PlatformInfo[] = [
   },
   {
     id: 'twitter',
-    name: 'Twitter',
-    description: 'Tweet updates and engage with followers',
+    name: 'X (Twitter)',
+    description: 'Post updates and engage with followers',
     icon: 'twitter',
-    color: '#1DA1F2',
-    available: false, // Not yet implemented
+    color: '#000000',
+    available: true,
   },
   {
     id: 'pinterest',
