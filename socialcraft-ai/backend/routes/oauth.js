@@ -1,5 +1,6 @@
 const express = require('express');
 const axios = require('axios');
+const crypto = require('crypto');
 const router = express.Router();
 const { saveSocialToken, getAllSocialTokens, deleteSocialToken } = require('../services/socialAuthService');
 const { verifySupabaseToken } = require('../middleware/supabaseAuth');
@@ -316,7 +317,6 @@ const pkceStore = new Map();
 
 // Helper function to generate PKCE code_verifier and code_challenge
 function generatePKCE() {
-    const crypto = require('crypto');
     const code_verifier = crypto.randomBytes(32).toString('base64url');
     const code_challenge = crypto.createHash('sha256').update(code_verifier).digest('base64url');
     return { code_verifier, code_challenge };
