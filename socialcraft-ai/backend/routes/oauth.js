@@ -411,8 +411,7 @@ router.get('/tiktok/callback', async (req, res) => {
 
 // --- Twitter (X) OAuth ---
 // X uses OAuth 2.0 with PKCE (Proof Key for Code Exchange)
-// Store code_verifier temporarily for PKCE flow
-const pkceStore = new Map();
+const { storePKCE, retrievePKCE, cleanupExpiredPKCE } = require('../services/pkceStore');
 
 // Helper function to generate PKCE code_verifier and code_challenge
 function generatePKCE() {
@@ -421,38 +420,63 @@ function generatePKCE() {
     return { code_verifier, code_challenge };
 }
 
-router.get('/twitter', (req, res) => {
-    // Get JWT token from state parameter (passed from frontend)
-    const { state } = req.query;
+// Clean up expired PKCE codes every 5 minutes
+setInterval(() => {
+    cleanupExpiredPKCE().catch(err => console.error('PKCE cleanup error:', err));
+}, 5 * 60 * 1000);
 
-    // Log environment configuration (for debugging)
-    console.log('Twitter OAuth initiated:', {
-        hasClientId: !!process.env.TWITTER_CLIENT_ID,
-        clientIdLength: process.env.TWITTER_CLIENT_ID?.length,
-        hasClientSecret: !!process.env.TWITTER_CLIENT_SECRET,
-        redirectUri: process.env.TWITTER_REDIRECT_URI,
-        hasState: !!state
-    });
+router.get('/twitter', async (req, res) => {
+    try {
+        // Get JWT token from state parameter (passed from frontend)
+        const { state } = req.query;
 
-    // Generate PKCE parameters
-    const { code_verifier, code_challenge } = generatePKCE();
+        // Log environment configuration (for debugging)
+        console.log('Twitter OAuth initiated:', {
+            hasClientId: !!process.env.TWITTER_CLIENT_ID,
+            clientIdLength: process.env.TWITTER_CLIENT_ID?.length,
+            hasClientSecret: !!process.env.TWITTER_CLIENT_SECRET,
+            redirectUri: process.env.TWITTER_REDIRECT_URI,
+            hasState: !!state
+        });
 
-    // Store code_verifier temporarily (expires in 10 minutes)
-    const pkceKey = crypto.randomBytes(16).toString('hex');
-    pkceStore.set(pkceKey, code_verifier);
-    setTimeout(() => pkceStore.delete(pkceKey), 10 * 60 * 1000);
+        // Generate PKCE parameters
+        const { code_verifier, code_challenge } = generatePKCE();
 
-    // Combine state and PKCE key (PKCE key is unique per request, preventing cache issues)
-    const combinedState = `${state}|${pkceKey}`;
+        // Store code_verifier in database (expires in 10 minutes)
+        const pkceKey = crypto.randomBytes(16).toString('hex');
+        await storePKCE(pkceKey, code_verifier, 10);
 
-    // X OAuth 2.0 scopes
-    const scope = 'tweet.read tweet.write users.read offline.access';
+        console.log('PKCE generated and stored:', {
+            pkceKey,
+            code_challenge: code_challenge.substring(0, 20) + '...'
+        });
 
-    const url = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${process.env.TWITTER_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.TWITTER_REDIRECT_URI)}&scope=${encodeURIComponent(scope)}&state=${encodeURIComponent(combinedState)}&code_challenge=${code_challenge}&code_challenge_method=S256`;
+        // Combine state and PKCE key (PKCE key is unique per request, preventing cache issues)
+        const combinedState = `${state}|${pkceKey}`;
 
-    console.log('Redirecting to Twitter OAuth URL (first 100 chars):', url.substring(0, 100) + '...');
+        // X OAuth 2.0 scopes
+        const scope = 'tweet.read tweet.write users.read offline.access';
 
-    res.redirect(url);
+        const url = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${process.env.TWITTER_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.TWITTER_REDIRECT_URI)}&scope=${encodeURIComponent(scope)}&state=${encodeURIComponent(combinedState)}&code_challenge=${code_challenge}&code_challenge_method=S256`;
+
+        console.log('Redirecting to Twitter OAuth URL (first 100 chars):', url.substring(0, 100) + '...');
+        res.redirect(url);
+    } catch (error) {
+        console.error('Error initiating Twitter OAuth:', error);
+        res.status(500).send(`
+            <html>
+                <body>
+                    <h2>Failed to initiate Twitter connection</h2>
+                    <p>Error: ${error.message}</p>
+                    <p>You can close this window.</p>
+                    <script>
+                        window.opener.postMessage({ type: 'oauth_error', platform: 'twitter', error: '${error.message}' }, '*');
+                        setTimeout(() => window.close(), 3000);
+                    </script>
+                </body>
+            </html>
+        `);
+    }
 });
 
 router.get('/twitter/callback', async (req, res) => {
@@ -498,6 +522,11 @@ router.get('/twitter/callback', async (req, res) => {
         // Split combined state to get JWT and PKCE key
         const [jwtToken, pkceKey] = state.split('|');
 
+        console.log('State parsed:', {
+            hasPkceKey: !!pkceKey,
+            hasJwtToken: !!jwtToken
+        });
+
         // Verify JWT token from state parameter
         const supabase = require('../config/supabase');
         const { data: { user }, error: authError } = await supabase.auth.getUser(jwtToken);
@@ -519,17 +548,19 @@ router.get('/twitter/callback', async (req, res) => {
         }
 
         const userId = user.id;
+        console.log('User authenticated:', { userId });
 
-        // Retrieve code_verifier for PKCE
-        const code_verifier = pkceStore.get(pkceKey);
+        // Retrieve code_verifier for PKCE from database
+        const code_verifier = await retrievePKCE(pkceKey);
         if (!code_verifier) {
-            throw new Error('PKCE verification failed or expired');
+            console.error('PKCE verification failed:', { pkceKey });
+            throw new Error('PKCE verification failed or expired. Please try connecting again.');
         }
 
-        // Clean up PKCE store
-        pkceStore.delete(pkceKey);
+        console.log('PKCE verified successfully from database');
 
         // Exchange authorization code for access token
+        console.log('Exchanging authorization code for access token...');
         const tokenResponse = await axios.post('https://api.twitter.com/2/oauth2/token',
             new URLSearchParams({
                 code: code,
@@ -547,11 +578,17 @@ router.get('/twitter/callback', async (req, res) => {
         );
 
         const accessToken = tokenResponse.data.access_token;
+        console.log('Access token received:', {
+            hasAccessToken: !!accessToken,
+            hasRefreshToken: !!tokenResponse.data.refresh_token,
+            expiresIn: tokenResponse.data.expires_in
+        });
 
         // Get Twitter user info
         let twitterUsername = null;
         let twitterUserId = null;
         try {
+            console.log('Fetching Twitter user info...');
             const userInfoResponse = await axios.get('https://api.twitter.com/2/users/me', {
                 headers: {
                     'Authorization': `Bearer ${accessToken}`
@@ -561,12 +598,14 @@ router.get('/twitter/callback', async (req, res) => {
             if (userInfoResponse.data?.data) {
                 twitterUserId = userInfoResponse.data.data.id;
                 twitterUsername = userInfoResponse.data.data.username;
+                console.log('Twitter user info retrieved:', { twitterUserId, twitterUsername });
             }
         } catch (userInfoError) {
             console.error('Error fetching Twitter user info:', userInfoError.response?.data || userInfoError.message);
         }
 
         // Save token to database
+        console.log('Saving token to database...');
         await saveSocialToken(userId, 'twitter', {
             access_token: accessToken,
             refresh_token: tokenResponse.data.refresh_token || null,
@@ -580,6 +619,8 @@ router.get('/twitter/callback', async (req, res) => {
                 token_type: tokenResponse.data.token_type
             }
         });
+
+        console.log('Twitter OAuth completed successfully for user:', userId);
 
         // Send success message and close popup
         res.send(`
@@ -596,6 +637,7 @@ router.get('/twitter/callback', async (req, res) => {
         `);
     } catch (error) {
         console.error('Twitter OAuth Error:', error.response?.data || error.message);
+        console.error('Error stack:', error.stack);
         res.send(`
             <html>
                 <body>
