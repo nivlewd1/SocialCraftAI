@@ -570,18 +570,34 @@ router.get('/twitter/callback', async (req, res) => {
 
         // Exchange authorization code for access token
         console.log('Exchanging authorization code for access token...');
+
+        // Debug: Check if client secret is properly set
+        const clientId = process.env.TWITTER_CLIENT_ID;
+        const clientSecret = process.env.TWITTER_CLIENT_SECRET;
+        console.log('Token exchange credentials check:', {
+            hasClientId: !!clientId,
+            clientIdLength: clientId?.length,
+            hasClientSecret: !!clientSecret,
+            clientSecretLength: clientSecret?.length,
+            clientSecretFirstChars: clientSecret ? clientSecret.substring(0, 4) + '...' : 'NOT SET'
+        });
+
+        if (!clientSecret) {
+            throw new Error('TWITTER_CLIENT_SECRET is not configured in environment variables');
+        }
+
         const tokenResponse = await axios.post('https://api.twitter.com/2/oauth2/token',
             new URLSearchParams({
                 code: code,
                 grant_type: 'authorization_code',
-                client_id: process.env.TWITTER_CLIENT_ID,
+                client_id: clientId,
                 redirect_uri: process.env.TWITTER_REDIRECT_URI,
                 code_verifier: code_verifier
             }),
             {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
-                    'Authorization': `Basic ${Buffer.from(`${process.env.TWITTER_CLIENT_ID}:${process.env.TWITTER_CLIENT_SECRET}`).toString('base64')}`
+                    'Authorization': `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`
                 }
             }
         );
