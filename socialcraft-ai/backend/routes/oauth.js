@@ -15,7 +15,29 @@ router.get('/linkedin', (req, res) => {
 });
 
 router.get('/linkedin/callback', async (req, res) => {
-    const { code, state } = req.query;
+    const { code, state, error, error_description } = req.query;
+
+    // Handle OAuth errors (user denied access, app misconfigured, etc.)
+    if (error) {
+        console.error('LinkedIn OAuth error:', error, error_description);
+        return res.send(`
+            <html>
+                <body>
+                    <h2>LinkedIn connection failed</h2>
+                    <p>${error_description || 'You denied access to the app or something went wrong.'}</p>
+                    <p>You can close this window and try again.</p>
+                    <script>
+                        window.opener.postMessage({
+                            type: 'oauth_error',
+                            platform: 'linkedin',
+                            error: '${error_description || 'Access denied'}'
+                        }, '*');
+                        setTimeout(() => window.close(), 3000);
+                    </script>
+                </body>
+            </html>
+        `);
+    }
 
     try {
         // Verify JWT token from state parameter
@@ -106,7 +128,29 @@ router.get('/instagram', (req, res) => {
 });
 
 router.get('/instagram/callback', async (req, res) => {
-    const { code, state } = req.query;
+    const { code, state, error, error_description } = req.query;
+
+    // Handle OAuth errors (user denied access, app misconfigured, etc.)
+    if (error) {
+        console.error('Instagram OAuth error:', error, error_description);
+        return res.send(`
+            <html>
+                <body>
+                    <h2>Instagram connection failed</h2>
+                    <p>${error_description || 'You denied access to the app or something went wrong.'}</p>
+                    <p>You can close this window and try again.</p>
+                    <script>
+                        window.opener.postMessage({
+                            type: 'oauth_error',
+                            platform: 'instagram',
+                            error: '${error_description || 'Access denied'}'
+                        }, '*');
+                        setTimeout(() => window.close(), 3000);
+                    </script>
+                </body>
+            </html>
+        `);
+    }
 
     try {
         // Verify JWT token from state parameter
@@ -233,7 +277,29 @@ router.get('/tiktok', (req, res) => {
 });
 
 router.get('/tiktok/callback', async (req, res) => {
-    const { code, state } = req.query;
+    const { code, state, error, error_description } = req.query;
+
+    // Handle OAuth errors (user denied access, app misconfigured, etc.)
+    if (error) {
+        console.error('TikTok OAuth error:', error, error_description);
+        return res.send(`
+            <html>
+                <body>
+                    <h2>TikTok connection failed</h2>
+                    <p>${error_description || 'You denied access to the app or something went wrong.'}</p>
+                    <p>You can close this window and try again.</p>
+                    <script>
+                        window.opener.postMessage({
+                            type: 'oauth_error',
+                            platform: 'tiktok',
+                            error: '${error_description || 'Access denied'}'
+                        }, '*');
+                        setTimeout(() => window.close(), 3000);
+                    </script>
+                </body>
+            </html>
+        `);
+    }
 
     try {
         // Verify JWT token from state parameter
@@ -379,7 +445,29 @@ router.get('/twitter', (req, res) => {
 });
 
 router.get('/twitter/callback', async (req, res) => {
-    const { code, state } = req.query;
+    const { code, state, error, error_description } = req.query;
+
+    // Handle OAuth errors (user denied access, app misconfigured, etc.)
+    if (error) {
+        console.error('Twitter OAuth error:', error, error_description);
+        return res.send(`
+            <html>
+                <body>
+                    <h2>Twitter connection failed</h2>
+                    <p>${error_description || 'You denied access to the app or something went wrong.'}</p>
+                    <p>You can close this window and try again.</p>
+                    <script>
+                        window.opener.postMessage({
+                            type: 'oauth_error',
+                            platform: 'twitter',
+                            error: '${error_description || 'Access denied'}'
+                        }, '*');
+                        setTimeout(() => window.close(), 3000);
+                    </script>
+                </body>
+            </html>
+        `);
+    }
 
     try {
         // Split combined state to get JWT and PKCE key
