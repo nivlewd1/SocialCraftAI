@@ -425,6 +425,15 @@ router.get('/twitter', (req, res) => {
     // Get JWT token from state parameter (passed from frontend)
     const { state } = req.query;
 
+    // Log environment configuration (for debugging)
+    console.log('Twitter OAuth initiated:', {
+        hasClientId: !!process.env.TWITTER_CLIENT_ID,
+        clientIdLength: process.env.TWITTER_CLIENT_ID?.length,
+        hasClientSecret: !!process.env.TWITTER_CLIENT_SECRET,
+        redirectUri: process.env.TWITTER_REDIRECT_URI,
+        hasState: !!state
+    });
+
     // Generate PKCE parameters
     const { code_verifier, code_challenge } = generatePKCE();
 
@@ -441,26 +450,42 @@ router.get('/twitter', (req, res) => {
 
     const url = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${process.env.TWITTER_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.TWITTER_REDIRECT_URI)}&scope=${encodeURIComponent(scope)}&state=${encodeURIComponent(combinedState)}&code_challenge=${code_challenge}&code_challenge_method=S256`;
 
+    console.log('Redirecting to Twitter OAuth URL (first 100 chars):', url.substring(0, 100) + '...');
+
     res.redirect(url);
 });
 
 router.get('/twitter/callback', async (req, res) => {
     const { code, state, error, error_description } = req.query;
 
+    // Log all query parameters for debugging
+    console.log('Twitter OAuth callback received:', {
+        hasCode: !!code,
+        hasState: !!state,
+        error: error,
+        error_description: error_description,
+        allParams: Object.keys(req.query)
+    });
+
     // Handle OAuth errors (user denied access, app misconfigured, etc.)
     if (error) {
-        console.error('Twitter OAuth error:', error, error_description);
+        console.error('Twitter OAuth error details:', {
+            error: error,
+            error_description: error_description || 'No description provided',
+            state: state ? 'present' : 'missing'
+        });
         return res.send(`
             <html>
                 <body>
                     <h2>Twitter connection failed</h2>
                     <p>${error_description || 'You denied access to the app or something went wrong.'}</p>
+                    <p>Error code: ${error}</p>
                     <p>You can close this window and try again.</p>
                     <script>
                         window.opener.postMessage({
                             type: 'oauth_error',
                             platform: 'twitter',
-                            error: '${error_description || 'Access denied'}'
+                            error: '${error}: ${error_description || 'No details provided'}'
                         }, '*');
                         setTimeout(() => window.close(), 3000);
                     </script>
