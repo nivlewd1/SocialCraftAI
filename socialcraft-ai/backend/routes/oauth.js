@@ -433,16 +433,13 @@ router.get('/twitter', (req, res) => {
     pkceStore.set(pkceKey, code_verifier);
     setTimeout(() => pkceStore.delete(pkceKey), 10 * 60 * 1000);
 
-    // Combine state and PKCE key
+    // Combine state and PKCE key (PKCE key is unique per request, preventing cache issues)
     const combinedState = `${state}|${pkceKey}`;
 
     // X OAuth 2.0 scopes
     const scope = 'tweet.read tweet.write users.read offline.access';
 
-    // Add nonce to prevent caching issues when retrying failed auth
-    const nonce = crypto.randomBytes(16).toString('hex');
-
-    const url = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${process.env.TWITTER_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.TWITTER_REDIRECT_URI)}&scope=${encodeURIComponent(scope)}&state=${encodeURIComponent(combinedState)}&code_challenge=${code_challenge}&code_challenge_method=S256&nonce=${nonce}`;
+    const url = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${process.env.TWITTER_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.TWITTER_REDIRECT_URI)}&scope=${encodeURIComponent(scope)}&state=${encodeURIComponent(combinedState)}&code_challenge=${code_challenge}&code_challenge_method=S256`;
 
     res.redirect(url);
 });
