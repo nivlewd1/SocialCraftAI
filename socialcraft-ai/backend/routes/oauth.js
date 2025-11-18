@@ -439,7 +439,10 @@ router.get('/twitter', (req, res) => {
     // X OAuth 2.0 scopes
     const scope = 'tweet.read tweet.write users.read offline.access';
 
-    const url = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${process.env.TWITTER_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.TWITTER_REDIRECT_URI)}&scope=${encodeURIComponent(scope)}&state=${encodeURIComponent(combinedState)}&code_challenge=${code_challenge}&code_challenge_method=S256`;
+    // Add nonce to prevent caching issues when retrying failed auth
+    const nonce = crypto.randomBytes(16).toString('hex');
+
+    const url = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${process.env.TWITTER_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.TWITTER_REDIRECT_URI)}&scope=${encodeURIComponent(scope)}&state=${encodeURIComponent(combinedState)}&code_challenge=${code_challenge}&code_challenge_method=S256&nonce=${nonce}`;
 
     res.redirect(url);
 });
