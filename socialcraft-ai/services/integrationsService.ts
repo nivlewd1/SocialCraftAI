@@ -143,6 +143,16 @@ export const integrationsService = {
 
       // Listen for OAuth completion message from popup
       return new Promise((resolve, reject) => {
+        let completed = false;
+
+        const cleanup = () => {
+          completed = true;
+          window.removeEventListener('message', messageListener);
+          if (popupCheckInterval) {
+            clearInterval(popupCheckInterval);
+          }
+        };
+
         const messageListener = (event: MessageEvent) => {
           // Verify message origin - must be from backend or current origin
           const backendOrigin = new URL(BACKEND_URL).origin;
@@ -152,11 +162,11 @@ export const integrationsService = {
           }
 
           if (event.data.type === 'oauth_success' && event.data.platform === platform) {
-            window.removeEventListener('message', messageListener);
+            cleanup();
             popup?.close();
             resolve();
           } else if (event.data.type === 'oauth_error' && event.data.platform === platform) {
-            window.removeEventListener('message', messageListener);
+            cleanup();
             popup?.close();
             reject(new Error(event.data.error || 'OAuth failed'));
           }
@@ -164,13 +174,23 @@ export const integrationsService = {
 
         window.addEventListener('message', messageListener);
 
+        // Check if popup was closed manually every 500ms
+        const popupCheckInterval = setInterval(() => {
+          if (popup && popup.closed && !completed) {
+            cleanup();
+            reject(new Error('OAuth cancelled - popup was closed'));
+          }
+        }, 500);
+
         // Timeout after 5 minutes
         setTimeout(() => {
-          window.removeEventListener('message', messageListener);
-          if (popup && !popup.closed) {
-            popup.close();
+          if (!completed) {
+            cleanup();
+            if (popup && !popup.closed) {
+              popup.close();
+            }
+            reject(new Error('OAuth timeout'));
           }
-          reject(new Error('OAuth timeout'));
         }, 5 * 60 * 1000);
       });
     } catch (error) {

@@ -24,7 +24,18 @@ router.get('/linkedin/callback', async (req, res) => {
 
         if (authError || !user) {
             console.error('Authentication error:', authError);
-            return res.status(401).send('Authentication failed. Please try connecting again.');
+            return res.send(`
+                <html>
+                    <body>
+                        <h2>Authentication failed</h2>
+                        <p>Please try connecting again.</p>
+                        <script>
+                            window.opener.postMessage({ type: 'oauth_error', platform: 'linkedin', error: 'Authentication failed' }, '*');
+                            setTimeout(() => window.close(), 3000);
+                        </script>
+                    </body>
+                </html>
+            `);
         }
 
         const userId = user.id;
@@ -104,7 +115,18 @@ router.get('/instagram/callback', async (req, res) => {
 
         if (authError || !user) {
             console.error('Authentication error:', authError);
-            return res.status(401).send('Authentication failed. Please try connecting again.');
+            return res.send(`
+                <html>
+                    <body>
+                        <h2>Authentication failed</h2>
+                        <p>Please try connecting again.</p>
+                        <script>
+                            window.opener.postMessage({ type: 'oauth_error', platform: 'instagram', error: 'Authentication failed' }, '*');
+                            setTimeout(() => window.close(), 3000);
+                        </script>
+                    </body>
+                </html>
+            `);
         }
 
         const userId = user.id;
@@ -220,7 +242,18 @@ router.get('/tiktok/callback', async (req, res) => {
 
         if (authError || !user) {
             console.error('Authentication error:', authError);
-            return res.status(401).send('Authentication failed. Please try connecting again.');
+            return res.send(`
+                <html>
+                    <body>
+                        <h2>Authentication failed</h2>
+                        <p>Please try connecting again.</p>
+                        <script>
+                            window.opener.postMessage({ type: 'oauth_error', platform: 'tiktok', error: 'Authentication failed' }, '*');
+                            setTimeout(() => window.close(), 3000);
+                        </script>
+                    </body>
+                </html>
+            `);
         }
 
         const userId = user.id;
@@ -358,7 +391,18 @@ router.get('/twitter/callback', async (req, res) => {
 
         if (authError || !user) {
             console.error('Authentication error:', authError);
-            return res.status(401).send('Authentication failed. Please try connecting again.');
+            return res.send(`
+                <html>
+                    <body>
+                        <h2>Authentication failed</h2>
+                        <p>Please try connecting again.</p>
+                        <script>
+                            window.opener.postMessage({ type: 'oauth_error', platform: 'twitter', error: 'Authentication failed' }, '*');
+                            setTimeout(() => window.close(), 3000);
+                        </script>
+                    </body>
+                </html>
+            `);
         }
 
         const userId = user.id;
