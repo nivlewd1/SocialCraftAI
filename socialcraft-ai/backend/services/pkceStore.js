@@ -1,90 +1,95 @@
 const supabase = require('../config/supabase');
 
 /**
- * Store PKCE code_verifier temporarily in database
- * @param {string} pkceKey - Unique key for this PKCE flow
+ * Store OAuth session data (PKCE verifier + original state/JWT)
+ * @param {string} sessionKey - Unique key for this OAuth session
  * @param {string} codeVerifier - PKCE code_verifier to store
+ * @param {string} originalState - Original state/JWT from frontend
  * @param {number} expiresInMinutes - Expiration time in minutes (default: 10)
  * @returns {Promise<void>}
  */
-async function storePKCE(pkceKey, codeVerifier, expiresInMinutes = 10) {
+async function storeOAuthSession(sessionKey, codeVerifier, originalState, expiresInMinutes = 10) {
   const expiresAt = new Date(Date.now() + expiresInMinutes * 60 * 1000).toISOString();
 
   const { error } = await supabase
     .from('pkce_store')
     .insert({
-      pkce_key: pkceKey,
+      pkce_key: sessionKey,
       code_verifier: codeVerifier,
+      original_state: originalState,
       expires_at: expiresAt
     });
 
   if (error) {
-    console.error('Error storing PKCE code:', error);
-    throw new Error('Failed to store PKCE verification code');
+    console.error('Error storing OAuth session:', error);
+    throw new Error('Failed to store OAuth session data');
   }
 
-  console.log('PKCE code stored successfully:', { pkceKey, expiresAt });
+  console.log('OAuth session stored successfully:', { sessionKey, expiresAt });
 }
 
 /**
- * Retrieve and delete PKCE code_verifier from database
- * @param {string} pkceKey - Unique key for this PKCE flow
- * @returns {Promise<string|null>} code_verifier or null if not found/expired
+ * Retrieve and delete OAuth session data from database
+ * @param {string} sessionKey - Unique key for this OAuth session
+ * @returns {Promise<{codeVerifier: string, originalState: string}|null>} Session data or null if not found/expired
  */
-async function retrievePKCE(pkceKey) {
-  // Get the PKCE code
+async function retrieveOAuthSession(sessionKey) {
+  // Get the OAuth session data
   const { data, error } = await supabase
     .from('pkce_store')
-    .select('code_verifier, expires_at')
-    .eq('pkce_key', pkceKey)
+    .select('code_verifier, original_state, expires_at')
+    .eq('pkce_key', sessionKey)
     .single();
 
   if (error) {
     if (error.code === 'PGRST116') {
       // Not found
-      console.log('PKCE code not found:', pkceKey);
+      console.log('OAuth session not found:', sessionKey);
       return null;
     }
-    console.error('Error retrieving PKCE code:', error);
+    console.error('Error retrieving OAuth session:', error);
     throw error;
   }
 
   // Check if expired
   if (new Date(data.expires_at) < new Date()) {
-    console.log('PKCE code expired:', pkceKey);
-    // Clean up expired code
-    await deletePKCE(pkceKey);
+    console.log('OAuth session expired:', sessionKey);
+    // Clean up expired session
+    await deleteSession(sessionKey);
     return null;
   }
 
   // Delete after retrieval (one-time use)
-  await deletePKCE(pkceKey);
+  await deleteSession(sessionKey);
 
-  console.log('PKCE code retrieved and deleted:', pkceKey);
-  return data.code_verifier;
+  console.log('OAuth session retrieved and deleted:', sessionKey);
+  return {
+    codeVerifier: data.code_verifier,
+    originalState: data.original_state
+  };
 }
 
 /**
- * Delete PKCE code from database
- * @param {string} pkceKey - Unique key for this PKCE flow
+ * Delete OAuth session from database
+ * @param {string} sessionKey - Unique key for this OAuth session
  * @returns {Promise<void>}
  */
-async function deletePKCE(pkceKey) {
+async function deleteSession(sessionKey) {
   const { error } = await supabase
     .from('pkce_store')
     .delete()
-    .eq('pkce_key', pkceKey);
+    .eq('pkce_key', sessionKey);
 
   if (error) {
-    console.error('Error deleting PKCE code:', error);
+    console.error('Error deleting OAuth session:', error);
   }
 }
 
 /**
- * Clean up expired PKCE codes (should be run periodically)
- * @returns {Promise<number>} Number of codes deleted
+ * Clean up expired OAuth sessions (should be run periodically)
+ * @returns {Promise<number>} Number of sessions deleted
  */
-async function cleanupExpiredPKCE() {
+async function cleanupExpiredSessions() {
   const { data, error } = await supabase
     .from('pkce_store')
     .delete()
@@ -92,20 +97,20 @@ async function cleanupExpiredPKCE() {
     .select('pkce_key');
 
   if (error) {
-    console.error('Error cleaning up expired PKCE codes:', error);
+    console.error('Error cleaning up expired OAuth sessions:', error);
     return 0;
   }
 
   const deletedCount = data?.length || 0;
   if (deletedCount > 0) {
-    console.log(`Cleaned up ${deletedCount} expired PKCE codes`);
+    console.log(`Cleaned up ${deletedCount} expired OAuth sessions`);
   }
   return deletedCount;
 }
 
 module.exports = {
-  storePKCE,
-  retrievePKCE,
-  deletePKCE,
-  cleanupExpiredPKCE
+  storeOAuthSession,
+  retrieveOAuthSession,
+  deleteSession,
+  cleanupExpiredSessions
 };

@@ -411,7 +411,7 @@ router.get('/tiktok/callback', async (req, res) => {
 
 // --- Twitter (X) OAuth ---
 // X uses OAuth 2.0 with PKCE (Proof Key for Code Exchange)
-const { storePKCE, retrievePKCE, cleanupExpiredPKCE } = require('../services/pkceStore');
+const { storeOAuthSession, retrieveOAuthSession, cleanupExpiredSessions } = require('../services/pkceStore');
 
 // Helper function to generate PKCE code_verifier and code_challenge
 function generatePKCE() {
@@ -420,9 +420,9 @@ function generatePKCE() {
     return { code_verifier, code_challenge };
 }
 
-// Clean up expired PKCE codes every 5 minutes
+// Clean up expired OAuth sessions every 5 minutes
 setInterval(() => {
-    cleanupExpiredPKCE().catch(err => console.error('PKCE cleanup error:', err));
+    cleanupExpiredSessions().catch(err => console.error('OAuth session cleanup error:', err));
 }, 5 * 60 * 1000);
 
 router.get('/twitter', async (req, res) => {
@@ -439,25 +439,25 @@ router.get('/twitter', async (req, res) => {
             hasState: !!state
         });
 
+        // Generate a short session ID to use as state (avoids URL length issues)
+        const sessionId = crypto.randomBytes(16).toString('hex');
+
         // Generate PKCE parameters
         const { code_verifier, code_challenge } = generatePKCE();
 
-        // Store code_verifier in database (expires in 10 minutes)
-        const pkceKey = crypto.randomBytes(16).toString('hex');
-        await storePKCE(pkceKey, code_verifier, 10);
+        // Store both code_verifier and original JWT in database (expires in 10 minutes)
+        await storeOAuthSession(sessionId, code_verifier, state, 10);
 
-        console.log('PKCE generated and stored:', {
-            pkceKey,
-            code_challenge: code_challenge.substring(0, 20) + '...'
+        console.log('OAuth session stored:', {
+            sessionId,
+            code_challenge: code_challenge.substring(0, 20) + '...',
+            hasOriginalState: !!state
         });
 
-        // Combine state and PKCE key (PKCE key is unique per request, preventing cache issues)
-        const combinedState = `${state}|${pkceKey}`;
+        // X OAuth 2.0 scopes (tweet.read not available on Free Tier)
+        const scope = 'tweet.write users.read offline.access';
 
-        // X OAuth 2.0 scopes
-        const scope = 'tweet.read tweet.write users.read offline.access';
-
-        const url = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${process.env.TWITTER_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.TWITTER_REDIRECT_URI)}&scope=${encodeURIComponent(scope)}&state=${encodeURIComponent(combinedState)}&code_challenge=${code_challenge}&code_challenge_method=S256`;
+        const url = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${process.env.TWITTER_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.TWITTER_REDIRECT_URI)}&scope=${encodeURIComponent(scope)}&state=${encodeURIComponent(sessionId)}&code_challenge=${code_challenge}&code_challenge_method=S256`;
 
         console.log('Redirecting to Twitter OAuth URL (first 100 chars):', url.substring(0, 100) + '...');
         res.redirect(url);
@@ -519,15 +519,33 @@ router.get('/twitter/callback', async (req, res) => {
     }
 
     try {
-        // Split combined state to get JWT and PKCE key
-        const [jwtToken, pkceKey] = state.split('|');
+        // State is the session ID - retrieve JWT and PKCE verifier from database
+        const sessionId = state;
 
-        console.log('State parsed:', {
-            hasPkceKey: !!pkceKey,
-            hasJwtToken: !!jwtToken
-        });
+        console.log('Retrieving OAuth session:', { sessionId });
 
-        // Verify JWT token from state parameter
+        // Retrieve session data (JWT + PKCE verifier) from database
+        const sessionData = await retrieveOAuthSession(sessionId);
+        if (!sessionData) {
+            console.error('OAuth session not found or expired:', { sessionId });
+            return res.send(`
+                <html>
+                    <body>
+                        <h2>Session expired</h2>
+                        <p>Your OAuth session has expired. Please try connecting again.</p>
+                        <script>
+                            window.opener.postMessage({ type: 'oauth_error', platform: 'twitter', error: 'Session expired' }, '*');
+                            setTimeout(() => window.close(), 3000);
+                        </script>
+                    </body>
+                </html>
+            `);
+        }
+
+        const { codeVerifier: code_verifier, originalState: jwtToken } = sessionData;
+        console.log('OAuth session retrieved successfully');
+
+        // Verify JWT token from stored state
         const supabase = require('../config/supabase');
         const { data: { user }, error: authError } = await supabase.auth.getUser(jwtToken);
 
@@ -549,15 +567,6 @@ router.get('/twitter/callback', async (req, res) => {
 
         const userId = user.id;
         console.log('User authenticated:', { userId });
-
-        // Retrieve code_verifier for PKCE from database
-        const code_verifier = await retrievePKCE(pkceKey);
-        if (!code_verifier) {
-            console.error('PKCE verification failed:', { pkceKey });
-            throw new Error('PKCE verification failed or expired. Please try connecting again.');
-        }
-
-        console.log('PKCE verified successfully from database');
 
         // Exchange authorization code for access token
         console.log('Exchanging authorization code for access token...');
@@ -614,7 +623,7 @@ router.get('/twitter/callback', async (req, res) => {
             expires_at: tokenResponse.data.expires_in
                 ? new Date(Date.now() + tokenResponse.data.expires_in * 1000).toISOString()
                 : null,
-            scopes: tokenResponse.data.scope ? tokenResponse.data.scope.split(' ') : ['tweet.read', 'tweet.write', 'users.read', 'offline.access'],
+            scopes: tokenResponse.data.scope ? tokenResponse.data.scope.split(' ') : ['tweet.write', 'users.read', 'offline.access'],
             metadata: {
                 token_type: tokenResponse.data.token_type
             }
