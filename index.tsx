@@ -3,7 +3,6 @@ import './index.css';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { AuthProvider } from './contexts/AuthContext';
 import { SubscriptionProvider } from './contexts/SubscriptionContext';
@@ -18,13 +17,11 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <ErrorBoundary>
-      <BrowserRouter>
-        <AuthProvider>
-          <SubscriptionProvider>
-            <App />
-          </SubscriptionProvider>
-        </AuthProvider>
-      </BrowserRouter>
+      <AuthProvider>
+        <SubscriptionProvider>
+          <App />
+        </SubscriptionProvider>
+      </AuthProvider>
     </ErrorBoundary>
   </React.StrictMode>
 );

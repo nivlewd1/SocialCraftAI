@@ -117,8 +117,8 @@ export interface Trend {
 }
 
 export interface GroundingSource {
-  uri: string;
-  title: string;
+    uri: string;
+    title: string;
 }
 
 export interface TrendAnalysisResult {
@@ -136,28 +136,7 @@ export interface ScheduledPost {
 }
 
 export interface UploadedImage {
-  data: string; // base64 encoded string
-  mimeType: string;
-  name: string;
-}
-
-export interface TrendReport {
-  id: string;
-  date: string;
-  niche: string;
-  content: string;
-  sources: { title: string; url: string }[];
-}
-
-export interface BrandPersona {
-  name: string;
-  tone: string;
-  audience: string;
-}
-
-export interface GeneratedPost {
-  platform: Platform;
-  content: string;
-  hashtags: string[];
-  imagePrompt?: string;
+    data: string; // base64 encoded string
+    mimeType: string;
+    name: string;
 }
