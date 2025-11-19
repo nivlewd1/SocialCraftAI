@@ -542,3 +542,86 @@ ${JSON.stringify(postContent, null, 2)}
         handleApiError(error, "visual prompt generation");
     }
 };
+
+export const fetchAgenticTrends = async (niche: string): Promise<{ text: string; sources: { title: string; url: string; }[] }> => {
+    const prompt = `You are a market research expert. Analyze the current trends in the "${niche}" industry using Google Search.
+
+Provide a comprehensive trend report in markdown format with:
+- An executive summary
+- Key insights and emerging trends
+- Data points and statistics where available
+
+Be specific and actionable.`;
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+            config: {
+                tools: [{ googleSearch: {} }],
+            }
+        });
+        
+        const text = response.text.trim();
+        
+        const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
+        const sources = groundingChunks
+            .map((chunk: any) => ({
+                title: chunk.web?.title || 'Untitled Source',
+                url: chunk.web?.uri || ''
+            }))
+            .filter((source: { title: string; url: string }) => source.url);
+            
+        const uniqueSources = Array.from(new Map(sources.map((item: { title: string; url: string }) => [item.url, item])).values());
+
+        return { text, sources: uniqueSources };
+    } catch (error) {
+        handleApiError(error, "agentic trend analysis");
+    }
+};
+
+export const generateBrandedContent = async (
+    trendContent: string,
+    persona: { name: string; tone: string; audience: string },
+    platform: string
+): Promise<{ platform: string; content: string; hashtags: string[]; imagePrompt: string }[]> => {
+    const prompt = `You are a social media content strategist. Based on the following trend analysis and brand persona, create engaging social media posts.
+
+Brand Persona:
+- Name: ${persona.name}
+- Tone: ${persona.tone}
+- Target Audience: ${persona.audience}
+
+Platform: ${platform}
+
+Trend Analysis:
+${trendContent}
+
+Generate 2-3 social media posts for the specified platform. Each post should:
+1. Align with the brand persona's tone
+2. Be relevant to the target audience
+3. Incorporate insights from the trend analysis
+4. Include relevant hashtags
+5. Include an image prompt suggestion
+
+Return a JSON array with objects containing: platform, content, hashtags (array), imagePrompt`;
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+            config: {
+                responseMimeType: 'application/json',
+            }
+        });
+        
+        let jsonText = response.text.trim();
+        if (jsonText.startsWith('```') && jsonText.endsWith('```')) {
+            jsonText = jsonText.replace(/^```(json)?\s*/, '').replace(/```$/, '').trim();
+        }
+        
+        return JSON.parse(jsonText);
+    } catch (error) {
+        handleApiError(error, "branded content generation");
+    }
+};

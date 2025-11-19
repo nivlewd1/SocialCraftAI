@@ -140,3 +140,23 @@ export interface UploadedImage {
     mimeType: string;
     name: string;
 }
+export interface TrendReport {
+  id: string;
+  date: string;
+  niche: string;
+  content: string;
+  sources: { title: string; url: string; }[];
+}
+
+export interface GeneratedPost {
+  platform: Platform;
+  content: string;
+  hashtags: string[];
+  imagePrompt: string;
+}
+
+export interface BrandPersona {
+  name: string;
+  tone: string;
+  audience: string;
+}
