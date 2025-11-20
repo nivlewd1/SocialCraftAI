@@ -152,7 +152,7 @@ export interface GeneratedPost {
   platform: Platform;
   content: string;
   hashtags: string[];
-  imagePrompt: string;
+  imagePrompt?: string;
 }
 
 export interface BrandPersona {

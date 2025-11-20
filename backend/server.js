@@ -5,6 +5,7 @@ const cors = require('cors');
 const { verifySupabaseToken } = require('./middleware/supabaseAuth');
 const oauthRoutes = require('./routes/oauth');
 const analyticsRoutes = require('./routes/analytics');
+const { initScheduler } = require('./services/scheduler');
 
 const app = express();
 
@@ -25,4 +26,5 @@ app.get('/', (req, res) => {
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
+    initScheduler(); // Start the publishing engine
 });
