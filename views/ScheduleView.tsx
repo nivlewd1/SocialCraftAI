@@ -18,7 +18,7 @@ const platformColors: Record<Platform, string> = {
     [Platform.LinkedIn]: 'bg-linkedin text-white',
     [Platform.Instagram]: 'bg-instagram text-white',
     [Platform.TikTok]: 'bg-tiktok text-white',
-    [Platform.Pinterest]: 'bg-terracotta text-white',
+    [Platform.Pinterest]: 'bg-brand-glow text-white',
 };
 
 interface ScheduleViewProps {
@@ -186,7 +186,7 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onOpenAuth }) => {
             case Platform.LinkedIn: return 'text-linkedin bg-linkedin/10';
             case Platform.Instagram: return 'text-instagram bg-instagram/10';
             case Platform.TikTok: return 'text-tiktok bg-tiktok/10';
-            case Platform.Pinterest: return 'text-terracotta bg-terracotta/10';
+            case Platform.Pinterest: return 'text-brand-primary bg-brand-glow/10';
             default: return 'text-gray-600 bg-gray-100';
         }
     };
@@ -195,7 +195,7 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onOpenAuth }) => {
         <div className="space-y-8 pb-20 animate-fade-in">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-4xl font-bold font-display text-deep-charcoal mb-2">Content Schedule</h1>
+                    <h1 className="text-4xl font-bold font-display text-surface-900 mb-2">Content Schedule</h1>
                     <p className="text-xl text-gray-600">Your upcoming posts and timeline.</p>
                 </div>
                 <div className="flex gap-3">
@@ -222,10 +222,10 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onOpenAuth }) => {
 
             {isLoading ? (
                 <div className="flex justify-center py-20">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sage-green"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div>
                 </div>
             ) : posts.length === 0 ? (
-                <div className="text-center py-20 glass-card rounded-3xl">
+                <div className="text-center py-20 glass-card rounded-lg">
                     <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <Calendar className="w-8 h-8 text-gray-400" />
                     </div>
@@ -237,14 +237,14 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onOpenAuth }) => {
                     <div className="space-y-4">
                         <h3 className="font-semibold text-gray-500 uppercase tracking-wider text-sm">Upcoming</h3>
                         {posts.map((post) => (
-                            <div key={post.id} className="glass-card p-6 rounded-2xl hover:shadow-medium transition-all group">
+                            <div key={post.id} className="glass-card p-6 rounded-lg hover:shadow-medium transition-all group">
                                 <div className="flex items-start gap-4">
                                     <div className={`p-3 rounded-xl ${getPlatformColor(post.content.platform)}`}>
                                         {getPlatformIcon(post.content.platform)}
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center justify-between mb-2">
-                                            <span className="font-semibold text-deep-charcoal">{post.content.platform} Post</span>
+                                            <span className="font-semibold text-surface-900">{post.content.platform} Post</span>
                                             <div className="flex items-center gap-2 text-sm text-gray-500">
                                                 <Clock className="w-4 h-4" />
                                                 {new Date(post.scheduledAt).toLocaleString()}

@@ -37,7 +37,7 @@ const PlatformSelector: React.FC<PlatformSelectorProps> = ({ selectedPlatforms, 
                         className={`flex items-center justify-center space-x-2 p-3 border rounded-lg transition-all duration-200 ${
                             isSelected
                                 ? 'border-[#8B9A8B] bg-[#8B9A8B]/10 text-[#8B9A8B] font-semibold'
-                                : 'bg-warm-gray/30 border-gray-300 text-deep-charcoal hover:border-[#8B9A8B]'
+                                : 'bg-surface-100/30 border-gray-300 text-surface-900 hover:border-[#8B9A8B]'
                         }`}
                     >
                         {option.icon}

@@ -125,7 +125,7 @@ const PricingView: React.FC = () => {
         <div className="max-w-7xl mx-auto space-y-12">
             {/* Header */}
             <div className="text-center space-y-4">
-                <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-deep-charcoal">
+                <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-surface-900">
                     Choose Your <span className="gradient-text-indigo">Perfect Plan</span>
                 </h1>
                 <p className="text-xl text-gray-600 max-w-2xl mx-auto">
@@ -135,13 +135,13 @@ const PricingView: React.FC = () => {
 
             {/* Billing Toggle */}
             <div className="flex justify-center items-center space-x-4">
-                <span className={`text-sm font-medium ${billingInterval === 'month' ? 'text-deep-charcoal' : 'text-gray-400'}`}>
+                <span className={`text-sm font-medium ${billingInterval === 'month' ? 'text-surface-900' : 'text-gray-400'}`}>
                     Monthly
                 </span>
                 <button
                     onClick={() => setBillingInterval(billingInterval === 'month' ? 'year' : 'month')}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        billingInterval === 'year' ? 'bg-sage-green' : 'bg-gray-300'
+                        billingInterval === 'year' ? 'bg-brand-primary' : 'bg-gray-300'
                     }`}
                 >
                     <span
@@ -150,9 +150,9 @@ const PricingView: React.FC = () => {
                         }`}
                     />
                 </button>
-                <span className={`text-sm font-medium ${billingInterval === 'year' ? 'text-deep-charcoal' : 'text-gray-400'}`}>
+                <span className={`text-sm font-medium ${billingInterval === 'year' ? 'text-surface-900' : 'text-gray-400'}`}>
                     Yearly
-                    <span className="ml-2 text-xs font-semibold text-sage-green bg-sage-green/10 px-2 py-1 rounded-full">
+                    <span className="ml-2 text-xs font-semibold text-brand-primary bg-brand-primary/10 px-2 py-1 rounded-full">
                         Save 20%
                     </span>
                 </span>
@@ -169,13 +169,13 @@ const PricingView: React.FC = () => {
                             key={plan.id}
                             className={`relative rounded-2xl p-8 flex flex-col ${
                                 plan.popular
-                                    ? 'glass-card border-2 border-sage-green shadow-2xl transform scale-105'
+                                    ? 'glass-card border-2 border-brand-primary shadow-2xl transform scale-105'
                                     : 'glass-card border border-warm-gray/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-300'
                             }`}
                         >
                             {/* Popular Badge */}
                             {plan.popular && (
-                                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-sage-green to-terracotta text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
+                                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-brand-primary to-brand-glow text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
                                     Most Popular
                                 </div>
                             )}
@@ -183,14 +183,14 @@ const PricingView: React.FC = () => {
                             {/* Icon */}
                             <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
                                 plan.popular
-                                    ? 'bg-gradient-to-br from-sage-green to-terracotta text-white'
-                                    : 'bg-warm-gray text-sage-green'
+                                    ? 'bg-gradient-to-br from-brand-primary to-brand-glow text-white'
+                                    : 'bg-surface-100 text-brand-primary'
                             }`}>
                                 {getPlanIcon(plan.id)}
                             </div>
 
                             {/* Plan Name */}
-                            <h3 className="text-2xl font-bold text-deep-charcoal mb-2">
+                            <h3 className="text-2xl font-bold text-surface-900 mb-2">
                                 {plan.name}
                             </h3>
 
@@ -202,7 +202,7 @@ const PricingView: React.FC = () => {
                             {/* Price */}
                             <div className="mb-6">
                                 <div className="flex items-baseline">
-                                    <span className="text-4xl font-extrabold text-deep-charcoal">
+                                    <span className="text-4xl font-extrabold text-surface-900">
                                         ${displayPrice.toFixed(0)}
                                     </span>
                                     <span className="text-gray-600 ml-2">
@@ -210,7 +210,7 @@ const PricingView: React.FC = () => {
                                     </span>
                                 </div>
                                 {billingInterval === 'year' && plan.price > 0 && (
-                                    <p className="text-sm text-sage-green mt-1">
+                                    <p className="text-sm text-brand-primary mt-1">
                                         ${yearlyPrice}/year, billed annually
                                     </p>
                                 )}
@@ -224,9 +224,9 @@ const PricingView: React.FC = () => {
                                     getButtonConfig(plan.id).disabled
                                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                         : plan.popular
-                                        ? 'bg-gradient-to-r from-sage-green to-terracotta text-white hover:opacity-90 hover:shadow-lg'
+                                        ? 'bg-gradient-to-r from-brand-primary to-brand-glow text-white hover:opacity-90 hover:shadow-lg'
                                         : plan.id === 'free'
-                                        ? 'bg-warm-gray text-deep-charcoal hover:bg-gray-300'
+                                        ? 'bg-surface-100 text-surface-900 hover:bg-gray-300'
                                         : 'btn-primary'
                                 }`}
                             >
@@ -237,7 +237,7 @@ const PricingView: React.FC = () => {
                             <div className="mt-8 space-y-3">
                                 {plan.features.map((feature, idx) => (
                                     <div key={idx} className="flex items-start space-x-2">
-                                        <Check className="h-5 w-5 text-sage-green flex-shrink-0 mt-0.5" />
+                                        <Check className="h-5 w-5 text-brand-primary flex-shrink-0 mt-0.5" />
                                         <span className="text-sm text-gray-700">{feature}</span>
                                     </div>
                                 ))}
@@ -254,13 +254,13 @@ const PricingView: React.FC = () => {
 
             {/* FAQ Section */}
             <div className="max-w-3xl mx-auto mt-16 space-y-8">
-                <h2 className="text-3xl font-bold text-center text-deep-charcoal mb-8">
+                <h2 className="text-3xl font-bold text-center text-surface-900 mb-8">
                     Frequently Asked Questions
                 </h2>
 
                 <div className="space-y-6">
                     <div className="glass-card rounded-xl p-6">
-                        <h3 className="text-lg font-semibold text-deep-charcoal mb-2">
+                        <h3 className="text-lg font-semibold text-surface-900 mb-2">
                             What happens when I reach my generation limit?
                         </h3>
                         <p className="text-gray-600">
@@ -269,7 +269,7 @@ const PricingView: React.FC = () => {
                     </div>
 
                     <div className="glass-card rounded-xl p-6">
-                        <h3 className="text-lg font-semibold text-deep-charcoal mb-2">
+                        <h3 className="text-lg font-semibold text-surface-900 mb-2">
                             Can I cancel anytime?
                         </h3>
                         <p className="text-gray-600">
@@ -278,7 +278,7 @@ const PricingView: React.FC = () => {
                     </div>
 
                     <div className="glass-card rounded-xl p-6">
-                        <h3 className="text-lg font-semibold text-deep-charcoal mb-2">
+                        <h3 className="text-lg font-semibold text-surface-900 mb-2">
                             Do you offer refunds?
                         </h3>
                         <p className="text-gray-600">
@@ -287,7 +287,7 @@ const PricingView: React.FC = () => {
                     </div>
 
                     <div className="glass-card rounded-xl p-6">
-                        <h3 className="text-lg font-semibold text-deep-charcoal mb-2">
+                        <h3 className="text-lg font-semibold text-surface-900 mb-2">
                             What payment methods do you accept?
                         </h3>
                         <p className="text-gray-600">
@@ -296,7 +296,7 @@ const PricingView: React.FC = () => {
                     </div>
 
                     <div className="glass-card rounded-xl p-6">
-                        <h3 className="text-lg font-semibold text-deep-charcoal mb-2">
+                        <h3 className="text-lg font-semibold text-surface-900 mb-2">
                             Can I upgrade or downgrade my plan?
                         </h3>
                         <p className="text-gray-600">
@@ -307,8 +307,8 @@ const PricingView: React.FC = () => {
             </div>
 
             {/* CTA Section */}
-            <div className="glass-card rounded-2xl p-12 text-center bg-gradient-to-br from-sage-green/10 to-terracotta/10 border border-sage-green/20">
-                <h2 className="text-3xl font-bold text-deep-charcoal mb-4">
+            <div className="glass-card rounded-lg p-12 text-center bg-gradient-to-br from-brand-primary/10 to-brand-glow/10 border border-brand-primary/20">
+                <h2 className="text-3xl font-bold text-surface-900 mb-4">
                     Still have questions?
                 </h2>
                 <p className="text-lg text-gray-600 mb-6">
@@ -323,7 +323,7 @@ const PricingView: React.FC = () => {
                     </a>
                     <button
                         onClick={() => navigate('/generator')}
-                        className="px-8 py-3 rounded-lg font-semibold bg-white text-sage-green border-2 border-sage-green hover:bg-sage-green/10 transition-colors"
+                        className="px-8 py-3 rounded-lg font-semibold bg-white text-brand-primary border-2 border-brand-primary hover:bg-brand-primary/10 transition-colors"
                     >
                         Try Free Plan
                     </button>

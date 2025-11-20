@@ -137,12 +137,12 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                 animate={{ opacity: 1, y: 0 }}
                 className="text-center space-y-4"
             >
-                <div className="inline-flex items-center justify-center p-2 bg-sage-green/10 rounded-full mb-4">
-                    <Zap className="w-5 h-5 text-sage-green mr-2" />
-                    <span className="text-sm font-medium text-sage-green">AI-Powered Content Engine</span>
+                <div className="inline-flex items-center justify-center p-2 bg-brand-primary/10 rounded-full mb-4">
+                    <Zap className="w-5 h-5 text-brand-primary mr-2" />
+                    <span className="text-sm font-medium text-brand-primary">AI-Powered Content Engine</span>
                 </div>
-                <h1 className="text-4xl md:text-6xl font-bold font-display tracking-tight text-deep-charcoal">
-                    Create <span className="text-transparent bg-clip-text bg-gradient-to-r from-sage-green to-terracotta">Engaging Content</span> in Seconds
+                <h1 className="text-4xl md:text-6xl font-bold font-display tracking-tight text-surface-900">
+                    Create <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-glow">Engaging Content</span> in Seconds
                 </h1>
                 <p className="max-w-2xl mx-auto text-lg text-gray-600">
                     Transform your ideas, URLs, or rough notes into polished, platform-optimized social media posts tailored to your unique voice.
@@ -155,27 +155,27 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                 animate="visible"
                 className="max-w-5xl mx-auto"
             >
-                <div className="glass-card rounded-3xl p-1 shadow-elevated overflow-hidden">
-                    <div className="bg-white/50 backdrop-blur-sm p-6 md:p-10 rounded-[1.4rem] space-y-8">
+                <div className="glass-card rounded-lg p-1 shadow-elevated overflow-hidden">
+                    <div className="bg-white/50 backdrop-blur-sm p-6 md:p-10 rounded-lg space-y-8">
 
                         {/* Section 1: Input */}
                         <motion.div variants={itemVariants} className="space-y-4">
                             <div className="flex items-center space-x-3 mb-2">
-                                <div className="w-8 h-8 rounded-full bg-sage-green/20 flex items-center justify-center text-sage-green font-bold">1</div>
-                                <h3 className="text-xl font-semibold text-deep-charcoal">What are we posting about?</h3>
+                                <div className="w-8 h-8 rounded-full bg-brand-primary/20 flex items-center justify-center text-brand-primary font-bold">1</div>
+                                <h3 className="text-xl font-semibold text-surface-900">What are we posting about?</h3>
                             </div>
                             <div className="relative group">
                                 <textarea
                                     value={sourceContent}
                                     onChange={(e) => setSourceContent(e.target.value)}
                                     placeholder="Paste an article URL, a topic, or just dump your thoughts here..."
-                                    className="w-full min-h-[160px] p-6 rounded-xl bg-white border-2 border-gray-100 focus:border-sage-green focus:ring-4 focus:ring-sage-green/10 transition-all resize-none text-lg placeholder:text-gray-400 shadow-inner"
+                                    className="w-full min-h-[160px] p-6 rounded-xl bg-white border-2 border-gray-100 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 transition-all resize-none text-lg placeholder:text-gray-400 shadow-inner"
                                 />
                                 <div className="absolute bottom-4 right-4 flex space-x-2">
                                     <button
                                         onClick={handleFindTrends}
                                         disabled={isFindingTrends || !sourceContent.trim()}
-                                        className="flex items-center space-x-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:text-sage-green hover:border-sage-green transition-colors shadow-sm disabled:opacity-50"
+                                        className="flex items-center space-x-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:text-brand-primary hover:border-brand-primary transition-colors shadow-sm disabled:opacity-50"
                                         title="Research this topic for trends"
                                     >
                                         {isFindingTrends ? <Spinner size="sm" /> : <Globe className="w-4 h-4" />}
@@ -189,8 +189,8 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                         <motion.div variants={itemVariants} className="space-y-4">
                             <div className="flex items-center justify-between mb-2">
                                 <div className="flex items-center space-x-3">
-                                    <div className="w-8 h-8 rounded-full bg-terracotta/20 flex items-center justify-center text-terracotta font-bold">2</div>
-                                    <h3 className="text-xl font-semibold text-deep-charcoal">Add your personal touch <span className="text-sm font-normal text-gray-400 ml-2">(Optional)</span></h3>
+                                    <div className="w-8 h-8 rounded-full bg-brand-primary/20 flex items-center justify-center text-brand-primary font-bold">2</div>
+                                    <h3 className="text-xl font-semibold text-surface-900">Add your personal touch <span className="text-sm font-normal text-gray-400 ml-2">(Optional)</span></h3>
                                 </div>
                                 <div className="hidden md:flex items-center text-xs text-gray-500 bg-gray-50 px-3 py-1 rounded-full border border-gray-100">
                                     <UserCheck className="w-3 h-3 mr-1.5" />
@@ -202,7 +202,7 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                                     value={authorsVoice}
                                     onChange={(e) => setAuthorsVoice(e.target.value)}
                                     placeholder="Share a personal story, your specific expertise, or a unique perspective to make this content truly yours..."
-                                    className="w-full h-24 p-4 rounded-xl bg-gray-50 border border-gray-200 focus:bg-white focus:border-terracotta focus:ring-4 focus:ring-terracotta/10 transition-all resize-none text-base placeholder:text-gray-400"
+                                    className="w-full h-24 p-4 rounded-xl bg-gray-50 border border-gray-200 focus:bg-white focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 transition-all resize-none text-base placeholder:text-gray-400"
                                 />
                                 <PenTool className="absolute top-4 right-4 w-4 h-4 text-gray-300" />
                             </div>
@@ -213,7 +213,7 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                             <motion.div variants={itemVariants} className="space-y-4">
                                 <div className="flex items-center space-x-3 mb-2">
                                     <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">3</div>
-                                    <h3 className="text-xl font-semibold text-deep-charcoal">Select Platforms</h3>
+                                    <h3 className="text-xl font-semibold text-surface-900">Select Platforms</h3>
                                 </div>
                                 <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
                                     <AdvancedPlatformSelector selections={platformSelections} onSelectionChange={setPlatformSelections} />
@@ -225,7 +225,7 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                                 <div className="space-y-4">
                                     <div className="flex items-center space-x-3 mb-2">
                                         <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold">4</div>
-                                        <h3 className="text-xl font-semibold text-deep-charcoal">Fine-tune</h3>
+                                        <h3 className="text-xl font-semibold text-surface-900">Fine-tune</h3>
                                     </div>
 
                                     <div className="space-y-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
@@ -247,19 +247,19 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                             <button
                                 onClick={handleGenerate}
                                 disabled={isLoading || isFindingTrends}
-                                className="relative w-full group overflow-hidden rounded-xl p-[2px] focus:outline-none focus:ring-4 focus:ring-sage-green/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="relative w-full group overflow-hidden rounded-xl p-[2px] focus:outline-none focus:ring-4 focus:ring-brand-primary/30 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                <span className="absolute inset-0 bg-gradient-to-r from-sage-green via-terracotta to-sage-green opacity-100 group-hover:opacity-100 animate-gradient-x"></span>
-                                <div className="relative flex items-center justify-center w-full bg-white rounded-[10px] px-8 py-4 transition-all group-hover:bg-opacity-90">
+                                <span className="absolute inset-0 bg-gradient-to-r from-brand-primary via-brand-glow to-brand-primary opacity-100 group-hover:opacity-100 animate-gradient-x"></span>
+                                <div className="relative flex items-center justify-center w-full bg-white rounded-lg px-8 py-4 transition-all group-hover:bg-opacity-90">
                                     {isLoading ? (
                                         <>
                                             <Spinner />
-                                            <span className="ml-3 text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-sage-green to-terracotta">Crafting Magic...</span>
+                                            <span className="ml-3 text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-glow">Crafting Magic...</span>
                                         </>
                                     ) : (
                                         <>
-                                            <Sparkles className="w-6 h-6 text-terracotta mr-3 group-hover:rotate-12 transition-transform" />
-                                            <span className="text-lg font-bold text-deep-charcoal group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-sage-green group-hover:to-terracotta transition-all">
+                                            <Sparkles className="w-6 h-6 text-brand-primary mr-3 group-hover:rotate-12 transition-transform" />
+                                            <span className="text-lg font-bold text-surface-900 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-brand-primary group-hover:to-brand-glow transition-all">
                                                 Generate High-Impact Posts
                                             </span>
                                             <ArrowRight className="w-5 h-5 text-gray-400 ml-3 group-hover:translate-x-1 transition-transform" />

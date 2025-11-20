@@ -7,11 +7,11 @@ const TermsOfServiceView: React.FC = () => {
             {/* Header */}
             <div className="text-center space-y-4">
                 <div className="flex justify-center">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-sage-green to-terracotta flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-primary to-brand-glow flex items-center justify-center">
                         <FileText className="h-8 w-8 text-white" />
                     </div>
                 </div>
-                <h1 className="text-4xl md:text-5xl font-extrabold font-display tracking-tight text-deep-charcoal">
+                <h1 className="text-4xl md:text-5xl font-extrabold font-display tracking-tight text-surface-900">
                     Terms of Service
                 </h1>
                 <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
@@ -21,10 +21,10 @@ const TermsOfServiceView: React.FC = () => {
             </div>
 
             {/* Content */}
-            <div className="glass-card rounded-2xl p-8 md:p-12 space-y-8">
+            <div className="glass-card rounded-lg p-8 md:p-12 space-y-8">
                 {/* Section 1 */}
                 <section>
-                    <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-4">1. Introduction</h2>
+                    <h2 className="text-2xl font-bold font-display text-surface-900 mb-4">1. Introduction</h2>
                     <p className="text-gray-700 leading-relaxed">
                         Welcome to SocialCraft AI ("Service", "we", "us", or "our"). By accessing or using our platform,
                         you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our service.
@@ -33,7 +33,7 @@ const TermsOfServiceView: React.FC = () => {
 
                 {/* Section 2 */}
                 <section>
-                    <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-4">2. Service Description</h2>
+                    <h2 className="text-2xl font-bold font-display text-surface-900 mb-4">2. Service Description</h2>
                     <p className="text-gray-700 leading-relaxed">
                         SocialCraft AI is an AI-powered social media content generation platform that helps users create,
                         optimize, and schedule content across multiple platforms including Twitter, LinkedIn, Instagram, TikTok, and Pinterest.
@@ -42,9 +42,9 @@ const TermsOfServiceView: React.FC = () => {
 
                 {/* Section 3 - User Accounts */}
                 <section>
-                    <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-4">3. User Accounts</h2>
+                    <h2 className="text-2xl font-bold font-display text-surface-900 mb-4">3. User Accounts</h2>
 
-                    <h3 className="text-xl font-semibold text-deep-charcoal mb-3 mt-4">3.1 Account Creation</h3>
+                    <h3 className="text-xl font-semibold text-surface-900 mb-3 mt-4">3.1 Account Creation</h3>
                     <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
                         <li>You must provide accurate and complete information</li>
                         <li>You must be at least 13 years old (or 16 in the EU)</li>
@@ -52,7 +52,7 @@ const TermsOfServiceView: React.FC = () => {
                         <li>You are responsible for maintaining account security</li>
                     </ul>
 
-                    <h3 className="text-xl font-semibold text-deep-charcoal mb-3 mt-4">3.2 Account Security</h3>
+                    <h3 className="text-xl font-semibold text-surface-900 mb-3 mt-4">3.2 Account Security</h3>
                     <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
                         <li>Keep your password confidential</li>
                         <li>Notify us immediately of unauthorized access</li>
@@ -62,23 +62,23 @@ const TermsOfServiceView: React.FC = () => {
 
                 {/* Section 4 - Subscription & Billing */}
                 <section>
-                    <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-4">4. Subscription & Billing</h2>
+                    <h2 className="text-2xl font-bold font-display text-surface-900 mb-4">4. Subscription & Billing</h2>
 
-                    <h3 className="text-xl font-semibold text-deep-charcoal mb-3 mt-4">4.1 Free Tier</h3>
+                    <h3 className="text-xl font-semibold text-surface-900 mb-3 mt-4">4.1 Free Tier</h3>
                     <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
                         <li>50 content generations per month</li>
                         <li>Access to basic features</li>
                         <li>Community support</li>
                     </ul>
 
-                    <h3 className="text-xl font-semibold text-deep-charcoal mb-3 mt-4">4.2 Paid Plans</h3>
-                    <div className="bg-warm-gray rounded-lg p-6 space-y-2">
+                    <h3 className="text-xl font-semibold text-surface-900 mb-3 mt-4">4.2 Paid Plans</h3>
+                    <div className="bg-surface-100 rounded-lg p-6 space-y-2">
                         <p className="text-gray-700"><strong>Starter:</strong> $19/month - 500 generations</p>
                         <p className="text-gray-700"><strong>Pro:</strong> $49/month - 3000 generations</p>
                         <p className="text-gray-700"><strong>Enterprise:</strong> Custom pricing - Unlimited generations</p>
                     </div>
 
-                    <h3 className="text-xl font-semibold text-deep-charcoal mb-3 mt-4">4.3 Free Trial</h3>
+                    <h3 className="text-xl font-semibold text-surface-900 mb-3 mt-4">4.3 Free Trial</h3>
                     <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
                         <li>First-time users receive a 14-day free trial on paid plans</li>
                         <li>One trial per user (tracked per account)</li>
@@ -86,7 +86,7 @@ const TermsOfServiceView: React.FC = () => {
                         <li>No charges during trial period</li>
                     </ul>
 
-                    <h3 className="text-xl font-semibold text-deep-charcoal mb-3 mt-4">4.4 Billing</h3>
+                    <h3 className="text-xl font-semibold text-surface-900 mb-3 mt-4">4.4 Billing</h3>
                     <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
                         <li>Billed monthly or annually (20% discount on annual)</li>
                         <li>Auto-renewal unless cancelled</li>
@@ -94,7 +94,7 @@ const TermsOfServiceView: React.FC = () => {
                         <li>All payments processed via Stripe</li>
                     </ul>
 
-                    <h3 className="text-xl font-semibold text-deep-charcoal mb-3 mt-4">4.5 Cancellation & Refunds</h3>
+                    <h3 className="text-xl font-semibold text-surface-900 mb-3 mt-4">4.5 Cancellation & Refunds</h3>
                     <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
                         <li>Cancel anytime from your account settings</li>
                         <li>Access continues until end of billing period</li>
@@ -105,7 +105,7 @@ const TermsOfServiceView: React.FC = () => {
 
                 {/* Section 5 - Acceptable Use */}
                 <section>
-                    <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-4">5. Acceptable Use Policy</h2>
+                    <h2 className="text-2xl font-bold font-display text-surface-900 mb-4">5. Acceptable Use Policy</h2>
                     <p className="text-gray-700 mb-3">You agree NOT to:</p>
                     <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
                         <li>Generate spam, malicious, or illegal content</li>
@@ -121,14 +121,14 @@ const TermsOfServiceView: React.FC = () => {
 
                 {/* Section 6 - Intellectual Property */}
                 <section>
-                    <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-4">6. Intellectual Property</h2>
+                    <h2 className="text-2xl font-bold font-display text-surface-900 mb-4">6. Intellectual Property</h2>
 
-                    <h3 className="text-xl font-semibold text-deep-charcoal mb-3 mt-4">6.1 Our IP</h3>
+                    <h3 className="text-xl font-semibold text-surface-900 mb-3 mt-4">6.1 Our IP</h3>
                     <p className="text-gray-700 leading-relaxed">
                         All SocialCraft AI branding, software, algorithms, and interfaces are our proprietary property.
                     </p>
 
-                    <h3 className="text-xl font-semibold text-deep-charcoal mb-3 mt-4">6.2 Your Content</h3>
+                    <h3 className="text-xl font-semibold text-surface-900 mb-3 mt-4">6.2 Your Content</h3>
                     <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
                         <li>You own all content you input into our service</li>
                         <li>You own all AI-generated content created by your prompts</li>
@@ -136,7 +136,7 @@ const TermsOfServiceView: React.FC = () => {
                         <li>We do not claim ownership of your generated content</li>
                     </ul>
 
-                    <h3 className="text-xl font-semibold text-deep-charcoal mb-3 mt-4">6.3 AI-Generated Content</h3>
+                    <h3 className="text-xl font-semibold text-surface-900 mb-3 mt-4">6.3 AI-Generated Content</h3>
                     <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
                         <li>You are responsible for reviewing and editing AI-generated content</li>
                         <li>We do not guarantee accuracy, originality, or platform compliance</li>
@@ -146,7 +146,7 @@ const TermsOfServiceView: React.FC = () => {
 
                 {/* Section 7 - Third-Party Services */}
                 <section>
-                    <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-4">7. Third-Party Services</h2>
+                    <h2 className="text-2xl font-bold font-display text-surface-900 mb-4">7. Third-Party Services</h2>
                     <p className="text-gray-700 mb-3">Our service integrates with:</p>
                     <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
                         <li><strong>Stripe:</strong> Payment processing (subject to Stripe's terms)</li>
@@ -159,8 +159,8 @@ const TermsOfServiceView: React.FC = () => {
 
                 {/* Section 8 - Limitation of Liability */}
                 <section>
-                    <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-4">8. Limitation of Liability</h2>
-                    <div className="bg-terracotta/10 border-l-4 border-terracotta p-6 rounded-r-lg">
+                    <h2 className="text-2xl font-bold font-display text-surface-900 mb-4">8. Limitation of Liability</h2>
+                    <div className="bg-brand-glow/10 border-l-4 border-terracotta p-6 rounded-r-lg">
                         <p className="text-gray-700 font-semibold mb-2">TO THE MAXIMUM EXTENT PERMITTED BY LAW:</p>
                         <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
                             <li>We provide the service "AS IS" without warranties</li>
@@ -173,15 +173,15 @@ const TermsOfServiceView: React.FC = () => {
 
                 {/* Section 9 - Termination */}
                 <section>
-                    <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-4">9. Termination</h2>
+                    <h2 className="text-2xl font-bold font-display text-surface-900 mb-4">9. Termination</h2>
 
-                    <h3 className="text-xl font-semibold text-deep-charcoal mb-3 mt-4">9.1 By You</h3>
+                    <h3 className="text-xl font-semibold text-surface-900 mb-3 mt-4">9.1 By You</h3>
                     <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
                         <li>Cancel your subscription anytime</li>
                         <li>Account data retained for 30 days after cancellation</li>
                     </ul>
 
-                    <h3 className="text-xl font-semibold text-deep-charcoal mb-3 mt-4">9.2 By Us</h3>
+                    <h3 className="text-xl font-semibold text-surface-900 mb-3 mt-4">9.2 By Us</h3>
                     <p className="text-gray-700 mb-2">We may suspend or terminate your account for:</p>
                     <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
                         <li>Violation of these terms</li>
@@ -193,7 +193,7 @@ const TermsOfServiceView: React.FC = () => {
 
                 {/* Section 10 - Changes to Terms */}
                 <section>
-                    <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-4">10. Changes to Terms</h2>
+                    <h2 className="text-2xl font-bold font-display text-surface-900 mb-4">10. Changes to Terms</h2>
                     <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
                         <li>We may modify these terms at any time</li>
                         <li>Material changes will be notified via email 30 days in advance</li>
@@ -203,7 +203,7 @@ const TermsOfServiceView: React.FC = () => {
 
                 {/* Section 11 - Governing Law */}
                 <section>
-                    <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-4">11. Governing Law</h2>
+                    <h2 className="text-2xl font-bold font-display text-surface-900 mb-4">11. Governing Law</h2>
                     <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
                         <li>These terms are governed by [Your State/Country] law</li>
                         <li>Disputes will be resolved in [Your Jurisdiction] courts</li>
@@ -213,16 +213,16 @@ const TermsOfServiceView: React.FC = () => {
 
                 {/* Section 12 - Contact */}
                 <section>
-                    <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-4">12. Contact Us</h2>
-                    <div className="bg-sage-green/10 rounded-lg p-6 space-y-3">
+                    <h2 className="text-2xl font-bold font-display text-surface-900 mb-4">12. Contact Us</h2>
+                    <div className="bg-brand-primary/10 rounded-lg p-6 space-y-3">
                         <p className="text-gray-700">For questions about these terms:</p>
                         <div className="space-y-2">
                             <div className="flex items-center space-x-2 text-gray-700">
-                                <Mail className="h-4 w-4 text-sage-green" />
+                                <Mail className="h-4 w-4 text-brand-primary" />
                                 <span><strong>Legal:</strong> legal@socialcraftai.com</span>
                             </div>
                             <div className="flex items-center space-x-2 text-gray-700">
-                                <Mail className="h-4 w-4 text-sage-green" />
+                                <Mail className="h-4 w-4 text-brand-primary" />
                                 <span><strong>Support:</strong> support@socialcraftai.com</span>
                             </div>
                         </div>

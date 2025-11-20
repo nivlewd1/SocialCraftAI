@@ -9,8 +9,8 @@ const TabButton: React.FC<{ label: string; icon: React.ReactNode; isActive: bool
         onClick={onClick}
         className={`flex items-center space-x-2 px-4 py-3 font-medium text-sm transition-colors border-b-2 -mb-px ${
             isActive
-                ? 'border-terracotta text-terracotta'
-                : 'border-transparent text-deep-charcoal hover:text-sage-green hover:border-warm-gray'
+                ? 'border-terracotta text-brand-primary'
+                : 'border-transparent text-surface-900 hover:text-brand-primary hover:border-warm-gray'
         }`}
     >
         {icon}
@@ -73,7 +73,7 @@ const DraftsView: React.FC = () => {
                 <h1 className="text-4xl md:text-5xl font-extrabold font-display tracking-tight">
                     Content <span className="gradient-text">Library</span>
                 </h1>
-                <p className="mt-4 max-w-2xl mx-auto text-lg text-deep-charcoal">
+                <p className="mt-4 max-w-2xl mx-auto text-lg text-surface-900">
                     Review, load, or delete your saved content drafts and generated media assets.
                 </p>
             </div>
@@ -91,8 +91,8 @@ const DraftsView: React.FC = () => {
                                 {drafts.map((draft) => (
                                     <div key={draft.id} className="glass-card rounded-lg p-4 flex items-center justify-between transition-shadow hover:shadow-md">
                                         <div className="flex-grow">
-                                            <p className="font-semibold text-deep-charcoal truncate">{draft.title}</p>
-                                            <p className="text-sm text-deep-charcoal flex items-center">
+                                            <p className="font-semibold text-surface-900 truncate">{draft.title}</p>
+                                            <p className="text-sm text-surface-900 flex items-center">
                                                 <Clock size={14} className="mr-1.5" />
                                                 Saved on {formatDate(draft.createdAt)}
                                             </p>
@@ -100,14 +100,14 @@ const DraftsView: React.FC = () => {
                                         <div className="flex items-center space-x-2 ml-4">
                                              <button
                                                 onClick={() => setViewingDraft(draft)}
-                                                className="p-2 rounded-md hover:bg-warm-gray text-deep-charcoal transition-colors"
+                                                className="p-2 rounded-md hover:bg-surface-100 text-surface-900 transition-colors"
                                                 title="View Draft"
                                             >
                                                 <Eye size={18} />
                                             </button>
                                             <button
                                                 onClick={() => handleLoadDraft(draft)}
-                                                className="p-2 rounded-md hover:bg-warm-gray text-deep-charcoal transition-colors"
+                                                className="p-2 rounded-md hover:bg-surface-100 text-surface-900 transition-colors"
                                                 title="Load Draft"
                                             >
                                                 <Edit size={18} />
@@ -125,9 +125,9 @@ const DraftsView: React.FC = () => {
                             </div>
                         ) : (
                             <div className="text-center py-16 px-6 glass-card rounded-lg">
-                                <Save size={48} className="mx-auto text-deep-charcoal" />
-                                <h3 className="mt-4 text-xl font-semibold text-deep-charcoal">No Drafts Saved Yet</h3>
-                                <p className="mt-2 text-deep-charcoal">
+                                <Save size={48} className="mx-auto text-surface-900" />
+                                <h3 className="mt-4 text-xl font-semibold text-surface-900">No Drafts Saved Yet</h3>
+                                <p className="mt-2 text-surface-900">
                                     When you generate content, click the "Save as Draft" button to save it here for later.
                                 </p>
                             </div>
@@ -152,8 +152,8 @@ const DraftsView: React.FC = () => {
                                             </div>
                                         )}
                                         <div className="p-3">
-                                            <p className="text-xs text-deep-charcoal truncate" title={item.prompt}>{item.prompt}</p>
-                                            <p className="text-xs text-deep-charcoal mt-1">{formatDate(item.createdAt)}</p>
+                                            <p className="text-xs text-surface-900 truncate" title={item.prompt}>{item.prompt}</p>
+                                            <p className="text-xs text-surface-900 mt-1">{formatDate(item.createdAt)}</p>
                                         </div>
                                         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <button
@@ -169,9 +169,9 @@ const DraftsView: React.FC = () => {
                             </div>
                         ) : (
                             <div className="text-center py-16 px-6 glass-card rounded-lg">
-                                <ImageIcon size={48} className="mx-auto text-deep-charcoal" />
-                                <h3 className="mt-4 text-xl font-semibold text-deep-charcoal">No Media Saved Yet</h3>
-                                <p className="mt-2 text-deep-charcoal">
+                                <ImageIcon size={48} className="mx-auto text-surface-900" />
+                                <h3 className="mt-4 text-xl font-semibold text-surface-900">No Media Saved Yet</h3>
+                                <p className="mt-2 text-surface-900">
                                     Go to the Media Studio, generate an image or video, and click "Save to Media" to store it here.
                                 </p>
                             </div>
@@ -183,14 +183,14 @@ const DraftsView: React.FC = () => {
             
             {confirmingDelete && (
                 <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4 animate-fade-in" onClick={() => setConfirmingDelete(null)}>
-                    <div className="bg-warm-gray rounded-2xl p-8 shadow-2xl max-w-md w-full text-center" onClick={(e) => e.stopPropagation()}>
+                    <div className="bg-surface-100 rounded-2xl p-8 shadow-2xl max-w-md w-full text-center" onClick={(e) => e.stopPropagation()}>
                         <AlertTriangle className="mx-auto h-12 w-12 text-status-error" />
-                        <h3 className="mt-4 text-xl font-bold text-deep-charcoal">Confirm Deletion</h3>
-                        <p className="mt-2 text-deep-charcoal">Are you sure you want to delete this item? This action cannot be undone.</p>
+                        <h3 className="mt-4 text-xl font-bold text-surface-900">Confirm Deletion</h3>
+                        <p className="mt-2 text-surface-900">Are you sure you want to delete this item? This action cannot be undone.</p>
                         <div className="mt-6 grid grid-cols-2 gap-4">
                             <button
                                 onClick={() => setConfirmingDelete(null)}
-                                className="px-4 py-2.5 rounded-lg text-base font-medium bg-gray-200 hover:bg-gray-300 text-deep-charcoal transition-colors"
+                                className="px-4 py-2.5 rounded-lg text-base font-medium bg-gray-200 hover:bg-gray-300 text-surface-900 transition-colors"
                             >
                                 Cancel
                             </button>

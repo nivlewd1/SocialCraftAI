@@ -30,8 +30,8 @@ const ToneSelector: React.FC<ToneSelectorProps> = ({ selectedTone, onToneChange 
                     onClick={() => onToneChange(tone)}
                     className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors duration-200 ${
                         selectedTone === tone
-                            ? 'bg-sage-green text-white shadow-sm'
-                            : 'bg-white hover:bg-warm-gray text-deep-charcoal border border-warm-gray'
+                            ? 'bg-brand-primary text-white shadow-sm'
+                            : 'bg-white hover:bg-surface-100 text-surface-900 border border-surface-100'
                     }`}
                 >
                     {tone}

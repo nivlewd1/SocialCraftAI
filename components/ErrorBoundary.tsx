@@ -65,10 +65,10 @@ export class ErrorBoundary extends Component<Props, State> {
               style={{
                 marginTop: '1.5rem',
                 padding: '0.5rem 1rem',
-                backgroundColor: '#8B9A8B',
+                backgroundColor: '#7C9885',
                 color: 'white',
                 border: 'none',
-                borderRadius: '0.375rem',
+                borderRadius: '0.5rem',
                 cursor: 'pointer',
                 fontSize: '1rem'
               }}

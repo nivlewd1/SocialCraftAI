@@ -48,25 +48,25 @@ const SchedulingModal: React.FC<SchedulingModalProps> = ({ content, onClose, onS
 
     return (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 animate-fade-in" onClick={onClose}>
-            <div className="bg-warm-gray rounded-2xl w-full max-w-lg shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-surface-100 rounded-lg w-full max-w-lg shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 p-2 rounded-full bg-warm-gray hover:bg-warm-gray/80 text-deep-charcoal transition-colors z-10"
+                    className="absolute top-4 right-4 p-2 rounded-full bg-surface-100 hover:bg-surface-100/80 text-surface-900 transition-colors z-10"
                     aria-label="Close"
                 >
                     <X size={20} />
                 </button>
                 <div className="p-8">
-                    <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-2">Schedule Post</h2>
-                    <p className="text-sm text-deep-charcoal mb-4">Add this content for {content.platform} to your calendar.</p>
-                    
-                    <div className="bg-white rounded-lg p-3 border border-warm-gray max-h-32 overflow-y-auto mb-6">
-                        <p className="text-deep-charcoal text-sm whitespace-pre-wrap font-sans">{content.primaryContent}</p>
+                    <h2 className="text-2xl font-bold font-display text-surface-900 mb-2">Schedule Post</h2>
+                    <p className="text-sm text-surface-900 mb-4">Add this content for {content.platform} to your calendar.</p>
+
+                    <div className="bg-white rounded-lg p-3 border border-surface-100 max-h-32 overflow-y-auto mb-6">
+                        <p className="text-surface-900 text-sm whitespace-pre-wrap font-sans">{content.primaryContent}</p>
                     </div>
 
                     <div>
-                        <h3 className="text-md font-semibold font-display text-deep-charcoal mb-3 flex items-center">
-                            <Sparkles size={16} className="mr-2 text-terracotta" />
+                        <h3 className="text-md font-semibold font-display text-surface-900 mb-3 flex items-center">
+                            <Sparkles size={16} className="mr-2 text-brand-primary" />
                             AI-Suggested Times
                         </h3>
                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-6">
@@ -74,7 +74,7 @@ const SchedulingModal: React.FC<SchedulingModalProps> = ({ content, onClose, onS
                                  <button
                                      key={slot.date.toISOString()}
                                      onClick={() => handleSchedule(slot.date)}
-                                     className="p-2 text-center rounded-md bg-sage-green/10 text-sage-green hover:bg-sage-green/20 transition-colors"
+                                     className="p-2 text-center rounded-md bg-brand-primary/10 text-brand-primary hover:bg-brand-primary/20 transition-colors"
                                  >
                                      <p className="font-semibold text-sm">{slot.date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</p>
                                      <p className="text-xs">{slot.label.split(',')[0]}</p>
@@ -83,8 +83,8 @@ const SchedulingModal: React.FC<SchedulingModalProps> = ({ content, onClose, onS
                          </div>
                     </div>
                      <div>
-                        <h3 className="text-md font-semibold font-display text-deep-charcoal mb-3 flex items-center">
-                             <Calendar size={16} className="mr-2 text-deep-charcoal" />
+                        <h3 className="text-md font-semibold font-display text-surface-900 mb-3 flex items-center">
+                             <Calendar size={16} className="mr-2 text-surface-900" />
                             Or Pick a Custom Time
                         </h3>
                         <div className="flex gap-2">

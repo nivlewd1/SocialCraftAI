@@ -127,11 +127,11 @@ export const TrendsAgent: React.FC<TrendsAgentProps> = ({ onTrendsFound, onOpenA
     <div className="space-y-8 pb-12">
       <div className="text-center space-y-4">
         <div className="flex justify-center">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center shadow-lg shadow-purple-500/20">
+          <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center shadow-lg shadow-purple-500/20">
             <Globe className="h-8 w-8 text-white" />
           </div>
         </div>
-        <h1 className="text-4xl md:text-5xl font-extrabold font-display tracking-tight text-deep-charcoal">
+        <h1 className="text-4xl md:text-5xl font-extrabold font-display tracking-tight text-surface-900">
           Trend Scout <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600">Agent</span>
         </h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -142,12 +142,12 @@ export const TrendsAgent: React.FC<TrendsAgentProps> = ({ onTrendsFound, onOpenA
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-7xl mx-auto">
         {/* Left Panel: Agent Configuration */}
         <div className="lg:col-span-4 space-y-6">
-          <div className="glass-card p-6 rounded-2xl space-y-6 border border-white/50 shadow-xl">
+          <div className="glass-card p-6 rounded-lg space-y-6 border border-white/50 shadow-xl">
             <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
               <div className="p-2 bg-purple-100 rounded-lg">
                 <Cpu className="w-5 h-5 text-purple-600" />
               </div>
-              <h2 className="text-xl font-bold text-deep-charcoal">Agent Control</h2>
+              <h2 className="text-xl font-bold text-surface-900">Agent Control</h2>
             </div>
 
             <div className="space-y-4">
@@ -159,13 +159,13 @@ export const TrendsAgent: React.FC<TrendsAgentProps> = ({ onTrendsFound, onOpenA
                     type="text"
                     value={niche}
                     onChange={(e) => setNiche(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-deep-charcoal focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all shadow-sm"
+                    className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-lg text-surface-900 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all shadow-sm"
                     placeholder="e.g. SaaS Marketing"
                   />
                 </div>
               </div>
 
-              <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl">
+              <div className="bg-blue-50 border border-blue-100 p-4 rounded-lg">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-blue-700 font-bold text-sm flex items-center gap-2">
                     <Clock className="w-4 h-4" /> Schedule
@@ -180,7 +180,7 @@ export const TrendsAgent: React.FC<TrendsAgentProps> = ({ onTrendsFound, onOpenA
               <button
                 onClick={handleRunAgent}
                 disabled={isSearching}
-                className={`w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5
+                className={`w-full py-4 rounded-lg font-bold flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5
                                 ${isSearching
                     ? 'bg-gray-800 text-gray-400 cursor-not-allowed'
                     : 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-purple-500/25'
@@ -200,7 +200,7 @@ export const TrendsAgent: React.FC<TrendsAgentProps> = ({ onTrendsFound, onOpenA
           </div>
 
           {/* Status Log */}
-          <div className="bg-gray-900 p-6 rounded-2xl border border-gray-800 shadow-2xl flex flex-col h-[300px] font-mono text-sm relative overflow-hidden group">
+          <div className="bg-gray-900 p-6 rounded-lg border border-gray-800 shadow-2xl flex flex-col h-[300px] font-mono text-sm relative overflow-hidden group">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-blue-500 opacity-50"></div>
             <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-800">
               <span className="text-gray-400 text-xs font-bold uppercase flex items-center gap-2">
@@ -227,14 +227,14 @@ export const TrendsAgent: React.FC<TrendsAgentProps> = ({ onTrendsFound, onOpenA
 
         {/* Right Panel: Results */}
         <div className="lg:col-span-8 h-full">
-          <div className="glass-card rounded-2xl border border-white/50 shadow-xl h-full min-h-[600px] flex flex-col overflow-hidden">
+          <div className="glass-card rounded-lg border border-white/50 shadow-xl h-full min-h-[600px] flex flex-col overflow-hidden">
             {!currentReport ? (
               <div className="flex-1 flex flex-col items-center justify-center text-center p-12 space-y-6">
                 <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center">
                   <Search className="w-10 h-10 text-gray-300" />
                 </div>
                 <div className="max-w-md space-y-2">
-                  <h3 className="text-xl font-bold text-deep-charcoal">Ready to Scout</h3>
+                  <h3 className="text-xl font-bold text-surface-900">Ready to Scout</h3>
                   <p className="text-gray-500">
                     Enter your niche and run the agent to generate a real-time trend briefing.
                   </p>
@@ -253,24 +253,24 @@ export const TrendsAgent: React.FC<TrendsAgentProps> = ({ onTrendsFound, onOpenA
                           <Clock className="w-3 h-3" /> {currentReport.date}
                         </span>
                       </div>
-                      <h3 className="text-2xl font-bold text-deep-charcoal">Trend Briefing: {currentReport.niche}</h3>
+                      <h3 className="text-2xl font-bold text-surface-900">Trend Briefing: {currentReport.niche}</h3>
                     </div>
                     <button
                       onClick={() => navigate('/amplifier', { state: { report: currentReport } })}
-                      className="flex items-center gap-2 px-4 py-2 bg-deep-charcoal text-white rounded-lg text-sm font-bold hover:bg-black transition-colors shadow-md"
+                      className="flex items-center gap-2 px-4 py-2 bg-surface-950 text-white rounded-lg text-sm font-bold hover:bg-black transition-colors shadow-md"
                     >
                       Amplifier <ArrowRight className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
 
-                <div className="p-8 overflow-y-auto flex-1 prose prose-slate max-w-none prose-headings:font-display prose-headings:text-deep-charcoal prose-a:text-purple-600">
+                <div className="p-8 overflow-y-auto flex-1 prose prose-slate max-w-none prose-headings:font-display prose-headings:text-surface-900 prose-a:text-purple-600">
                   <ReactMarkdown>{currentReport.content}</ReactMarkdown>
                 </div>
 
                 <div className="p-6 bg-gray-50 border-t border-gray-100 text-sm">
-                  <span className="font-bold text-deep-charcoal flex items-center gap-2 mb-3">
-                    <Globe className="w-4 h-4 text-sage-green" /> Sources Cited
+                  <span className="font-bold text-surface-900 flex items-center gap-2 mb-3">
+                    <Globe className="w-4 h-4 text-brand-primary" /> Sources Cited
                   </span>
                   <div className="flex flex-wrap gap-3">
                     {currentReport.sources.map((s, i) => (

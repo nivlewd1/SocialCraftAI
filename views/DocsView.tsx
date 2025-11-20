@@ -44,8 +44,8 @@ const DocsView: React.FC = () => {
                                     key={section.id}
                                     onClick={() => setActiveSection(section.id)}
                                     className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-left transition-all duration-200 ${activeSection === section.id
-                                            ? 'bg-sage-green text-white shadow-md'
-                                            : 'text-deep-charcoal hover:bg-warm-gray'
+                                            ? 'bg-brand-primary text-white shadow-md'
+                                            : 'text-surface-900 hover:bg-surface-100'
                                         }`}
                                 >
                                     <div className="flex items-center space-x-3">
@@ -62,7 +62,7 @@ const DocsView: React.FC = () => {
 
             {/* Content */}
             <div className="flex-1 min-w-0">
-                <div className="glass-card rounded-2xl p-8 md:p-12 min-h-[80vh]">
+                <div className="glass-card rounded-lg p-8 md:p-12 min-h-[80vh]">
                     {activeSection === 'getting-started' && <GettingStartedDocs />}
                     {activeSection === 'features' && <FeaturesDocs />}
                     {activeSection === 'agentic-trends' && <AgenticTrendsDocs />}
@@ -81,7 +81,7 @@ const DocsView: React.FC = () => {
 const GettingStartedDocs = () => (
     <div className="space-y-8 animate-fade-in">
         <div>
-            <h1 className="text-4xl font-bold font-display text-deep-charcoal mb-4">Getting Started</h1>
+            <h1 className="text-4xl font-bold font-display text-surface-900 mb-4">Getting Started</h1>
             <p className="text-xl text-gray-600 leading-relaxed">
                 Welcome to SocialCraft AI. Your journey to effortless, algorithm-optimized content creation begins here.
             </p>
@@ -89,7 +89,7 @@ const GettingStartedDocs = () => (
 
         <section className="space-y-8">
             <div className="border-b border-gray-200 pb-4">
-                <h2 className="text-2xl font-bold text-deep-charcoal mb-4">Quick Start Guide</h2>
+                <h2 className="text-2xl font-bold text-surface-900 mb-4">Quick Start Guide</h2>
             </div>
 
             <div className="grid gap-6">
@@ -120,11 +120,11 @@ const GettingStartedDocs = () => (
 
 const StepCard = ({ number, title, description }: { number: number, title: string, description: string }) => (
     <div className="flex items-start p-6 bg-white/50 rounded-xl border border-white/40 shadow-sm hover:shadow-md transition-all">
-        <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-gradient-to-br from-sage-green to-terracotta text-white rounded-full font-bold text-lg shadow-sm">
+        <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-gradient-to-br from-brand-primary to-brand-glow text-white rounded-full font-bold text-lg shadow-sm">
             {number}
         </div>
         <div className="ml-6">
-            <h3 className="text-xl font-bold text-deep-charcoal mb-2">{title}</h3>
+            <h3 className="text-xl font-bold text-surface-900 mb-2">{title}</h3>
             <p className="text-gray-700 leading-relaxed">{description}</p>
         </div>
     </div>
@@ -133,12 +133,12 @@ const StepCard = ({ number, title, description }: { number: number, title: strin
 const FeaturesDocs = () => (
     <div className="space-y-12 animate-fade-in">
         <div>
-            <h1 className="text-4xl font-bold font-display text-deep-charcoal mb-4">Core Features</h1>
+            <h1 className="text-4xl font-bold font-display text-surface-900 mb-4">Core Features</h1>
             <p className="text-xl text-gray-600">A detailed walkthrough of SocialCraft AI's powerful toolset.</p>
         </div>
 
         <section className="space-y-8">
-            <h2 className="text-2xl font-bold text-deep-charcoal border-b border-terracotta/30 pb-2">The Content Generator</h2>
+            <h2 className="text-2xl font-bold text-surface-900 border-b border-terracotta/30 pb-2">The Content Generator</h2>
             <p className="text-gray-700 text-lg">
                 The Content Generator is the heart of SocialCraft AI. It transforms ideas, URLs, or documents into optimized social media posts.
             </p>
@@ -168,8 +168,8 @@ const FeaturesDocs = () => (
 const AgenticTrendsDocs = () => (
     <div className="space-y-12 animate-fade-in">
         <div>
-            <h1 className="text-4xl font-bold font-display text-deep-charcoal mb-4">Trend Scout Agent</h1>
-            <div className="inline-flex items-center px-3 py-1 rounded-full bg-sage-green/10 text-sage-green text-sm font-medium mb-4">
+            <h1 className="text-4xl font-bold font-display text-surface-900 mb-4">Trend Scout Agent</h1>
+            <div className="inline-flex items-center px-3 py-1 rounded-full bg-brand-primary/10 text-brand-primary text-sm font-medium mb-4">
                 <Zap className="w-4 h-4 mr-2" /> New Agentic Feature
             </div>
             <p className="text-xl text-gray-600">
@@ -178,12 +178,12 @@ const AgenticTrendsDocs = () => (
         </div>
 
         <section className="space-y-6">
-            <h2 className="text-2xl font-bold text-deep-charcoal">How It Works</h2>
+            <h2 className="text-2xl font-bold text-surface-900">How It Works</h2>
             <p className="text-gray-700 leading-relaxed">
                 The Trend Scout Agent uses advanced Google Search Grounding to scan the live web for emerging topics, news, and discussions in your specific niche. It doesn't just search; it analyzes sentiment, engagement potential, and relevance to your brand.
             </p>
 
-            <div className="bg-white/60 rounded-xl p-6 border border-sage-green/20">
+            <div className="bg-white/60 rounded-xl p-6 border border-brand-primary/20">
                 <h3 className="font-bold text-lg mb-4">Workflow</h3>
                 <ol className="list-decimal list-inside space-y-3 text-gray-700">
                     <li><strong>Input Niche:</strong> Enter your industry or topic (e.g., "SaaS Marketing", "Sustainable Fashion").</li>
@@ -199,37 +199,37 @@ const AgenticTrendsDocs = () => (
 const BrandAmplifierDocs = () => (
     <div className="space-y-12 animate-fade-in">
         <div>
-            <h1 className="text-4xl font-bold font-display text-deep-charcoal mb-4">Brand Amplifier</h1>
+            <h1 className="text-4xl font-bold font-display text-surface-900 mb-4">Brand Amplifier</h1>
             <p className="text-xl text-gray-600">
                 Scale your presence without losing your soul. The Brand Amplifier combines your unique voice with trending topics.
             </p>
         </div>
 
         <section className="space-y-6">
-            <h2 className="text-2xl font-bold text-deep-charcoal">Brand Personas</h2>
+            <h2 className="text-2xl font-bold text-surface-900">Brand Personas</h2>
             <p className="text-gray-700">
                 Stop sounding like a robot. Brand Personas allow you to define exactly how the AI should write.
             </p>
             <ul className="grid gap-4 md:grid-cols-2">
                 <li className="p-4 bg-white rounded-lg shadow-sm border border-gray-100">
-                    <strong className="block text-sage-green mb-1">Voice Analysis</strong>
+                    <strong className="block text-brand-primary mb-1">Voice Analysis</strong>
                     Upload sample posts, and the AI analyzes your sentence structure, vocabulary, and tone.
                 </li>
                 <li className="p-4 bg-white rounded-lg shadow-sm border border-gray-100">
-                    <strong className="block text-sage-green mb-1">Multiple Personas</strong>
+                    <strong className="block text-brand-primary mb-1">Multiple Personas</strong>
                     Create different personas for different channels (e.g., "Professional CEO" for LinkedIn, "Casual Behind-the-Scenes" for Twitter).
                 </li>
             </ul>
         </section>
 
         <section className="space-y-6">
-            <h2 className="text-2xl font-bold text-deep-charcoal">Campaign Generation</h2>
+            <h2 className="text-2xl font-bold text-surface-900">Campaign Generation</h2>
             <p className="text-gray-700">
                 The Amplifier takes a Trend Report and your Brand Persona to generate a full week's worth of content in seconds.
             </p>
-            <div className="p-4 bg-terracotta/10 rounded-lg border border-terracotta/20">
-                <h4 className="font-bold text-terracotta mb-2">Pro Tip: The "Schedule All" Button</h4>
-                <p className="text-sm text-deep-charcoal">
+            <div className="p-4 bg-brand-glow/10 rounded-lg border border-terracotta/20">
+                <h4 className="font-bold text-brand-primary mb-2">Pro Tip: The "Schedule All" Button</h4>
+                <p className="text-sm text-surface-900">
                     Once you've reviewed the generated campaign, hit "Schedule All" to automatically queue every post to your content calendar. The Publishing Engine handles the rest.
                 </p>
             </div>
@@ -240,7 +240,7 @@ const BrandAmplifierDocs = () => (
 const PublishingDocs = () => (
     <div className="space-y-12 animate-fade-in">
         <div>
-            <h1 className="text-4xl font-bold font-display text-deep-charcoal mb-4">Publishing Engine</h1>
+            <h1 className="text-4xl font-bold font-display text-surface-900 mb-4">Publishing Engine</h1>
             <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-medium mb-4">
                 <ShieldCheck className="w-4 h-4 mr-2" /> Secure Server-Side
             </div>
@@ -250,7 +250,7 @@ const PublishingDocs = () => (
         </div>
 
         <section className="space-y-6">
-            <h2 className="text-2xl font-bold text-deep-charcoal">How It Works</h2>
+            <h2 className="text-2xl font-bold text-surface-900">How It Works</h2>
             <p className="text-gray-700">
                 Unlike some tools that require your browser to be open, SocialCraft AI uses a dedicated backend scheduler.
             </p>
@@ -274,7 +274,7 @@ const PublishingDocs = () => (
         </section>
 
         <section className="space-y-6">
-            <h2 className="text-2xl font-bold text-deep-charcoal">Security</h2>
+            <h2 className="text-2xl font-bold text-surface-900">Security</h2>
             <p className="text-gray-700">
                 We take security seriously. Your social media access tokens are encrypted at rest using AES-256 encryption. We never see your passwords, and you can revoke access at any time.
             </p>
@@ -285,7 +285,7 @@ const PublishingDocs = () => (
 const PlatformsDocs = () => (
     <div className="space-y-12 animate-fade-in">
         <div>
-            <h1 className="text-4xl font-bold font-display text-deep-charcoal mb-4">Platform Guides</h1>
+            <h1 className="text-4xl font-bold font-display text-surface-900 mb-4">Platform Guides</h1>
             <p className="text-xl text-gray-600">Master the nuances of each network.</p>
         </div>
 
@@ -341,12 +341,12 @@ const PlatformsDocs = () => (
 
 const PlatformGuide = ({ name, focus, tips }: { name: string, focus: string, tips: string[] }) => (
     <div className="p-6 bg-white rounded-xl shadow-sm border border-gray-100">
-        <h3 className="text-2xl font-bold text-deep-charcoal mb-2">{name}</h3>
-        <p className="text-sage-green font-medium mb-4">Focus: {focus}</p>
+        <h3 className="text-2xl font-bold text-surface-900 mb-2">{name}</h3>
+        <p className="text-brand-primary font-medium mb-4">Focus: {focus}</p>
         <ul className="space-y-2">
             {tips.map((tip, i) => (
                 <li key={i} className="flex items-start text-gray-700">
-                    <span className="mr-2 text-terracotta">•</span>
+                    <span className="mr-2 text-brand-primary">•</span>
                     {tip}
                 </li>
             ))}
@@ -356,8 +356,8 @@ const PlatformGuide = ({ name, focus, tips }: { name: string, focus: string, tip
 
 const BillingDocs = () => (
     <div className="space-y-8 animate-fade-in">
-        <h1 className="text-4xl font-bold font-display text-deep-charcoal">Billing & Plans</h1>
-        <div className="p-6 bg-gradient-to-r from-sage-green/10 to-terracotta/10 rounded-xl border border-sage-green/20">
+        <h1 className="text-4xl font-bold font-display text-surface-900">Billing & Plans</h1>
+        <div className="p-6 bg-gradient-to-r from-brand-primary/10 to-brand-glow/10 rounded-xl border border-brand-primary/20">
             <h3 className="text-xl font-bold mb-2">Pro Plan (Most Popular)</h3>
             <p className="text-gray-700 mb-4">Everything you need to grow a personal brand.</p>
             <ul className="space-y-2 text-sm text-gray-700">
@@ -372,7 +372,7 @@ const BillingDocs = () => (
 
 const FAQDocs = () => (
     <div className="space-y-8 animate-fade-in">
-        <h1 className="text-4xl font-bold font-display text-deep-charcoal">FAQ</h1>
+        <h1 className="text-4xl font-bold font-display text-surface-900">FAQ</h1>
         <div className="space-y-6">
             <FAQItem
                 question="Do I need my own API keys?"
@@ -392,14 +392,14 @@ const FAQDocs = () => (
 
 const FAQItem = ({ question, answer }: { question: string, answer: string }) => (
     <div className="border-b border-gray-200 pb-4">
-        <h3 className="text-lg font-bold text-deep-charcoal mb-2">{question}</h3>
+        <h3 className="text-lg font-bold text-surface-900 mb-2">{question}</h3>
         <p className="text-gray-600">{answer}</p>
     </div>
 );
 
 const FeatureHighlight = ({ title, description }: { title: string, description: string }) => (
     <div className="p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all">
-        <h3 className="font-bold text-lg text-deep-charcoal mb-2">{title}</h3>
+        <h3 className="font-bold text-lg text-surface-900 mb-2">{title}</h3>
         <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
     </div>
 );

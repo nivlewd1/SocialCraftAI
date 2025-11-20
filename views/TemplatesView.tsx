@@ -9,11 +9,11 @@ interface TemplatesViewProps {
 }
 
 const platformIcons: { [key in Platform]: React.ReactNode } = {
-    [Platform.Twitter]: <Twitter size={16} className="text-deep-charcoal" />,
-    [Platform.LinkedIn]: <Linkedin size={16} className="text-deep-charcoal" />,
-    [Platform.Instagram]: <Instagram size={16} className="text-deep-charcoal" />,
-    [Platform.TikTok]: <Music size={16} className="text-deep-charcoal" />,
-    [Platform.Pinterest]: <Pin size={16} className="text-deep-charcoal" />,
+    [Platform.Twitter]: <Twitter size={16} className="text-surface-900" />,
+    [Platform.LinkedIn]: <Linkedin size={16} className="text-surface-900" />,
+    [Platform.Instagram]: <Instagram size={16} className="text-surface-900" />,
+    [Platform.TikTok]: <Music size={16} className="text-surface-900" />,
+    [Platform.Pinterest]: <Pin size={16} className="text-surface-900" />,
 };
 
 const playbooks: Playbook[] = [
@@ -195,26 +195,26 @@ If this was helpful, repost it for others!
 
 const categoryColors: { [key in PlaybookCategory]: string } = {
     [PlaybookCategory.ProductLaunch]: 'bg-soft-blue/20 text-soft-blue',
-    [PlaybookCategory.ThoughtLeadership]: 'bg-sage-green/20 text-sage-green',
-    [PlaybookCategory.CompanyNews]: 'bg-warm-gray text-deep-charcoal',
-    [PlaybookCategory.EventPromotion]: 'bg-terracotta/20 text-terracotta',
+    [PlaybookCategory.ThoughtLeadership]: 'bg-brand-primary/20 text-brand-primary',
+    [PlaybookCategory.CompanyNews]: 'bg-surface-100 text-surface-900',
+    [PlaybookCategory.EventPromotion]: 'bg-brand-glow/20 text-brand-primary',
     [PlaybookCategory.Engagement]: 'bg-soft-blue/20 text-soft-blue',
 }
 
 const categoryIcons: { [key in PlaybookCategory]: { icon: React.ReactNode; bg: string } } = {
     [PlaybookCategory.ProductLaunch]: { icon: <Rocket size={18} className="text-white" />, bg: "bg-soft-blue"},
-    [PlaybookCategory.ThoughtLeadership]: { icon: <Lightbulb size={18} className="text-white" />, bg: "bg-sage-green"},
-    [PlaybookCategory.CompanyNews]: { icon: <Building2 size={18} className="text-deep-charcoal" />, bg: "bg-warm-gray"},
-    [PlaybookCategory.EventPromotion]: { icon: <Calendar size={18} className="text-white" />, bg: "bg-terracotta"},
+    [PlaybookCategory.ThoughtLeadership]: { icon: <Lightbulb size={18} className="text-white" />, bg: "bg-brand-primary"},
+    [PlaybookCategory.CompanyNews]: { icon: <Building2 size={18} className="text-surface-900" />, bg: "bg-surface-100"},
+    [PlaybookCategory.EventPromotion]: { icon: <Calendar size={18} className="text-white" />, bg: "bg-brand-glow"},
     [PlaybookCategory.Engagement]: { icon: <MessageCircle size={18} className="text-white" />, bg: "bg-soft-blue"},
 }
 
 const customIcons: { [title: string]: { icon: React.ReactNode; bg: string } } = {
-    "LinkedIn Carousel Deep Dive": { icon: <LayoutList size={18} className="text-white" />, bg: "bg-sage-green" },
-    "Instagram Educational Carousel": { icon: <Layers size={18} className="text-white" />, bg: "bg-sage-green" },
+    "LinkedIn Carousel Deep Dive": { icon: <LayoutList size={18} className="text-white" />, bg: "bg-brand-primary" },
+    "Instagram Educational Carousel": { icon: <Layers size={18} className="text-white" />, bg: "bg-brand-primary" },
     "Viral Instagram Reel Script": { icon: <Film size={18} className="text-white" />, bg: "bg-soft-blue" },
-    "TikTok SEO Video Script": { icon: <Search size={18} className="text-white" />, bg: "bg-terracotta" },
-    "SEO-Optimized Pinterest Pin": { icon: <Pin size={18} className="text-white" />, bg: "bg-terracotta" },
+    "TikTok SEO Video Script": { icon: <Search size={18} className="text-white" />, bg: "bg-brand-glow" },
+    "SEO-Optimized Pinterest Pin": { icon: <Pin size={18} className="text-white" />, bg: "bg-brand-glow" },
 };
 
 const TemplatesView: React.FC<TemplatesViewProps> = ({ onOpenAuth }) => {
@@ -256,7 +256,7 @@ const TemplatesView: React.FC<TemplatesViewProps> = ({ onOpenAuth }) => {
                 <h1 className="text-4xl md:text-5xl font-extrabold font-display tracking-tight">
                     Viral Content <span className="gradient-text">Playbooks</span>
                 </h1>
-                <p className="mt-4 max-w-2xl mx-auto text-lg text-deep-charcoal">
+                <p className="mt-4 max-w-2xl mx-auto text-lg text-surface-900">
                     Kickstart your content creation with proven, high-engagement playbooks for every platform and goal.
                 </p>
             </div>
@@ -264,7 +264,7 @@ const TemplatesView: React.FC<TemplatesViewProps> = ({ onOpenAuth }) => {
             <div className="sticky top-16 z-10 bg-[#F8F6F3]/80 backdrop-blur-sm py-4">
               <div className="max-w-5xl mx-auto space-y-4">
                   <div className="relative">
-                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-deep-charcoal" />
+                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-surface-900" />
                       <input
                           type="text"
                           placeholder="Search playbooks by title or description..."
@@ -276,7 +276,7 @@ const TemplatesView: React.FC<TemplatesViewProps> = ({ onOpenAuth }) => {
                   <div className="flex flex-wrap gap-2">
                        <span className="text-sm font-semibold self-center pr-2">Category:</span>
                        {allCategories.map(cat => (
-                           <button key={cat} onClick={() => setCategoryFilter(cat as any)} className={`px-3 py-1 text-sm font-medium rounded-full transition-colors ${categoryFilter === cat ? 'bg-sage-green text-white' : 'bg-white hover:bg-warm-gray'}`}>
+                           <button key={cat} onClick={() => setCategoryFilter(cat as any)} className={`px-3 py-1 text-sm font-medium rounded-full transition-colors ${categoryFilter === cat ? 'bg-brand-primary text-white' : 'bg-white hover:bg-surface-100'}`}>
                                {cat}
                            </button>
                        ))}
@@ -284,7 +284,7 @@ const TemplatesView: React.FC<TemplatesViewProps> = ({ onOpenAuth }) => {
                   <div className="flex flex-wrap gap-2">
                        <span className="text-sm font-semibold self-center pr-2">Platform:</span>
                        {allPlatforms.map(platform => (
-                           <button key={platform} onClick={() => setPlatformFilter(platform as any)} className={`px-3 py-1 text-sm font-medium rounded-full transition-colors ${platformFilter === platform ? 'bg-sage-green text-white' : 'bg-white hover:bg-warm-gray'}`}>
+                           <button key={platform} onClick={() => setPlatformFilter(platform as any)} className={`px-3 py-1 text-sm font-medium rounded-full transition-colors ${platformFilter === platform ? 'bg-brand-primary text-white' : 'bg-white hover:bg-surface-100'}`}>
                                {platform}
                            </button>
                        ))}
@@ -301,16 +301,16 @@ const TemplatesView: React.FC<TemplatesViewProps> = ({ onOpenAuth }) => {
                                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${iconInfo.bg}`}>
                                     {iconInfo.icon}
                                 </div>
-                                <h3 className="font-bold font-display text-lg text-deep-charcoal mb-2">{playbook.title}</h3>
-                                <p className="text-deep-charcoal text-sm mb-4">{playbook.description}</p>
+                                <h3 className="font-bold font-display text-lg text-surface-900 mb-2">{playbook.title}</h3>
+                                <p className="text-surface-900 text-sm mb-4">{playbook.description}</p>
                             </div>
                             <div className="mt-auto">
                                 <div className="flex justify-between items-center mb-3">
                                     <div className="flex flex-wrap items-center gap-2">
                                         <span className={`text-xs font-semibold px-2 py-0.5 rounded-md ${categoryColors[playbook.category]}`}>{playbook.category}</span>
                                         {playbook.successRate && (
-                                            <span className="flex items-center text-xs font-semibold text-sage-green">
-                                                <span className="w-2 h-2 bg-sage-green rounded-full mr-1.5"></span>
+                                            <span className="flex items-center text-xs font-semibold text-brand-primary">
+                                                <span className="w-2 h-2 bg-brand-primary rounded-full mr-1.5"></span>
                                                 {playbook.successRate}% success
                                             </span>
                                         )}
@@ -320,7 +320,7 @@ const TemplatesView: React.FC<TemplatesViewProps> = ({ onOpenAuth }) => {
                                     <div className="flex space-x-2">
                                         {playbook.platforms.map(p => <span key={p} title={p}>{platformIcons[p]}</span>)}
                                     </div>
-                                    <button onClick={() => handleUsePlaybook(playbook.content)} className="text-sm font-semibold text-sage-green hover:text-terracotta">
+                                    <button onClick={() => handleUsePlaybook(playbook.content)} className="text-sm font-semibold text-brand-primary hover:text-brand-primary">
                                         Use Playbook
                                     </button>
                                 </div>
@@ -330,7 +330,7 @@ const TemplatesView: React.FC<TemplatesViewProps> = ({ onOpenAuth }) => {
                 })}
             </div>
             {filteredPlaybooks.length === 0 && (
-                <div className="text-center py-12 text-deep-charcoal">
+                <div className="text-center py-12 text-surface-900">
                     <p className="font-semibold">No playbooks found.</p>
                     <p>Try adjusting your search or filters.</p>
                 </div>
