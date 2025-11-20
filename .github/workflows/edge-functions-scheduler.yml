@@ -1,0 +1,108 @@
+name: Edge Functions Scheduler
+
+on:
+  schedule:
+    # Post scheduler - every 5 minutes
+    - cron: '*/5 * * * *'
+    # Token refresh - daily at 2 AM UTC
+    - cron: '0 2 * * *'
+    # Analytics fetcher - every hour
+    - cron: '0 * * * *'
+
+  # Allow manual trigger for testing
+  workflow_dispatch:
+    inputs:
+      function:
+        description: 'Edge function to invoke'
+        required: false
+        type: choice
+        options:
+          - all
+          - post-scheduler
+          - token-refresh
+          - analytics-fetcher
+
+jobs:
+  post-scheduler:
+    name: Post Scheduler
+    runs-on: ubuntu-latest
+    # Run every 5 minutes OR on manual trigger
+    if: |
+      github.event.schedule == '*/5 * * * *' ||
+      github.event_name == 'workflow_dispatch' && (github.event.inputs.function == 'post-scheduler' || github.event.inputs.function == 'all')
+
+    steps:
+      - name: Invoke post-scheduler edge function
+        run: |
+          echo "Invoking post-scheduler at $(date -u)"
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            "${{ secrets.SUPABASE_URL }}/functions/v1/post-scheduler" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json")
+
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n-1)
+
+          echo "Response body: $body"
+          echo "HTTP status: $http_code"
+
+          if [ "$http_code" -ge 400 ]; then
+            echo "Error: Edge function returned HTTP $http_code"
+            exit 1
+          fi
+
+  token-refresh:
+    name: Token Refresh
+    runs-on: ubuntu-latest
+    # Run daily at 2 AM UTC OR on manual trigger
+    if: |
+      github.event.schedule == '0 2 * * *' ||
+      github.event_name == 'workflow_dispatch' && (github.event.inputs.function == 'token-refresh' || github.event.inputs.function == 'all')
+
+    steps:
+      - name: Invoke token-refresh edge function
+        run: |
+          echo "Invoking token-refresh at $(date -u)"
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            "${{ secrets.SUPABASE_URL }}/functions/v1/token-refresh" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json")
+
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n-1)
+
+          echo "Response body: $body"
+          echo "HTTP status: $http_code"
+
+          if [ "$http_code" -ge 400 ]; then
+            echo "Error: Edge function returned HTTP $http_code"
+            exit 1
+          fi
+
+  analytics-fetcher:
+    name: Analytics Fetcher
+    runs-on: ubuntu-latest
+    # Run hourly OR on manual trigger
+    if: |
+      github.event.schedule == '0 * * * *' ||
+      github.event_name == 'workflow_dispatch' && (github.event.inputs.function == 'analytics-fetcher' || github.event.inputs.function == 'all')
+
+    steps:
+      - name: Invoke analytics-fetcher edge function
+        run: |
+          echo "Invoking analytics-fetcher at $(date -u)"
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            "${{ secrets.SUPABASE_URL }}/functions/v1/analytics-fetcher" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json")
+
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n-1)
+
+          echo "Response body: $body"
+          echo "HTTP status: $http_code"
+
+          if [ "$http_code" -ge 400 ]; then
+            echo "Error: Edge function returned HTTP $http_code"
+            exit 1
+          fi

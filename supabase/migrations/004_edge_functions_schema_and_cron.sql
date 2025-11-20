@@ -1,22 +1,16 @@
 -- =====================================================
--- SocialCraft AI - Edge Functions Schema & Cron Jobs
+-- SocialCraft AI - Edge Functions Schema Updates
 -- =====================================================
 -- Purpose:
 -- 1. Update schema to match edge function requirements
--- 2. Enable pg_cron extension for scheduled jobs
--- 3. Set up cron jobs to invoke edge functions
+-- 2. Add columns and constraints needed by edge functions
+--
+-- Note: Cron scheduling is handled via GitHub Actions
+-- See: .github/workflows/edge-functions-scheduler.yml
 -- =====================================================
 
 -- =====================================================
--- 1. ENABLE PG_CRON EXTENSION
--- =====================================================
-CREATE EXTENSION IF NOT EXISTS pg_cron;
-
--- Grant usage to postgres role
-GRANT USAGE ON SCHEMA cron TO postgres;
-
--- =====================================================
--- 2. UPDATE SCHEDULED_POSTS TABLE
+-- 1. UPDATE SCHEDULED_POSTS TABLE
 -- =====================================================
 -- Add missing columns needed by edge functions
 ALTER TABLE public.scheduled_posts
@@ -41,7 +35,7 @@ CREATE INDEX IF NOT EXISTS scheduled_posts_platform_post_id_idx
   ON public.scheduled_posts(platform_post_id);
 
 -- =====================================================
--- 3. UPDATE CONNECTED_ACCOUNTS TABLE
+-- 2. UPDATE CONNECTED_ACCOUNTS TABLE
 -- =====================================================
 -- Add is_active column for token refresh logic
 ALTER TABLE public.connected_accounts
@@ -53,7 +47,7 @@ CREATE INDEX IF NOT EXISTS connected_accounts_token_expires_idx
   WHERE is_active = TRUE;
 
 -- =====================================================
--- 4. UPDATE ANALYTICS_CACHE TABLE
+-- 3. UPDATE ANALYTICS_CACHE TABLE
 -- =====================================================
 -- Drop old table and recreate with new schema to match edge function
 DROP TABLE IF EXISTS public.analytics_cache CASCADE;
@@ -90,104 +84,18 @@ CREATE POLICY "Service role can manage analytics cache"
   WITH CHECK (true);
 
 -- =====================================================
--- 5. ENABLE PG_NET EXTENSION FOR HTTP REQUESTS
--- =====================================================
-CREATE EXTENSION IF NOT EXISTS pg_net;
-
--- =====================================================
--- 6. CREATE HTTP REQUEST FUNCTION FOR EDGE FUNCTIONS
--- =====================================================
--- This function uses pg_net to invoke edge functions via HTTP
-CREATE OR REPLACE FUNCTION invoke_edge_function(function_name TEXT)
-RETURNS void
-LANGUAGE plpgsql
-SECURITY DEFINER
-AS $$
-DECLARE
-  supabase_url TEXT;
-  service_key TEXT;
-  function_url TEXT;
-  request_id BIGINT;
-BEGIN
-  -- Get Supabase project reference (e.g., 'abcdefghijklmnop')
-  -- You'll need to replace this with your actual project reference
-  supabase_url := current_setting('app.settings.supabase_url', true);
-  service_key := current_setting('app.settings.supabase_service_role_key', true);
-
-  IF supabase_url IS NULL THEN
-    RAISE WARNING 'Supabase URL not configured. Please set app.settings.supabase_url';
-    RETURN;
-  END IF;
-
-  IF service_key IS NULL THEN
-    RAISE WARNING 'Supabase service key not configured. Please set app.settings.supabase_service_role_key';
-    RETURN;
-  END IF;
-
-  function_url := supabase_url || '/functions/v1/' || function_name;
-
-  -- Make HTTP POST request to edge function using pg_net
-  SELECT net.http_post(
-    url := function_url,
-    headers := jsonb_build_object(
-      'Content-Type', 'application/json',
-      'Authorization', 'Bearer ' || service_key
-    ),
-    body := '{}'::jsonb
-  ) INTO request_id;
-
-  RAISE LOG 'Edge function % invoked: request_id=%', function_name, request_id;
-EXCEPTION
-  WHEN OTHERS THEN
-    RAISE WARNING 'Failed to invoke edge function %: %', function_name, SQLERRM;
-END;
-$$;
-
--- =====================================================
--- 7. SET UP CRON JOBS
--- =====================================================
-
--- Post Scheduler: Every 5 minutes
--- Checks for scheduled posts that are ready to publish
-SELECT cron.schedule(
-  'post-scheduler',           -- job name
-  '*/5 * * * *',              -- every 5 minutes
-  $$SELECT invoke_edge_function('post-scheduler');$$
-);
-
--- Token Refresh: Daily at 2 AM UTC
--- Refreshes OAuth tokens that will expire within 7 days
-SELECT cron.schedule(
-  'token-refresh',            -- job name
-  '0 2 * * *',                -- daily at 2 AM UTC
-  $$SELECT invoke_edge_function('token-refresh');$$
-);
-
--- Analytics Fetcher: Every hour
--- Fetches engagement metrics for published posts
-SELECT cron.schedule(
-  'analytics-fetcher',        -- job name
-  '0 * * * *',                -- every hour at minute 0
-  $$SELECT invoke_edge_function('analytics-fetcher');$$
-);
-
--- Cleanup expired PKCE codes: Daily at 3 AM UTC
-SELECT cron.schedule(
-  'cleanup-pkce-codes',       -- job name
-  '0 3 * * *',                -- daily at 3 AM UTC
-  $$SELECT delete_expired_pkce_codes();$$
-);
-
--- =====================================================
 -- COMPLETE!
 -- =====================================================
--- Next steps:
--- 1. Apply this migration: supabase db push
--- 2. Configure Supabase secrets for edge function invocation:
---    - Go to Supabase Dashboard > Settings > Database
---    - Add database secrets:
---      app.settings.supabase_url = your_supabase_url
---      app.settings.supabase_service_role_key = your_service_key
--- 3. Verify cron jobs: SELECT * FROM cron.job;
--- 4. Check job runs: SELECT * FROM cron.job_run_details ORDER BY start_time DESC LIMIT 10;
+-- This migration updates the database schema to support
+-- edge functions for automated content publishing.
+--
+-- Edge functions are scheduled via GitHub Actions.
+-- See: .github/workflows/edge-functions-scheduler.yml
+--
+-- To set up GitHub Actions:
+-- 1. Go to your GitHub repository > Settings > Secrets and variables > Actions
+-- 2. Add the following secrets:
+--    - SUPABASE_URL: Your Supabase project URL
+--    - SUPABASE_SERVICE_ROLE_KEY: Your service role key
+-- 3. The workflow will automatically run on schedule
 -- =====================================================
