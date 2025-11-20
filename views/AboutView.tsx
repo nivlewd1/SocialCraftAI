@@ -10,7 +10,7 @@ const AboutView: React.FC = () => {
             {/* Hero Section */}
             <div className="text-center space-y-6">
                 <div className="flex justify-center">
-                    <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-brand-primary via-terracotta to-soft-blue flex items-center justify-center animate-pulse">
+                    <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-brand-primary via-brand-glow to-indigo-400 flex items-center justify-center animate-pulse">
                         <Heart className="h-10 w-10 text-white" />
                     </div>
                 </div>

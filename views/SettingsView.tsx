@@ -313,7 +313,7 @@ const AccountSettings: React.FC<{
       </div>
 
       {/* Privacy Settings */}
-      <div className="border-t border-warm-gray pt-6">
+      <div className="border-t border-surface-200 pt-6">
         <h3 className="text-lg font-semibold text-surface-900 mb-4">Privacy</h3>
         <div className="space-y-3">
           <ToggleSetting label="Make profile public" description="Allow others to see your profile" />
@@ -374,7 +374,7 @@ const NotificationSettings: React.FC<{
         </div>
       </div>
 
-      <div className="border-t border-warm-gray pt-6">
+      <div className="border-t border-surface-200 pt-6">
         <h3 className="text-lg font-semibold text-surface-900 mb-4">Push Notifications</h3>
         <div className="space-y-3">
           <ToggleSetting
@@ -772,7 +772,7 @@ const DangerZone: React.FC = () => (
 
     <div className="space-y-4">
       {/* Export Data */}
-      <div className="border-2 border-warm-gray rounded-xl p-6">
+      <div className="border-2 border-surface-200 rounded-xl p-6">
         <div className="flex items-start justify-between">
           <div>
             <h3 className="text-lg font-semibold text-surface-900 mb-2 flex items-center">
@@ -829,7 +829,7 @@ const ToggleSetting: React.FC<{
         checked={checked}
         onChange={(e) => onChange?.(e.target.checked)}
       />
-      <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-sage-green rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-primary"></div>
+      <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-brand-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-primary"></div>
     </label>
   </div>
 );

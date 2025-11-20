@@ -7,7 +7,7 @@ const PrivacyPolicyView: React.FC = () => {
             {/* Header */}
             <div className="text-center space-y-4">
                 <div className="flex justify-center">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-soft-blue to-sage-green flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-400 to-brand-primary flex items-center justify-center">
                         <Shield className="h-8 w-8 text-white" />
                     </div>
                 </div>

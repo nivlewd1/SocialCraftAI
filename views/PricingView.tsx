@@ -170,7 +170,7 @@ const PricingView: React.FC = () => {
                             className={`relative rounded-2xl p-8 flex flex-col ${
                                 plan.popular
                                     ? 'glass-card border-2 border-brand-primary shadow-2xl transform scale-105'
-                                    : 'glass-card border border-warm-gray/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-300'
+                                    : 'glass-card border border-surface-200/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-300'
                             }`}
                         >
                             {/* Popular Badge */}

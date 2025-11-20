@@ -10,7 +10,7 @@ const TabButton: React.FC<{ label: string; icon: React.ReactNode; isActive: bool
         className={`flex items-center space-x-2 px-4 py-3 font-medium text-sm transition-colors border-b-2 -mb-px ${
             isActive
                 ? 'border-brand-primary text-brand-primary'
-                : 'border-transparent text-surface-900 hover:text-brand-primary hover:border-warm-gray'
+                : 'border-transparent text-surface-900 hover:text-brand-primary hover:border-surface-200'
         }`}
     >
         {icon}
