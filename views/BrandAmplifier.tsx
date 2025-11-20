@@ -4,7 +4,7 @@ import { generateBrandedContent } from '../services/geminiService';
 import { IconZap, IconCopy, IconRefresh } from '../components/ui/Icons';
 import { supabase } from '../config/supabase';
 import { useAuth } from '../contexts/AuthContext';
-import { Calendar, Download, Copy, Check, Save, User, Sliders, FileText, Info } from 'lucide-react';
+import { Calendar, Download, Copy, Check, Save, User, Sliders, FileText, Info, AlertCircle, Search, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface BrandAmplifierProps {
@@ -64,18 +64,60 @@ export const BrandAmplifier: React.FC<BrandAmplifierProps> = ({ activeReport, on
     const [isScheduling, setIsScheduling] = useState(false);
     const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
-    // Determine if we are in demo mode
-    const isDemoMode = !activeReport;
-    const currentReport = activeReport || DEMO_REPORT;
+    // New state for enhanced functionality
+    const [previousReports, setPreviousReports] = useState<TrendReport[]>([]);
+    const [isLoadingReports, setIsLoadingReports] = useState(false);
+    const [manualTopic, setManualTopic] = useState('');
+    const [useManualTopic, setUseManualTopic] = useState(false);
+
+    // Better demo mode detection
+    const showDemo = !activeReport && !user;  // Demo only for guests
+    const showEmptyState = !activeReport && user && !useManualTopic;  // CTA for authenticated users
+    const currentReport = activeReport || (showDemo ? DEMO_REPORT : null);
 
     // Clear posts when the active trend report changes, or load demo posts
     useEffect(() => {
-        if (isDemoMode) {
+        if (showDemo) {
             setPosts(DEMO_POSTS);
         } else {
             setPosts([]);
         }
-    }, [activeReport, isDemoMode]);
+    }, [activeReport, showDemo]);
+
+    // Fetch previous reports for authenticated users
+    useEffect(() => {
+        const fetchPreviousReports = async () => {
+            if (!user) return;
+
+            setIsLoadingReports(true);
+            try {
+                const { data, error } = await (supabase as any)
+                    .from('trend_reports')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .order('created_at', { ascending: false })
+                    .limit(10);
+
+                if (error) throw error;
+
+                const reports: TrendReport[] = (data || []).map((item: any) => ({
+                    id: item.id,
+                    date: new Date(item.created_at).toLocaleDateString(),
+                    niche: item.niche,
+                    content: item.content,
+                    sources: item.sources || []
+                }));
+
+                setPreviousReports(reports);
+            } catch (error) {
+                console.error('Error fetching previous reports:', error);
+            } finally {
+                setIsLoadingReports(false);
+            }
+        };
+
+        fetchPreviousReports();
+    }, [user]);
 
     const handleSavePersona = () => {
         localStorage.setItem('socialcraft_persona', JSON.stringify(persona));
@@ -83,16 +125,55 @@ export const BrandAmplifier: React.FC<BrandAmplifierProps> = ({ activeReport, on
         alert("Brand Persona saved to local storage.");
     };
 
+    // Handler to select a previous report
+    const handleSelectReport = (report: TrendReport) => {
+        setUseManualTopic(false);
+        setManualTopic('');
+        // Navigate to amplifier with the selected report
+        window.location.href = `/trends-agent`;
+    };
+
+    // Handler for manual topic generation
+    const handleGenerateFromTopic = async () => {
+        if (!user) {
+            onOpenAuth();
+            return;
+        }
+        if (!manualTopic.trim()) return;
+
+        setIsGenerating(true);
+        try {
+            // Generate content directly from the manual topic
+            const topicContext = `Topic: ${manualTopic}\n\nCreate engaging social media content about this topic.`;
+            const newPosts = await generateBrandedContent(
+                topicContext,
+                persona,
+                platform
+            );
+            setPosts(newPosts);
+            setUseManualTopic(true);
+        } catch (error) {
+            console.error(error);
+            alert("Failed to generate content. Ensure API Key is valid.");
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
     const handleGenerate = async () => {
         if (!user) {
             onOpenAuth();
             return;
         }
-        if (!currentReport) return;
+
+        // Allow generation if we have a report OR manual topic
+        if (!currentReport && !useManualTopic) return;
+
         setIsGenerating(true);
         try {
+            const contextToUse = currentReport?.content || `Topic: ${manualTopic}`;
             const newPosts = await generateBrandedContent(
-                currentReport.content,
+                contextToUse,
                 persona,
                 platform
             );
@@ -190,7 +271,8 @@ ${post.imagePrompt}` : ''}
                         <h2 className="text-xl font-bold text-deep-charcoal">Brand Amplifier</h2>
                     </div>
 
-                    {isDemoMode && (
+                    {/* Demo mode for unauthenticated users */}
+                    {showDemo && (
                         <div className="mb-6 p-4 bg-blue-50 border border-blue-100 rounded-xl flex items-start gap-3">
                             <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                             <div>
@@ -198,6 +280,81 @@ ${post.imagePrompt}` : ''}
                                 <p className="text-xs text-blue-600 mt-1">
                                     Viewing example data. <button onClick={onOpenAuth} className="underline font-semibold hover:text-blue-800">Sign in</button> to generate your own content.
                                 </p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Empty state for authenticated users without a report */}
+                    {showEmptyState && (
+                        <div className="mb-6 space-y-4">
+                            {/* Previous Reports Section */}
+                            {previousReports.length > 0 && (
+                                <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl">
+                                    <h4 className="text-sm font-bold text-deep-charcoal mb-3 flex items-center gap-2">
+                                        <FileText className="w-4 h-4 text-sage-green" />
+                                        Your Previous Reports
+                                    </h4>
+                                    <div className="space-y-2 max-h-32 overflow-y-auto">
+                                        {previousReports.map((report) => (
+                                            <button
+                                                key={report.id}
+                                                onClick={() => handleSelectReport(report)}
+                                                className="w-full text-left p-3 bg-white border border-gray-200 rounded-lg hover:border-sage-green hover:bg-sage-green/5 transition-all flex justify-between items-center group"
+                                            >
+                                                <div>
+                                                    <span className="text-sm font-medium text-deep-charcoal">{report.niche}</span>
+                                                    <span className="text-xs text-gray-500 ml-2">{report.date}</span>
+                                                </div>
+                                                <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-sage-green transition-colors" />
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Manual Topic Input */}
+                            <div className="p-4 bg-purple-50 border border-purple-100 rounded-xl">
+                                <h4 className="text-sm font-bold text-purple-800 mb-2 flex items-center gap-2">
+                                    <Search className="w-4 h-4" />
+                                    Quick Generate
+                                </h4>
+                                <p className="text-xs text-purple-600 mb-3">
+                                    Enter a topic to generate content directly, or run the Trend Scout for deeper insights.
+                                </p>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        value={manualTopic}
+                                        onChange={(e) => setManualTopic(e.target.value)}
+                                        placeholder="e.g., AI productivity tools"
+                                        className="flex-1 px-3 py-2 text-sm border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none"
+                                    />
+                                    <button
+                                        onClick={handleGenerateFromTopic}
+                                        disabled={!manualTopic.trim() || isGenerating}
+                                        className="px-4 py-2 bg-purple-600 text-white text-sm font-bold rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                    >
+                                        Generate
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Run Trend Scout CTA */}
+                            <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl flex items-start gap-3">
+                                <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                                <div>
+                                    <h4 className="text-sm font-bold text-amber-800">No Active Trend Report</h4>
+                                    <p className="text-xs text-amber-600 mt-1">
+                                        For best results, run the{' '}
+                                        <button
+                                            onClick={() => window.location.href = '/trends-agent'}
+                                            className="underline font-semibold hover:text-amber-800"
+                                        >
+                                            Trend Scout Agent
+                                        </button>
+                                        {' '}to discover what's trending in your niche.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     )}
@@ -267,14 +424,20 @@ ${post.imagePrompt}` : ''}
                         </div>
 
                         {/* Source Material Info */}
-                        <div className="bg-sage-green/5 p-4 rounded-xl border border-sage-green/10">
-                            <p className="text-xs font-semibold text-sage-green uppercase tracking-wider mb-1">Active Source</p>
-                            <div className="flex items-center gap-2 text-deep-charcoal font-medium">
-                                <FileText className="w-4 h-4 text-terracotta" />
-                                <span className="truncate">{currentReport.niche} Briefing</span>
+                        {(currentReport || useManualTopic) && (
+                            <div className="bg-sage-green/5 p-4 rounded-xl border border-sage-green/10">
+                                <p className="text-xs font-semibold text-sage-green uppercase tracking-wider mb-1">Active Source</p>
+                                <div className="flex items-center gap-2 text-deep-charcoal font-medium">
+                                    <FileText className="w-4 h-4 text-terracotta" />
+                                    <span className="truncate">
+                                        {useManualTopic ? `Topic: ${manualTopic}` : `${currentReport?.niche} Briefing`}
+                                    </span>
+                                </div>
+                                {currentReport && !useManualTopic && (
+                                    <p className="text-xs text-gray-500 mt-1">{currentReport.date}</p>
+                                )}
                             </div>
-                            <p className="text-xs text-gray-500 mt-1">{currentReport.date}</p>
-                        </div>
+                        )}
 
                         <button
                             onClick={handleGenerate}
