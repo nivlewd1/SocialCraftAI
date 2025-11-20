@@ -7,11 +7,23 @@ import DocsView from './views/DocsView';
 import TrendsView from "./views/TrendsView";
 import PlaybooksView from "./views/PlaybooksView";
 import ScheduleView from "./views/ScheduleView";
+import SettingsView from "./views/SettingsView";
+import MediaStudioView from "./views/MediaStudioView";
+import DraftsView from "./views/DraftsView";
+import PricingView from "./views/PricingView";
+import AboutView from "./views/AboutView";
+import PrivacyPolicyView from "./views/PrivacyPolicyView";
+import TermsOfServiceView from "./views/TermsOfServiceView";
+import CheckoutSuccessView from "./views/CheckoutSuccessView";
+import CheckoutCancelView from "./views/CheckoutCancelView";
+import TemplatesView from "./views/TemplatesView";
+import AcademicModeView from "./views/AcademicModeView";
 import { TrendsAgent } from "./views/TrendsAgent";
 import { BrandAmplifier } from "./views/BrandAmplifier";
 import { AuthModal } from './components/AuthModal';
+import Footer from './components/Footer';
 import { useAuth } from "./contexts/AuthContext";
-import { Menu, X, Sparkles, Book, TrendingUp, Zap, LogOut, User, Layout, Calendar } from 'lucide-react';
+import { Menu, X, Sparkles, Book, TrendingUp, Zap, LogOut, User, Layout, Calendar, Settings, Image } from 'lucide-react';
 
 function App() {
     const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -128,7 +140,7 @@ function App() {
             </nav>
 
             {/* Main Content */}
-            <main className="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-[calc(100vh-4rem)]">
+            <main className="pt-24 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
                 <AnimatePresence mode="wait">
                     <Routes location={location} key={location.pathname}>
                         <Route path="/" element={<LandingView onOpenAuth={() => setIsAuthOpen(true)} />} />
@@ -136,14 +148,27 @@ function App() {
                         <Route path="/docs" element={<DocsView />} />
                         <Route path="/trends" element={<TrendsView />} />
                         <Route path="/playbooks" element={<PlaybooksView onOpenAuth={() => setIsAuthOpen(true)} />} />
-
                         <Route path="/trends-agent" element={<TrendsAgent onTrendsFound={() => { }} onOpenAuth={() => setIsAuthOpen(true)} />} />
                         <Route path="/amplifier" element={<BrandAmplifier activeReport={null} onOpenAuth={() => setIsAuthOpen(true)} />} />
                         <Route path="/schedule" element={<ScheduleView onOpenAuth={() => setIsAuthOpen(true)} />} />
+                        <Route path="/settings" element={<SettingsView />} />
+                        <Route path="/media-studio" element={<MediaStudioView onOpenAuth={() => setIsAuthOpen(true)} />} />
+                        <Route path="/drafts" element={<DraftsView onOpenAuth={() => setIsAuthOpen(true)} />} />
+                        <Route path="/pricing" element={<PricingView />} />
+                        <Route path="/about" element={<AboutView />} />
+                        <Route path="/privacy" element={<PrivacyPolicyView />} />
+                        <Route path="/terms" element={<TermsOfServiceView />} />
+                        <Route path="/checkout/success" element={<CheckoutSuccessView />} />
+                        <Route path="/checkout/cancel" element={<CheckoutCancelView />} />
+                        <Route path="/templates" element={<TemplatesView onOpenAuth={() => setIsAuthOpen(true)} />} />
+                        <Route path="/academic" element={<AcademicModeView onOpenAuth={() => setIsAuthOpen(true)} />} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                 </AnimatePresence>
             </main>
+
+            {/* Footer */}
+            <Footer />
 
             {/* Auth Modal */}
             {isAuthOpen && <AuthModal onClose={() => setIsAuthOpen(false)} />}
