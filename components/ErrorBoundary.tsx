@@ -31,7 +31,7 @@ export class ErrorBoundary extends Component<Props, State> {
           justifyContent: 'center',
           minHeight: '100vh',
           padding: '2rem',
-          backgroundColor: '#f8f6f3'
+          backgroundColor: '#F4F4F5'
         }}>
           <div style={{
             backgroundColor: 'white',
@@ -40,7 +40,7 @@ export class ErrorBoundary extends Component<Props, State> {
             maxWidth: '32rem',
             boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
           }}>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem', color: '#2C2C2C' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem', color: '#18181B' }}>
               Oops! Something went wrong
             </h2>
             <p style={{ color: '#666', marginBottom: '1rem' }}>
@@ -65,7 +65,7 @@ export class ErrorBoundary extends Component<Props, State> {
               style={{
                 marginTop: '1.5rem',
                 padding: '0.5rem 1rem',
-                backgroundColor: '#7C9885',
+                backgroundColor: '#4F46E5',
                 color: 'white',
                 border: 'none',
                 borderRadius: '0.5rem',

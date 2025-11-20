@@ -75,8 +75,8 @@ const TabButton: React.FC<{ label: string; icon: React.ReactNode; isActive: bool
         onClick={onClick}
         className={`flex items-center space-x-2 px-4 py-3 font-medium text-sm transition-colors border-b-2 ${
             isActive
-                ? 'border-terracotta text-brand-primary'
-                : 'border-transparent text-surface-900 hover:text-brand-primary hover:border-warm-gray'
+                ? 'border-brand-primary text-brand-primary'
+                : 'border-transparent text-surface-900 hover:text-brand-primary hover:border-surface-200'
         }`}
     >
         {icon}
@@ -186,7 +186,7 @@ const ImageGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder={uploadedImage ? "Describe the edits you want to make..." : "e.g., A robot holding a red skateboard."}
-                className="w-full h-24 p-4 rounded-lg text-surface-900 placeholder-deep-charcoal resize-none input-field"
+                className="w-full h-24 p-4 rounded-lg text-surface-900 placeholder-surface-700 resize-none input-field"
             />
              <div className="space-y-2">
                  <label className="block text-sm font-medium text-surface-900">Upload an Image to Edit (Optional)</label>
