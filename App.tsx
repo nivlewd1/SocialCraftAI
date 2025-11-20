@@ -23,7 +23,7 @@ import { BrandAmplifier } from "./views/BrandAmplifier";
 import { AuthModal } from './components/AuthModal';
 import Footer from './components/Footer';
 import { useAuth } from "./contexts/AuthContext";
-import { Menu, X, Sparkles, Book, TrendingUp, Zap, LogOut, User, Layout, Calendar, Settings, Image } from 'lucide-react';
+import { Menu, X, Sparkles, Book, TrendingUp, Zap, LogOut, User, Layout, Calendar, Settings, Image, GraduationCap } from 'lucide-react';
 
 function App() {
     const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -62,6 +62,7 @@ function App() {
                             <NavLink href="/trends-agent" icon={<TrendingUp className="w-4 h-4" />} label="Trend Scout" active={location.pathname === '/trends-agent'} />
                             <NavLink href="/amplifier" icon={<Layout className="w-4 h-4" />} label="Amplifier" active={location.pathname === '/amplifier'} />
                             <NavLink href="/media-studio" icon={<Image className="w-4 h-4" />} label="Media" active={location.pathname === '/media-studio'} />
+                            <NavLink href="/academic" icon={<GraduationCap className="w-4 h-4" />} label="Academic" active={location.pathname === '/academic'} />
                             <NavLink href="/schedule" icon={<Calendar className="w-4 h-4" />} label="Schedule" active={location.pathname === '/schedule'} />
                             <NavLink href="/drafts" icon={<Book className="w-4 h-4" />} label="Drafts" active={location.pathname === '/drafts'} />
                         </div>
@@ -113,6 +114,7 @@ function App() {
                         <MobileNavLink href="/trends-agent" icon={<TrendingUp className="w-4 h-4" />} label="Trend Scout" />
                         <MobileNavLink href="/amplifier" icon={<Layout className="w-4 h-4" />} label="Amplifier" />
                         <MobileNavLink href="/media-studio" icon={<Image className="w-4 h-4" />} label="Media Studio" />
+                        <MobileNavLink href="/academic" icon={<GraduationCap className="w-4 h-4" />} label="Academic Mode" />
                         <MobileNavLink href="/schedule" icon={<Calendar className="w-4 h-4" />} label="Schedule" />
                         <MobileNavLink href="/drafts" icon={<Book className="w-4 h-4" />} label="Drafts" />
                         <div className="pt-4 border-t border-surface-100 mt-2">
