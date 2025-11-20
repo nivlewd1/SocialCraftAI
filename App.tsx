@@ -21,6 +21,7 @@ import AcademicModeView from "./views/AcademicModeView";
 import { TrendsAgent } from "./views/TrendsAgent";
 import { BrandAmplifier } from "./views/BrandAmplifier";
 import { AuthModal } from './components/AuthModal';
+import { Footer } from './components/Footer';
 import { useAuth } from "./contexts/AuthContext";
 import { Menu, X, Sparkles, Book, TrendingUp, Zap, LogOut, User, Layout, Calendar, Settings, Image } from 'lucide-react';
 
@@ -139,7 +140,7 @@ function App() {
             </nav>
 
             {/* Main Content */}
-            <main className="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-[calc(100vh-4rem)]">
+            <main className="pt-24 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
                 <AnimatePresence mode="wait">
                     <Routes location={location} key={location.pathname}>
                         <Route path="/" element={<LandingView onOpenAuth={() => setIsAuthOpen(true)} />} />
@@ -165,6 +166,9 @@ function App() {
                     </Routes>
                 </AnimatePresence>
             </main>
+
+            {/* Footer */}
+            <Footer />
 
             {/* Auth Modal */}
             {isAuthOpen && <AuthModal onClose={() => setIsAuthOpen(false)} />}
