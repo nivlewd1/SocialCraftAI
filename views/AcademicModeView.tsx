@@ -24,7 +24,6 @@ const AcademicModeView: React.FC = () => {
         }
 
         setIsLoading(true);
-        setError(null);
         setGeneratedContent([]);
 
         try {
