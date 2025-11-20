@@ -55,22 +55,22 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
     }
   };
 
-  // Configuration for orbiting platform icons
+  // Configuration for orbiting platform icons with 3D sphere gradients
   const platformIcons = [
-    { Icon: Twitter, color: '#1DA1F2', delay: 0 },
-    { Icon: Instagram, color: '#E4405F', delay: 1 },
-    { Icon: PinterestIcon, color: '#E60023', delay: 2 },
-    { Icon: TikTokIcon, color: '#000000', delay: 3 },
-    { Icon: Linkedin, color: '#0077B5', delay: 4 },
+    { Icon: Twitter, color: '#fff', gradient: ['#6BB7F6', '#1DA1F2', '#0C68A6'], label: 'Twitter' },
+    { Icon: Instagram, color: '#fff', gradient: ['#FF87A1', '#E4405F', '#8C1A30'], label: 'Instagram' },
+    { Icon: PinterestIcon, color: '#fff', gradient: ['#FF6B6B', '#E60023', '#8C0015'], label: 'Pinterest' },
+    { Icon: TikTokIcon, color: '#fff', gradient: ['#69C9D0', '#010101', '#000000'], label: 'TikTok' },
+    { Icon: Linkedin, color: '#fff', gradient: ['#4A9FD8', '#0077B5', '#004B7A'], label: 'LinkedIn' },
   ];
 
   return (
-    <div className="min-h-screen overflow-x-hidden">
+    <div className="min-h-screen overflow-x-hidden bg-surface-50">
       {/* Hero Section */}
-      <section className="relative pt-32 pb-24 overflow-hidden bg-gradient-to-br from-surface-50 via-white to-surface-100">
-        
+      <section className="relative pt-32 pb-24 overflow-hidden bg-surface-50">
+
         {/* Visual Enhancement: Tech Grid Background Pattern */}
-        <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none" 
+        <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none"
              style={{ backgroundImage: 'radial-gradient(#2c3e50 1px, transparent 1px)', backgroundSize: '32px 32px' }}>
         </div>
 
@@ -153,7 +153,7 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
               </motion.div>
             </motion.div>
 
-            {/* Right Column - Cohesive Photorealistic Globe */}
+            {/* Right Column - Enhanced Photorealistic Globe with 3D Spheres */}
             <motion.div
               className="relative h-[650px] w-full flex items-center justify-center perspective-1000"
               initial={{ opacity: 0, scale: 0.8 }}
@@ -164,41 +164,44 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
                 {/* Using dark surface to bridge the black space globe to the light background */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-surface-900 rounded-full blur-[80px] opacity-20 pointer-events-none mix-blend-multiply"></div>
 
-                {/* 2. The Photorealistic Globe */}
+                {/* 2. The Photorealistic Globe with Darker Atmosphere */}
                 <div className="relative z-10 w-96 h-96 rounded-full group">
-                    
-                    <div className="absolute inset-0 rounded-full overflow-hidden shadow-[0_25px_60px_-15px_rgba(0,0,0,0.4)]">
-                        {/* Texture Layer */}
-                        <motion.div 
+
+                    <div className="absolute inset-0 rounded-full overflow-hidden bg-[#000510]">
+                        {/* Texture Layer with Enhanced Contrast */}
+                        <motion.div
                             className="absolute inset-0 w-full h-full"
                             style={{
                                 background: "url('https://upload.wikimedia.org/wikipedia/commons/b/ba/The_earth_at_night.jpg')",
                                 backgroundSize: "210% 100%",
-                                filter: "contrast(1.1) brightness(1.15) saturate(0.9)" // Slight desaturation to match earthy tones
+                                filter: "contrast(1.2) brightness(1.3) saturate(0.8)"
                             }}
-                            animate={{ 
-                                backgroundPosition: ["0% 0%", "-200% 0%"] 
+                            animate={{
+                                backgroundPosition: ["0% 0%", "-200% 0%"]
                             }}
-                            transition={{ 
-                                duration: 60, 
-                                repeat: Infinity, 
-                                ease: "linear" 
+                            transition={{
+                                duration: 60,
+                                repeat: Infinity,
+                                ease: "linear"
                             }}
                         />
 
-                        {/* Inner Shading - Adjusted for Palette Harmony */}
-                        <div className="absolute inset-0 rounded-full shadow-[inset_30px_0px_60px_0px_rgba(0,0,0,0.9),inset_-10px_0px_40px_0px_rgba(79,70,229,0.4)] pointer-events-none"></div>
+                        {/* Inner Shading - Enhanced for Premium Look */}
+                        <div className="absolute inset-0 rounded-full shadow-[inset_40px_0px_70px_0px_rgba(0,0,0,0.95),inset_-15px_0px_50px_0px_rgba(79,70,229,0.5)] pointer-events-none"></div>
 
-                        {/* Top Atmospheric Reflection */}
-                        <div className="absolute -top-12 left-0 right-0 h-48 bg-gradient-to-b from-brand-glow/20 to-transparent blur-2xl pointer-events-none rounded-t-full"></div>
+                        {/* Atmospheric Reflection with brand-glow */}
+                        <div className="absolute -top-12 left-0 right-0 h-48 bg-gradient-to-b from-brand-glow/25 to-transparent blur-2xl pointer-events-none rounded-t-full"></div>
+
+                        {/* Additional Rim Lighting */}
+                        <div className="absolute inset-0 rounded-full shadow-[inset_0_0_40px_rgba(79,70,229,0.3)]"></div>
                     </div>
                 </div>
 
-                {/* 3. Orbiting Illuminated Icons System */}
+                {/* 3. Orbiting 3D Sphere Icons System */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
                     {platformIcons.map((platform, index) => {
                     const totalIcons = platformIcons.length;
-                    const duration = 30; 
+                    const duration = 40;
                     const orbitRadius = 280; // Increased radius for better spacing around larger globe
 
                     return (
@@ -213,17 +216,11 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
                             ease: "linear",
                         }}
                         >
-                        <div 
-                            className="absolute top-1/2 left-1/2 -ml-9 -mt-9"
+                        <div
+                            className="absolute top-1/2 left-1/2 -ml-10 -mt-10"
                             style={{ transform: `translateX(${orbitRadius}px)` }}
                         >
                             <motion.div
-                                // REFINED GLASS ICON STYLING
-                                className="w-18 h-18 p-4 rounded-xl flex items-center justify-center pointer-events-auto cursor-pointer bg-white/90 backdrop-blur-xl border border-white/50 transition-all duration-300"
-                                style={{
-                                    // Colored Shadow matching brand
-                                    boxShadow: `0 8px 32px -8px ${platform.color}55`
-                                }}
                                 initial={{ rotate: -((index * 360) / totalIcons) }}
                                 animate={{ rotate: -((index * 360) / totalIcons + 360) }}
                                 transition={{
@@ -231,13 +228,37 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
                                 repeat: Infinity,
                                 ease: "linear",
                                 }}
-                                whileHover={{ scale: 1.15, boxShadow: `0 12px 40px -5px ${platform.color}88` }}
                             >
-                                {/* Icon Itself */}
-                                <platform.Icon 
-                                    className="h-8 w-8 relative z-10" 
-                                    style={{ color: platform.color }} 
-                                />
+                                {/* 3D Sphere with Radial Gradient */}
+                                <motion.div
+                                    className="w-20 h-20 rounded-full flex items-center justify-center pointer-events-auto cursor-pointer relative"
+                                    style={{
+                                        background: `radial-gradient(circle at 30% 30%, ${platform.gradient[0]}, ${platform.gradient[1]}, ${platform.gradient[2]})`,
+                                        boxShadow: `
+                                            inset 2px 2px 4px rgba(255,255,255,0.4),
+                                            inset -4px -4px 10px rgba(0,0,0,0.4),
+                                            0 10px 20px rgba(0,0,0,0.3)
+                                        `,
+                                    }}
+                                    whileHover={{
+                                        scale: 1.15,
+                                        boxShadow: `
+                                            inset 3px 3px 6px rgba(255,255,255,0.5),
+                                            inset -5px -5px 12px rgba(0,0,0,0.5),
+                                            0 15px 30px rgba(0,0,0,0.4)
+                                        `
+                                    }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    {/* Specular Highlight */}
+                                    <div className="absolute top-3 left-3 w-6 h-4 bg-white/20 rounded-full blur-[2px] transform -rotate-45"></div>
+
+                                    {/* Icon */}
+                                    <platform.Icon
+                                        className="h-8 w-8 relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]"
+                                        style={{ color: '#FFFFFF' }}
+                                    />
+                                </motion.div>
                             </motion.div>
                         </div>
                         </motion.div>
