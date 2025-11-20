@@ -7,6 +7,7 @@ import DocsView from './views/DocsView';
 import TrendsView from "./views/TrendsView";
 import PlaybooksView from "./views/PlaybooksView";
 import ScheduleView from "./views/ScheduleView";
+import SettingsView from "./views/SettingsView";
 import { TrendsAgent } from "./views/TrendsAgent";
 import { BrandAmplifier } from "./views/BrandAmplifier";
 import { AuthModal } from './components/AuthModal';
@@ -140,6 +141,7 @@ function App() {
                         <Route path="/trends-agent" element={<TrendsAgent onTrendsFound={() => { }} onOpenAuth={() => setIsAuthOpen(true)} />} />
                         <Route path="/amplifier" element={<BrandAmplifier activeReport={null} onOpenAuth={() => setIsAuthOpen(true)} />} />
                         <Route path="/schedule" element={<ScheduleView onOpenAuth={() => setIsAuthOpen(true)} />} />
+                        <Route path="/settings" element={<SettingsView />} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                 </AnimatePresence>
