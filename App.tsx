@@ -21,7 +21,7 @@ import AcademicModeView from "./views/AcademicModeView";
 import { TrendsAgent } from "./views/TrendsAgent";
 import { BrandAmplifier } from "./views/BrandAmplifier";
 import { AuthModal } from './components/AuthModal';
-import { Footer } from './components/Footer';
+import Footer from './components/Footer';
 import { useAuth } from "./contexts/AuthContext";
 import { Menu, X, Sparkles, Book, TrendingUp, Zap, LogOut, User, Layout, Calendar, Settings, Image } from 'lucide-react';
 
