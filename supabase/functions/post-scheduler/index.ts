@@ -26,6 +26,17 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
 
 // ============================================
+// PLATFORM RATE LIMITS (24-hour window)
+// ============================================
+const RATE_LIMITS: Record<string, number> = {
+  twitter: 100,      // Basic tier (use 17 for free tier)
+  instagram: 100,    // All tiers
+  linkedin: 10,      // Personal profiles (12 for company pages)
+  pinterest: 12,     // Conservative limit
+  tiktok: 15,        // Conservative limit
+};
+
+// ============================================
 // PLATFORM POSTING FUNCTIONS
 // ============================================
 
@@ -78,6 +89,13 @@ async function postToLinkedIn(content: any, credentials: any) {
 
     if (!postResponse.ok) {
       const errorData = await postResponse.json();
+
+      // Check for rate limit
+      if (postResponse.status === 429) {
+        const retryAfter = postResponse.headers.get('Retry-After') || 'unknown';
+        throw new Error(`LinkedIn rate limit hit. Retry after ${retryAfter} seconds`);
+      }
+
       throw new Error(`LinkedIn API error: ${JSON.stringify(errorData)}`);
     }
 
@@ -106,6 +124,13 @@ async function postToTwitter(content: any, credentials: any) {
 
     if (!response.ok) {
       const errorData = await response.json();
+
+      // Check for rate limit
+      if (response.status === 429) {
+        const retryAfter = response.headers.get('x-rate-limit-reset') || 'unknown';
+        throw new Error(`Twitter rate limit hit. Retry after ${retryAfter}`);
+      }
+
       throw new Error(`Twitter API error: ${JSON.stringify(errorData)}`);
     }
 
@@ -143,6 +168,12 @@ async function postToInstagram(content: any, credentials: any) {
 
     if (!containerResponse.ok) {
       const errorData = await containerResponse.json();
+
+      // Check for rate limit
+      if (containerResponse.status === 429) {
+        throw new Error(`Instagram rate limit hit (100 posts/24h)`);
+      }
+
       throw new Error(`Instagram container error: ${JSON.stringify(errorData)}`);
     }
 
@@ -225,13 +256,60 @@ serve(async (req) => {
       total: postsToPublish.length,
       published: 0,
       failed: 0,
+      rateLimited: 0,
       errors: [] as any[]
     };
 
-    // Process each post
+    // Process each post with rate limiting
     for (const post of postsToPublish) {
       try {
         console.log(`\n📝 Processing post ${post.id} (${post.platform})...`);
+
+        // ============================================
+        // RATE LIMIT CHECK
+        // ============================================
+        const limit = RATE_LIMITS[post.platform.toLowerCase()] || 100;
+        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+        const { count: postsInLast24h, error: countError } = await supabase
+          .from('scheduled_posts')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', post.user_id)
+          .eq('platform', post.platform)
+          .eq('status', 'published')
+          .gte('posted_at', twentyFourHoursAgo);
+
+        if (countError) {
+          console.error('Error checking rate limit:', countError);
+        }
+
+        const currentCount = postsInLast24h || 0;
+
+        // Check if rate limit exceeded
+        if (currentCount >= limit) {
+          console.warn(`⚠️ Rate limit exceeded for ${post.platform}: ${currentCount}/${limit} posts in 24h`);
+
+          // Mark as failed with rate limit error
+          await supabase
+            .from('scheduled_posts')
+            .update({
+              status: 'failed',
+              error_message: `Rate limit exceeded: ${currentCount}/${limit} posts in 24 hours. Will retry after rate limit window expires.`,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', post.id);
+
+          results.rateLimited++;
+          results.errors.push({
+            postId: post.id,
+            platform: post.platform,
+            error: `Rate limit exceeded (${currentCount}/${limit})`,
+          });
+
+          continue; // Skip to next post
+        }
+
+        console.log(`✓ Rate limit OK: ${currentCount}/${limit} posts in 24h`);
 
         // Mark as "publishing" to prevent duplicate processing
         await supabase
