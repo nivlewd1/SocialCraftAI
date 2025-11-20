@@ -27,9 +27,14 @@ export const TrendsAgent: React.FC<TrendsAgentProps> = ({ onTrendsFound, onOpenA
   ]);
 
   const logsEndRef = useRef<HTMLDivElement>(null);
+  const isInitialMount = useRef(true);
 
-  // Auto-scroll logs
+  // Auto-scroll logs (but not on initial mount to prevent page scroll on load)
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
     logsEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [logs]);
 

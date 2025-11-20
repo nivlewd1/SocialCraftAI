@@ -14,13 +14,13 @@ const Footer: React.FC = () => {
                             AI-powered social media content generation for creators, marketers, and businesses.
                         </p>
                         <div className="flex space-x-4">
-                            <a href="https://twitter.com/socialcraftai" className="hover:text-brand-primary transition-colors">
+                            <a href="https://x.com/Social_Craft_AI" target="_blank" rel="noopener noreferrer" className="hover:text-brand-primary transition-colors">
                                 <Twitter className="h-5 w-5" />
                             </a>
-                            <a href="https://linkedin.com/company/socialcraftai" className="hover:text-brand-primary transition-colors">
+                            <a href="https://www.linkedin.com/company/socialcraft-ai" target="_blank" rel="noopener noreferrer" className="hover:text-brand-primary transition-colors">
                                 <Linkedin className="h-5 w-5" />
                             </a>
-                            <a href="https://instagram.com/socialcraftai" className="hover:text-brand-primary transition-colors">
+                            <a href="https://instagram.com/socialcraftai" target="_blank" rel="noopener noreferrer" className="hover:text-brand-primary transition-colors">
                                 <Instagram className="h-5 w-5" />
                             </a>
                         </div>
