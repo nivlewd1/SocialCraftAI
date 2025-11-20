@@ -148,7 +148,7 @@ function App() {
             </nav>
 
             {/* Main Content */}
-            <main className="pt-28 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            <main className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
                 <AnimatePresence mode="wait">
                     <Routes location={location} key={location.pathname}>
                         <Route path="/" element={<LandingView onOpenAuth={() => setIsAuthOpen(true)} />} />
