@@ -54,19 +54,23 @@ const SettingsView: React.FC = () => {
         <p className="text-deep-charcoal">Manage your profile, preferences, and subscription</p>
       </div>
 
-      {/* Message Alert */}
+      {/* Toast Notification */}
       {message && (
-        <div
-          className={`glass-card rounded-lg p-4 flex items-center ${
-            message.type === 'success' ? 'bg-sage-green/10 border-2 border-sage-green/20' : 'bg-status-error/10 border-2 border-status-error/20'
-          }`}
-        >
-          {message.type === 'success' ? (
-            <CheckCircle className="h-5 w-5 text-sage-green mr-3" />
-          ) : (
-            <AlertTriangle className="h-5 w-5 text-status-error mr-3" />
-          )}
-          <span className={message.type === 'success' ? 'text-deep-charcoal' : 'text-deep-charcoal'}>{message.text}</span>
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 animate-in slide-in-from-bottom-5 fade-in duration-300">
+          <div
+            className={`shadow-lg rounded-xl px-6 py-4 flex items-center space-x-3 ${
+              message.type === 'success'
+                ? 'bg-sage-green text-white'
+                : 'bg-status-error text-white'
+            }`}
+          >
+            {message.type === 'success' ? (
+              <CheckCircle className="h-6 w-6 flex-shrink-0" />
+            ) : (
+              <AlertTriangle className="h-6 w-6 flex-shrink-0" />
+            )}
+            <span className="font-medium text-base">{message.text}</span>
+          </div>
         </div>
       )}
 
