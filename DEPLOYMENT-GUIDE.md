@@ -4,6 +4,47 @@
 - Supabase CLI installed
 - Project linked to Supabase
 - OAuth apps created (Twitter, LinkedIn, Instagram) ✅
+- Database schema ready (run migrations first)
+
+---
+
+## Step 0: Run Database Migrations (REQUIRED)
+
+Before deploying the edge function, you need to add missing columns:
+
+### Run in Supabase SQL Editor:
+
+```sql
+-- Copy entire contents of database-migrations.sql and run it
+-- This will:
+-- 1. Add platform_post_id column to scheduled_posts
+-- 2. Add is_active column to connected_accounts
+-- 3. Create helpful monitoring views
+-- 4. Set up triggers
+```
+
+**Or run these essential queries:**
+
+```sql
+-- Add missing columns
+ALTER TABLE scheduled_posts ADD COLUMN IF NOT EXISTS platform_post_id TEXT;
+ALTER TABLE connected_accounts ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT true;
+UPDATE connected_accounts SET is_active = true WHERE is_active IS NULL;
+
+-- Create indexes
+CREATE INDEX IF NOT EXISTS idx_scheduled_posts_platform_post_id ON scheduled_posts(platform_post_id);
+CREATE INDEX IF NOT EXISTS idx_connected_accounts_active ON connected_accounts(user_id, platform, is_active) WHERE is_active = true;
+```
+
+**Verify migrations worked:**
+```sql
+-- Should return the new columns
+SELECT column_name FROM information_schema.columns
+WHERE table_name = 'scheduled_posts' AND column_name = 'platform_post_id';
+
+SELECT column_name FROM information_schema.columns
+WHERE table_name = 'connected_accounts' AND column_name = 'is_active';
+```
 
 ---
 

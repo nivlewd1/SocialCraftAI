@@ -1,10 +1,22 @@
 // ============================================
 // SUPABASE EDGE FUNCTION: post-scheduler
 // ============================================
-// Updated to use YOUR existing schema:
-// - connected_accounts (instead of user_api_credentials)
-// - scheduled_posts (already perfect)
-// - brand_personas (optional integration)
+// Schema Requirements:
+//
+// connected_accounts:
+//   - access_token (TEXT) - OAuth access token
+//   - refresh_token (TEXT) - OAuth refresh token
+//   - token_expires_at (TIMESTAMPTZ) - Token expiration
+//   - platform_user_id (TEXT) - User's ID on platform
+//   - metadata (JSONB) - Platform-specific data (e.g., instagram_account_id)
+//
+// scheduled_posts:
+//   - platform (TEXT) - 'linkedin', 'twitter', 'instagram', 'tiktok'
+//   - content (JSONB) - { text, hashtags, image_url }
+//   - scheduled_at (TIMESTAMPTZ) - When to post
+//   - status (TEXT) - 'scheduled', 'publishing', 'published', 'failed'
+//   - platform_post_id (TEXT) - ID from platform after posting
+//   - error_message (TEXT) - Error details if failed
 //
 // Deploy with:
 // supabase functions deploy post-scheduler --no-verify-jwt
@@ -227,10 +239,10 @@ serve(async (req) => {
           .update({ status: 'publishing', updated_at: new Date().toISOString() })
           .eq('id', post.id);
 
-        // Fetch connected account credentials
+        // Fetch connected account credentials (FLAT structure - not credentials JSONB)
         const { data: connectedAccount, error: credError } = await supabase
           .from('connected_accounts')
-          .select('credentials, is_active')
+          .select('access_token, refresh_token, token_expires_at, platform_user_id, metadata')
           .eq('user_id', post.user_id)
           .eq('platform', post.platform)
           .single();
@@ -239,24 +251,36 @@ serve(async (req) => {
           throw new Error(`No connected account found for ${post.platform}`);
         }
 
-        if (!connectedAccount.is_active) {
-          throw new Error(`Connected account is inactive for ${post.platform}`);
+        // Check if token is expired
+        if (connectedAccount.token_expires_at) {
+          const expiresAt = new Date(connectedAccount.token_expires_at);
+          if (expiresAt <= new Date()) {
+            throw new Error(`Access token expired for ${post.platform}. User needs to reconnect.`);
+          }
         }
+
+        // Build credentials object from flat structure
+        const credentials = {
+          access_token: connectedAccount.access_token,
+          refresh_token: connectedAccount.refresh_token,
+          // Instagram needs instagram_account_id from metadata
+          instagram_account_id: connectedAccount.metadata?.instagram_account_id
+        };
 
         // Post to platform
         let result;
         switch (post.platform.toLowerCase()) {
           case 'linkedin':
-            result = await postToLinkedIn(post.content, connectedAccount.credentials);
+            result = await postToLinkedIn(post.content, credentials);
             break;
           case 'twitter':
-            result = await postToTwitter(post.content, connectedAccount.credentials);
+            result = await postToTwitter(post.content, credentials);
             break;
           case 'instagram':
-            result = await postToInstagram(post.content, connectedAccount.credentials);
+            result = await postToInstagram(post.content, credentials);
             break;
           case 'tiktok':
-            result = await postToTikTok(post.content, connectedAccount.credentials);
+            result = await postToTikTok(post.content, credentials);
             break;
           default:
             throw new Error(`Unsupported platform: ${post.platform}`);
