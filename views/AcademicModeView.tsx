@@ -55,7 +55,7 @@ const AcademicModeView: React.FC = () => {
                         value={sourceContent}
                         onChange={(e) => setSourceContent(e.target.value)}
                         placeholder="Paste your arXiv URL or the full abstract of your academic paper here..."
-                        className="w-full h-48 p-4 rounded-lg transition-all text-surface-900 placeholder-deep-charcoal resize-none input-field"
+                        className="w-full h-48 p-4 rounded-lg transition-all text-surface-900 placeholder-surface-700 resize-none input-field"
                     />
                 </div>
 
@@ -67,7 +67,7 @@ const AcademicModeView: React.FC = () => {
                         value={authorsVoice}
                         onChange={(e) => setAuthorsVoice(e.target.value)}
                         placeholder="Add a personal insight, the 'aha!' moment of the discovery, or the real-world implication of this research..."
-                        className="w-full h-24 p-4 rounded-lg transition-all text-surface-900 placeholder-deep-charcoal resize-none input-field"
+                        className="w-full h-24 p-4 rounded-lg transition-all text-surface-900 placeholder-surface-700 resize-none input-field"
                     />
                      <p className="text-xs text-surface-900 mt-1">This helps humanize your research and demonstrate first-hand experience (E-E-A-T).</p>
                 </div>

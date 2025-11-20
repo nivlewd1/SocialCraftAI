@@ -110,7 +110,7 @@ const PrivacyPolicyView: React.FC = () => {
                         <li>In case of merger, acquisition, or sale of assets</li>
                     </ul>
 
-                    <div className="bg-brand-glow/10 border-l-4 border-terracotta p-6 rounded-r-lg mt-6">
+                    <div className="bg-brand-glow/10 border-l-4 border-brand-glow p-6 rounded-r-lg mt-6">
                         <p className="text-gray-700 font-semibold mb-2">We DO NOT:</p>
                         <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
                            <li>Sell your personal information</li>

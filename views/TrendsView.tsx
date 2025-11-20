@@ -46,7 +46,7 @@ const TrendsView: React.FC = () => {
                     value={sourceContent}
                     onChange={(e) => setSourceContent(e.target.value)}
                     placeholder="Enter a topic (e.g., 'AI in marketing'), paste a URL, or some text to analyze for trends..."
-                    className="w-full h-32 p-4 rounded-lg transition-all text-surface-900 placeholder-deep-charcoal resize-none input-field"
+                    className="w-full h-32 p-4 rounded-lg transition-all text-surface-900 placeholder-surface-700 resize-none input-field"
                 />
                 
                 {error && <p className="text-status-error text-sm text-center">{error}</p>}

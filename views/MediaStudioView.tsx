@@ -421,7 +421,7 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
     return (
         <div className="glass-card rounded-lg p-8 space-y-6">
             {!hasApiKey ? (
-                <div className="text-center p-6 bg-surface-100 border-l-4 border-terracotta">
+                <div className="text-center p-6 bg-surface-100 border-l-4 border-brand-primary">
                     <KeyRound className="mx-auto h-12 w-12 text-brand-primary" />
                     <h3 className="mt-2 text-lg font-semibold text-surface-900">Video Generation Requires an API Key</h3>
                     <p className="mt-2 text-sm text-surface-900">
@@ -440,7 +440,7 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
                         placeholder="e.g., A neon hologram of a cat driving at top speed"
-                        className="w-full h-24 p-4 rounded-lg text-surface-900 placeholder-deep-charcoal resize-none input-field"
+                        className="w-full h-24 p-4 rounded-lg text-surface-900 placeholder-surface-700 resize-none input-field"
                     />
                     <div className="space-y-2">
                         <label className="block text-sm font-medium text-surface-900">Upload Reference Images (Optional, up to 5)</label>

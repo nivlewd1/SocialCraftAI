@@ -138,7 +138,7 @@ const FeaturesDocs = () => (
         </div>
 
         <section className="space-y-8">
-            <h2 className="text-2xl font-bold text-surface-900 border-b border-terracotta/30 pb-2">The Content Generator</h2>
+            <h2 className="text-2xl font-bold text-surface-900 border-b border-brand-primary/30 pb-2">The Content Generator</h2>
             <p className="text-gray-700 text-lg">
                 The Content Generator is the heart of SocialCraft AI. It transforms ideas, URLs, or documents into optimized social media posts.
             </p>
@@ -227,7 +227,7 @@ const BrandAmplifierDocs = () => (
             <p className="text-gray-700">
                 The Amplifier takes a Trend Report and your Brand Persona to generate a full week's worth of content in seconds.
             </p>
-            <div className="p-4 bg-brand-glow/10 rounded-lg border border-terracotta/20">
+            <div className="p-4 bg-brand-glow/10 rounded-lg border border-brand-glow/20">
                 <h4 className="font-bold text-brand-primary mb-2">Pro Tip: The "Schedule All" Button</h4>
                 <p className="text-sm text-surface-900">
                     Once you've reviewed the generated campaign, hit "Schedule All" to automatically queue every post to your content calendar. The Publishing Engine handles the rest.
