@@ -9,47 +9,67 @@ export default {
   theme: {
     extend: {
       colors: {
-        'sage-green': '#8B9A8B',
-        'terracotta': '#C4A484',
-        'warm-gray': '#F8F6F3',
-        'deep-charcoal': '#2C2C2C',
-        'soft-blue': '#A8B8C8',
-        'warm-white': '#FEFEFE',
+        // Professional Neutral Scale (Zinc)
+        'surface-50': '#FAFAFA',
+        'surface-100': '#F4F4F5',
+        'surface-200': '#E4E4E7',
+        'surface-300': '#D4D4D8',
+        'surface-800': '#27272A',
+        'surface-900': '#18181B',
+        'surface-950': '#09090B', // Deep Charcoal replacement
+
+        // Brand Accent (Fluorescent Blue/Indigo)
+        'brand-primary': '#4F46E5', // Indigo 600
+        'brand-glow': '#818CF8',    // Indigo 400
+        'brand-dark': '#3730A3',
+
+        // Semantic
+        'status-error': '#DC2626',
+        'status-success': '#16A34A',
+
+        // Platform colors (keep unchanged)
         'twitter': '#1DA1F2',
         'linkedin': '#0077B5',
         'instagram': '#E4405F',
         'tiktok': '#000000',
-        'status-error': '#ef4444',
       },
       fontFamily: {
-        'sans': ['Inter', 'system-ui', 'sans-serif'],
-        'display': ['Manrope', 'sans-serif'],
-        'mono': ['SF Mono', 'Monaco', 'monospace'],
+        // Use Inter for everything for consistency and sharpness
+        'sans': ['Inter', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+        'mono': ['JetBrains Mono', 'SF Mono', 'monospace'], // Tech-focused mono
       },
-      spacing: {
-        '18': '4.5rem',
+      backgroundImage: {
+        'fluent-gradient': 'linear-gradient(135deg, #4F46E5 0%, #9333EA 50%, #EC4899 100%)',
+        'photoreal-shine': 'linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%)',
       },
       borderRadius: {
-        'xl': '0.75rem',
-        '2xl': '1rem',
-        '3xl': '1.5rem',
+        'lg': '0.5rem',  // Sharp, standard
+        'xl': '0.75rem', // Slightly softer
+        '2xl': '1rem',   // Max roundness
       },
       boxShadow: {
-        'soft': '0 2px 8px rgba(0, 0, 0, 0.04)',
-        'medium': '0 4px 16px rgba(0, 0, 0, 0.08)',
-        'elevated': '0 12px 35px rgba(0, 0, 0, 0.1)',
+        'soft': '0 2px 10px rgba(0, 0, 0, 0.03)',
+        'sharp': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.07)',
+        'glow': '0 0 20px -5px rgba(79, 70, 229, 0.3)',
       },
       animation: {
-        'float': 'float 6s ease-in-out infinite',
-        'fade-in': 'fadeIn 0.6s ease-out',
+        'gradient-xy': 'gradient-xy 6s ease infinite',
+        'fade-in-up': 'fadeInUp 0.5s ease-out forwards',
       },
       keyframes: {
-        float: {
-          '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-10px)' },
+        'gradient-xy': {
+            '0%, 100%': {
+                'background-size': '200% 200%',
+                'background-position': 'left center'
+            },
+            '50%': {
+                'background-size': '200% 200%',
+                'background-position': 'right center'
+            }
         },
-        fadeIn: {
-          '0%': { opacity: '0', transform: 'translateY(20px)' },
+        fadeInUp: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
       },

@@ -144,7 +144,7 @@ const IntegrationsSettings: React.FC<IntegrationsSettingsProps> = ({
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-12 w-12 animate-spin text-sage-green" />
+        <Loader2 className="h-12 w-12 animate-spin text-brand-primary" />
       </div>
     );
   }
@@ -153,10 +153,10 @@ const IntegrationsSettings: React.FC<IntegrationsSettingsProps> = ({
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-2">
+        <h2 className="text-2xl font-bold font-display text-surface-900 mb-2">
           Social Media Integrations
         </h2>
-        <p className="text-deep-charcoal">
+        <p className="text-surface-900">
           Connect your social media accounts to publish content directly from SocialCraft AI
         </p>
       </div>
@@ -166,29 +166,29 @@ const IntegrationsSettings: React.FC<IntegrationsSettingsProps> = ({
         <div
           className={`glass-card rounded-lg p-4 flex items-center ${
             message.type === 'success'
-              ? 'bg-sage-green/10 border-2 border-sage-green/20'
+              ? 'bg-brand-primary/10 border-2 border-brand-primary/20'
               : 'bg-status-error/10 border-2 border-status-error/20'
           }`}
         >
           {message.type === 'success' ? (
-            <CheckCircle className="h-5 w-5 text-sage-green mr-3" />
+            <CheckCircle className="h-5 w-5 text-brand-primary mr-3" />
           ) : (
             <AlertCircle className="h-5 w-5 text-status-error mr-3" />
           )}
-          <span className="text-deep-charcoal">{message.text}</span>
+          <span className="text-surface-900">{message.text}</span>
         </div>
       )}
 
       {/* Connected Accounts Summary */}
-      <div className="glass-card rounded-xl p-6 bg-gradient-to-br from-sage-green/10 to-soft-blue/10 border border-sage-green/20">
+      <div className="glass-card rounded-xl p-6 bg-gradient-to-br from-brand-primary/10 to-soft-blue/10 border border-brand-primary/20">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-deep-charcoal mb-1">Connected Accounts</h3>
-            <p className="text-sm text-deep-charcoal">
+            <h3 className="text-lg font-semibold text-surface-900 mb-1">Connected Accounts</h3>
+            <p className="text-sm text-surface-900">
               {connectedAccounts.length} of {AVAILABLE_PLATFORMS.length} platforms connected
             </p>
           </div>
-          <div className="text-4xl font-bold text-sage-green">
+          <div className="text-4xl font-bold text-brand-primary">
             {connectedAccounts.length}/{AVAILABLE_PLATFORMS.length}
           </div>
         </div>
@@ -196,7 +196,7 @@ const IntegrationsSettings: React.FC<IntegrationsSettingsProps> = ({
 
       {/* Platform Cards */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-deep-charcoal">Available Platforms</h3>
+        <h3 className="text-lg font-semibold text-surface-900">Available Platforms</h3>
 
         {AVAILABLE_PLATFORMS.map((platform) => {
           const connected = isConnected(platform.id);
@@ -209,10 +209,10 @@ const IntegrationsSettings: React.FC<IntegrationsSettingsProps> = ({
               key={platform.id}
               className={`glass-card rounded-xl p-6 transition-all ${
                 connected
-                  ? 'bg-warm-gray border-2 border-sage-green/30'
+                  ? 'bg-surface-100 border-2 border-brand-primary/30'
                   : platform.available
-                  ? 'bg-warm-gray hover:shadow-medium'
-                  : 'bg-warm-gray opacity-60'
+                  ? 'bg-surface-100 hover:shadow-medium'
+                  : 'bg-surface-100 opacity-60'
               }`}
             >
               <div className="flex items-start justify-between">
@@ -229,9 +229,9 @@ const IntegrationsSettings: React.FC<IntegrationsSettingsProps> = ({
                   {/* Details */}
                   <div className="flex-grow">
                     <div className="flex items-center space-x-2 mb-1">
-                      <h4 className="text-lg font-semibold text-deep-charcoal">{platform.name}</h4>
+                      <h4 className="text-lg font-semibold text-surface-900">{platform.name}</h4>
                       {connected && (
-                        <span className="px-2 py-0.5 bg-sage-green text-white text-xs rounded-full flex items-center space-x-1">
+                        <span className="px-2 py-0.5 bg-brand-primary text-white text-xs rounded-full flex items-center space-x-1">
                           <CheckCircle className="h-3 w-3" />
                           <span>Connected</span>
                         </span>
@@ -242,11 +242,11 @@ const IntegrationsSettings: React.FC<IntegrationsSettingsProps> = ({
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-deep-charcoal mb-3">{platform.description}</p>
+                    <p className="text-sm text-surface-900 mb-3">{platform.description}</p>
 
                     {/* Account Details (if connected) */}
                     {connected && account && (
-                      <div className="flex flex-wrap gap-3 text-xs text-deep-charcoal">
+                      <div className="flex flex-wrap gap-3 text-xs text-surface-900">
                         {account.platform_username && (
                           <div className="flex items-center space-x-1">
                             <User className="h-3 w-3" />
@@ -325,11 +325,11 @@ const IntegrationsSettings: React.FC<IntegrationsSettingsProps> = ({
 
       {/* Help Section */}
       <div className="glass-card rounded-xl p-6 bg-soft-blue/10 border border-soft-blue/20">
-        <h3 className="text-lg font-semibold text-deep-charcoal mb-3 flex items-center">
+        <h3 className="text-lg font-semibold text-surface-900 mb-3 flex items-center">
           <AlertCircle className="h-5 w-5 mr-2 text-soft-blue" />
           About Social Integrations
         </h3>
-        <div className="space-y-2 text-sm text-deep-charcoal">
+        <div className="space-y-2 text-sm text-surface-900">
           <p>
             <strong>Secure Authentication:</strong> We use OAuth 2.0 to securely connect your social
             media accounts. Your passwords are never stored.

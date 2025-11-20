@@ -107,11 +107,11 @@ Key Points to Cover:
         <div className="max-w-4xl mx-auto space-y-8">
             <div className="text-center space-y-4">
                 <div className="flex justify-center">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-sage-green to-soft-blue flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-primary to-soft-blue flex items-center justify-center">
                         <BookOpen className="h-8 w-8 text-white" />
                     </div>
                 </div>
-                <h1 className="text-4xl md:text-5xl font-extrabold font-display tracking-tight text-deep-charcoal">
+                <h1 className="text-4xl md:text-5xl font-extrabold font-display tracking-tight text-surface-900">
                     Playbooks
                 </h1>
                 <p className="text-lg text-gray-600">
@@ -124,11 +124,11 @@ Key Points to Cover:
                     <div key={index} className="feature-card p-6">
                         <div className="flex justify-between items-start">
                             <div>
-                                <h2 className="text-xl font-bold font-display text-deep-charcoal mb-2">{playbook.title}</h2>
+                                <h2 className="text-xl font-bold font-display text-surface-900 mb-2">{playbook.title}</h2>
                                 <div className="flex items-center space-x-4 text-sm text-gray-600 mb-4">
                                     <span className="font-medium">{playbook.platform}</span>
                                     <span className="flex items-center">
-                                        <Zap className="h-4 w-4 text-terracotta mr-1" />
+                                        <Zap className="h-4 w-4 text-brand-primary mr-1" />
                                         {playbook.successRate}% Success Rate
                                     </span>
                                 </div>
@@ -136,7 +136,7 @@ Key Points to Cover:
                             </div>
                             <button 
                                 onClick={() => handleUsePlaybook(playbook.content)}
-                                className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-sage-green text-white hover:bg-sage-green/90 transition-colors"
+                                className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-brand-primary text-white hover:bg-brand-primary/90 transition-colors"
                             >
                                 <span>Use Playbook</span>
                                 <ChevronRight className="h-4 w-4" />

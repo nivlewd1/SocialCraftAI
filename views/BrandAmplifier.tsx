@@ -263,12 +263,12 @@ ${post.imagePrompt}` : ''}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-32">
             {/* Configuration Panel */}
             <div className="lg:col-span-4 space-y-6">
-                <div className="glass-card p-6 rounded-2xl sticky top-24">
+                <div className="glass-card p-6 rounded-lg sticky top-24">
                     <div className="flex items-center gap-3 mb-6 border-b border-gray-100 pb-4">
-                        <div className="p-2 bg-terracotta/10 rounded-lg">
-                            <IconZap className="w-5 h-5 text-terracotta" />
+                        <div className="p-2 bg-brand-primary/10 rounded-lg">
+                            <IconZap className="w-5 h-5 text-brand-primary" />
                         </div>
-                        <h2 className="text-xl font-bold text-deep-charcoal">Brand Amplifier</h2>
+                        <h2 className="text-xl font-bold text-surface-900">Brand Amplifier</h2>
                     </div>
 
                     {/* Demo mode for unauthenticated users */}
@@ -289,9 +289,9 @@ ${post.imagePrompt}` : ''}
                         <div className="mb-6 space-y-4">
                             {/* Previous Reports Section */}
                             {previousReports.length > 0 && (
-                                <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl">
-                                    <h4 className="text-sm font-bold text-deep-charcoal mb-3 flex items-center gap-2">
-                                        <FileText className="w-4 h-4 text-sage-green" />
+                                <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                                    <h4 className="text-sm font-bold text-surface-900 mb-3 flex items-center gap-2">
+                                        <FileText className="w-4 h-4 text-brand-primary" />
                                         Your Previous Reports
                                     </h4>
                                     <div className="space-y-2 max-h-32 overflow-y-auto">
@@ -299,13 +299,13 @@ ${post.imagePrompt}` : ''}
                                             <button
                                                 key={report.id}
                                                 onClick={() => handleSelectReport(report)}
-                                                className="w-full text-left p-3 bg-white border border-gray-200 rounded-lg hover:border-sage-green hover:bg-sage-green/5 transition-all flex justify-between items-center group"
+                                                className="w-full text-left p-3 bg-white border border-gray-200 rounded-lg hover:border-brand-primary hover:bg-brand-primary/5 transition-all flex justify-between items-center group"
                                             >
                                                 <div>
-                                                    <span className="text-sm font-medium text-deep-charcoal">{report.niche}</span>
+                                                    <span className="text-sm font-medium text-surface-900">{report.niche}</span>
                                                     <span className="text-xs text-gray-500 ml-2">{report.date}</span>
                                                 </div>
-                                                <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-sage-green transition-colors" />
+                                                <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-brand-primary transition-colors" />
                                             </button>
                                         ))}
                                     </div>
@@ -313,7 +313,7 @@ ${post.imagePrompt}` : ''}
                             )}
 
                             {/* Manual Topic Input */}
-                            <div className="p-4 bg-purple-50 border border-purple-100 rounded-xl">
+                            <div className="p-4 bg-purple-50 border border-purple-100 rounded-lg">
                                 <h4 className="text-sm font-bold text-purple-800 mb-2 flex items-center gap-2">
                                     <Search className="w-4 h-4" />
                                     Quick Generate
@@ -340,7 +340,7 @@ ${post.imagePrompt}` : ''}
                             </div>
 
                             {/* Run Trend Scout CTA */}
-                            <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl flex items-start gap-3">
+                            <div className="p-4 bg-amber-50 border border-amber-100 rounded-lg flex items-start gap-3">
                                 <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                                 <div>
                                     <h4 className="text-sm font-bold text-amber-800">No Active Trend Report</h4>
@@ -364,12 +364,12 @@ ${post.imagePrompt}` : ''}
                         <div className="space-y-4">
                             <div className="flex justify-between items-center">
                                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                                    <User className="w-4 h-4 text-sage-green" />
+                                    <User className="w-4 h-4 text-brand-primary" />
                                     Brand Persona
                                 </label>
                                 <button
                                     onClick={handleSavePersona}
-                                    className="flex items-center gap-1 text-xs font-medium text-sage-green hover:text-terracotta transition-colors"
+                                    className="flex items-center gap-1 text-xs font-medium text-brand-primary hover:text-brand-glow transition-colors"
                                     title="Save to browser storage"
                                 >
                                     <Save className="w-3 h-3" />
@@ -381,21 +381,21 @@ ${post.imagePrompt}` : ''}
                                 <input
                                     value={persona.name}
                                     onChange={(e) => setPersona({ ...persona, name: e.target.value })}
-                                    className="w-full bg-white border border-gray-200 text-deep-charcoal p-3 rounded-xl text-sm focus:ring-2 focus:ring-sage-green/20 focus:border-sage-green outline-none transition-all placeholder:text-gray-400"
+                                    className="w-full bg-white border border-gray-200 text-surface-900 p-3 rounded-lg text-sm focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all placeholder:text-gray-400"
                                     placeholder="Persona Name (e.g., Tech Visionary)"
                                 />
 
                                 <input
                                     value={persona.audience}
                                     onChange={(e) => setPersona({ ...persona, audience: e.target.value })}
-                                    className="w-full bg-white border border-gray-200 text-deep-charcoal p-3 rounded-xl text-sm focus:ring-2 focus:ring-sage-green/20 focus:border-sage-green outline-none transition-all placeholder:text-gray-400"
+                                    className="w-full bg-white border border-gray-200 text-surface-900 p-3 rounded-lg text-sm focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all placeholder:text-gray-400"
                                     placeholder="Target Audience (e.g. CTOs, Gen Z)"
                                 />
 
                                 <textarea
                                     value={persona.tone}
                                     onChange={(e) => setPersona({ ...persona, tone: e.target.value })}
-                                    className="w-full bg-white border border-gray-200 text-deep-charcoal p-3 rounded-xl text-sm h-24 resize-none focus:ring-2 focus:ring-sage-green/20 focus:border-sage-green outline-none transition-all placeholder:text-gray-400"
+                                    className="w-full bg-white border border-gray-200 text-surface-900 p-3 rounded-lg text-sm h-24 resize-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all placeholder:text-gray-400"
                                     placeholder="Define the tone..."
                                 />
                             </div>
@@ -404,7 +404,7 @@ ${post.imagePrompt}` : ''}
                         {/* Platform Section */}
                         <div className="space-y-3">
                             <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                                <Sliders className="w-4 h-4 text-sage-green" />
+                                <Sliders className="w-4 h-4 text-brand-primary" />
                                 Target Platform
                             </label>
                             <div className="grid grid-cols-2 gap-2">
@@ -412,8 +412,8 @@ ${post.imagePrompt}` : ''}
                                     <button
                                         key={p}
                                         onClick={() => setPlatform(p)}
-                                        className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${platform === p
-                                            ? 'bg-deep-charcoal text-white shadow-md transform scale-[1.02]'
+                                        className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${platform === p
+                                            ? 'bg-surface-950 text-white shadow-md transform scale-[1.02]'
                                             : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
                                             }`}
                                     >
@@ -425,10 +425,10 @@ ${post.imagePrompt}` : ''}
 
                         {/* Source Material Info */}
                         {(currentReport || useManualTopic) && (
-                            <div className="bg-sage-green/5 p-4 rounded-xl border border-sage-green/10">
-                                <p className="text-xs font-semibold text-sage-green uppercase tracking-wider mb-1">Active Source</p>
-                                <div className="flex items-center gap-2 text-deep-charcoal font-medium">
-                                    <FileText className="w-4 h-4 text-terracotta" />
+                            <div className="bg-brand-primary/5 p-4 rounded-lg border border-brand-primary/10">
+                                <p className="text-xs font-semibold text-brand-primary uppercase tracking-wider mb-1">Active Source</p>
+                                <div className="flex items-center gap-2 text-surface-900 font-medium">
+                                    <FileText className="w-4 h-4 text-brand-primary" />
                                     <span className="truncate">
                                         {useManualTopic ? `Topic: ${manualTopic}` : `${currentReport?.niche} Briefing`}
                                     </span>
@@ -442,7 +442,7 @@ ${post.imagePrompt}` : ''}
                         <button
                             onClick={handleGenerate}
                             disabled={isGenerating}
-                            className="w-full btn-primary py-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all disabled:opacity-70 disabled:transform-none disabled:cursor-not-allowed"
+                            className="w-full btn-primary py-4 rounded-lg font-bold flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all disabled:opacity-70 disabled:transform-none disabled:cursor-not-allowed"
                         >
                             {isGenerating ? (
                                 <>
@@ -465,16 +465,16 @@ ${post.imagePrompt}` : ''}
                         <button
                             onClick={handleScheduleAll}
                             disabled={isScheduling}
-                            className="flex items-center gap-2 bg-white hover:bg-gray-50 border border-gray-200 text-deep-charcoal px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm hover:shadow-md disabled:opacity-50"
+                            className="flex items-center gap-2 bg-white hover:bg-gray-50 border border-gray-200 text-surface-900 px-5 py-2.5 rounded-lg text-sm font-bold transition-all shadow-sm hover:shadow-md disabled:opacity-50"
                         >
-                            {isScheduling ? <IconRefresh className="animate-spin w-4 h-4" /> : <Calendar className="w-4 h-4 text-sage-green" />}
+                            {isScheduling ? <IconRefresh className="animate-spin w-4 h-4" /> : <Calendar className="w-4 h-4 text-brand-primary" />}
                             Schedule All
                         </button>
                         <button
                             onClick={handleExport}
-                            className="flex items-center gap-2 bg-white hover:bg-gray-50 border border-gray-200 text-deep-charcoal px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm hover:shadow-md"
+                            className="flex items-center gap-2 bg-white hover:bg-gray-50 border border-gray-200 text-surface-900 px-5 py-2.5 rounded-lg text-sm font-bold transition-all shadow-sm hover:shadow-md"
                         >
-                            <Download className="w-4 h-4 text-terracotta" />
+                            <Download className="w-4 h-4 text-brand-primary" />
                             Export
                         </button>
                     </div>
@@ -482,7 +482,7 @@ ${post.imagePrompt}` : ''}
 
                 <div className="space-y-6">
                     {posts.length === 0 && !isGenerating ? (
-                        <div className="flex flex-col items-center justify-center h-96 text-gray-400 border-2 border-dashed border-gray-200 rounded-3xl bg-gray-50/50">
+                        <div className="flex flex-col items-center justify-center h-96 text-gray-400 border-2 border-dashed border-gray-200 rounded-lg bg-gray-50/50">
                             <IconZap className="w-12 h-12 mb-4 opacity-20" />
                             <p className="text-lg font-medium">Generated content cards will appear here.</p>
                         </div>
@@ -493,14 +493,14 @@ ${post.imagePrompt}` : ''}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: idx * 0.1 }}
-                                className="glass-card rounded-2xl p-8 hover:shadow-elevated transition-all duration-300 border border-white/50"
+                                className="glass-card rounded-lg p-8 hover:shadow-elevated transition-all duration-300 border border-white/50"
                             >
                                 <div className="flex justify-between items-start mb-6">
-                                    <span className="bg-deep-charcoal text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wide">
+                                    <span className="bg-surface-950 text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wide">
                                         {post.platform}
                                     </span>
                                     <button
-                                        className="flex items-center gap-2 text-gray-500 hover:text-sage-green px-3 py-1.5 rounded-lg hover:bg-sage-green/5 transition-all"
+                                        className="flex items-center gap-2 text-gray-500 hover:text-brand-primary px-3 py-1.5 rounded-lg hover:bg-brand-primary/5 transition-all"
                                         onClick={() => copyToClipboard(post.content, idx)}
                                         title="Copy content"
                                     >
@@ -518,13 +518,13 @@ ${post.imagePrompt}` : ''}
                                     </button>
                                 </div>
 
-                                <div className="whitespace-pre-wrap text-deep-charcoal mb-8 font-sans text-base leading-relaxed">
+                                <div className="whitespace-pre-wrap text-surface-900 mb-8 font-sans text-base leading-relaxed">
                                     {post.content}
                                 </div>
 
                                 {post.imagePrompt && (
-                                    <div className="mb-6 p-4 bg-terracotta/5 border border-terracotta/20 rounded-xl">
-                                        <span className="flex items-center gap-2 font-bold text-terracotta text-xs uppercase tracking-wider mb-2">
+                                    <div className="mb-6 p-4 bg-brand-primary/5 border border-brand-primary/20 rounded-lg">
+                                        <span className="flex items-center gap-2 font-bold text-brand-primary text-xs uppercase tracking-wider mb-2">
                                             <IconZap className="w-3 h-3" /> Suggested Image Prompt
                                         </span>
                                         <p className="text-sm text-gray-700 italic">
@@ -535,7 +535,7 @@ ${post.imagePrompt}` : ''}
 
                                 <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-100">
                                     {post.hashtags.map((tag, i) => (
-                                        <span key={i} className="text-sage-green text-sm font-medium hover:text-deep-charcoal cursor-pointer transition-colors">
+                                        <span key={i} className="text-brand-primary text-sm font-medium hover:text-surface-900 cursor-pointer transition-colors">
                                             #{tag.replace('#', '')}
                                         </span>
                                     ))}

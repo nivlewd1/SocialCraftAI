@@ -7,14 +7,14 @@ const CheckoutCancelView: React.FC = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4">
-            <div className="max-w-md w-full glass-card rounded-2xl p-8 text-center">
+            <div className="max-w-md w-full glass-card rounded-lg p-8 text-center">
                 {/* Cancel Icon */}
                 <div className="w-20 h-20 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <XCircle className="h-12 w-12 text-white" />
                 </div>
 
                 {/* Cancel Message */}
-                <h1 className="text-3xl font-bold text-deep-charcoal mb-4">
+                <h1 className="text-3xl font-bold text-surface-900 mb-4">
                     Checkout Canceled
                 </h1>
                 <p className="text-gray-600 mb-8">
@@ -22,9 +22,9 @@ const CheckoutCancelView: React.FC = () => {
                 </p>
 
                 {/* Why Subscribe? */}
-                <div className="bg-warm-gray rounded-lg p-6 mb-8 text-left">
-                    <h3 className="font-semibold text-deep-charcoal mb-3 flex items-center">
-                        <HelpCircle className="h-5 w-5 text-sage-green mr-2" />
+                <div className="bg-surface-100 rounded-lg p-6 mb-8 text-left">
+                    <h3 className="font-semibold text-surface-900 mb-3 flex items-center">
+                        <HelpCircle className="h-5 w-5 text-brand-primary mr-2" />
                         Why Subscribe?
                     </h3>
                     <ul className="space-y-2 text-sm text-gray-700">
@@ -47,7 +47,7 @@ const CheckoutCancelView: React.FC = () => {
                     </button>
                     <button
                         onClick={() => navigate('/generator')}
-                        className="w-full bg-white text-sage-green border-2 border-sage-green py-3 px-6 rounded-lg font-semibold hover:bg-sage-green/10 transition-colors"
+                        className="w-full bg-white text-brand-primary border-2 border-brand-primary py-3 px-6 rounded-lg font-semibold hover:bg-brand-primary/10 transition-colors"
                     >
                         Try Free Plan
                     </button>
@@ -58,7 +58,7 @@ const CheckoutCancelView: React.FC = () => {
                     Need help?{' '}
                     <a
                         href="mailto:support@socialcraftai.com"
-                        className="text-sage-green hover:underline font-medium"
+                        className="text-brand-primary hover:underline font-medium"
                     >
                         Contact Support
                     </a>

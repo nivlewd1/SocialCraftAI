@@ -48,10 +48,10 @@ const SettingsView: React.FC = () => {
     <div className="max-w-7xl mx-auto space-y-6 pt-8">
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold font-display text-deep-charcoal mb-2">
+        <h1 className="text-4xl font-bold font-display text-surface-900 mb-2">
           Account <span className="gradient-text">Settings</span>
         </h1>
-        <p className="text-deep-charcoal">Manage your profile, preferences, and subscription</p>
+        <p className="text-surface-900">Manage your profile, preferences, and subscription</p>
       </div>
 
       {/* Toast Notification */}
@@ -60,7 +60,7 @@ const SettingsView: React.FC = () => {
           <div
             className={`shadow-lg rounded-xl px-6 py-4 flex items-center space-x-3 ${
               message.type === 'success'
-                ? 'bg-sage-green text-white'
+                ? 'bg-brand-primary text-white'
                 : 'bg-status-error text-white'
             }`}
           >
@@ -77,7 +77,7 @@ const SettingsView: React.FC = () => {
       <div className="grid lg:grid-cols-4 gap-6">
         {/* Sidebar Navigation */}
         <div className="lg:col-span-1">
-          <nav className="glass-card rounded-2xl p-4 space-y-1">
+          <nav className="glass-card rounded-lg p-4 space-y-1">
             <TabButton
               icon={<User size={18} />}
               label="Profile"
@@ -125,7 +125,7 @@ const SettingsView: React.FC = () => {
 
         {/* Main Content Area */}
         <div className="lg:col-span-3">
-          <div className="glass-card rounded-2xl p-8">
+          <div className="glass-card rounded-lg p-8">
             {activeTab === 'profile' && (
               <ProfileSettings
                 displayName={displayName}
@@ -183,8 +183,8 @@ const TabButton: React.FC<{
     onClick={onClick}
     className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
       active
-        ? 'bg-sage-green text-white shadow-medium'
-        : 'text-deep-charcoal hover:bg-warm-gray'
+        ? 'bg-brand-primary text-white shadow-medium'
+        : 'text-surface-900 hover:bg-surface-100'
     }`}
   >
     {icon}
@@ -202,30 +202,30 @@ const ProfileSettings: React.FC<{
 }> = ({ displayName, setDisplayName, email, setEmail, onSubmit }) => (
   <div className="space-y-6">
     <div>
-      <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-2">Profile Information</h2>
-      <p className="text-deep-charcoal">Update your profile details and avatar</p>
+      <h2 className="text-2xl font-bold font-display text-surface-900 mb-2">Profile Information</h2>
+      <p className="text-surface-900">Update your profile details and avatar</p>
     </div>
 
     <form onSubmit={onSubmit} className="space-y-6">
       {/* Avatar Upload */}
       <div>
-        <label className="block text-sm font-medium text-deep-charcoal mb-3">Profile Picture</label>
+        <label className="block text-sm font-medium text-surface-900 mb-3">Profile Picture</label>
         <div className="flex items-center space-x-4">
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-sage-green to-terracotta flex items-center justify-center text-white text-2xl font-bold">
+          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-brand-primary to-brand-glow flex items-center justify-center text-white text-2xl font-bold">
             {displayName?.charAt(0)?.toUpperCase() || 'U'}
           </div>
           <div>
             <button type="button" className="btn-secondary px-4 py-2 rounded-lg text-sm">
               Upload New
             </button>
-            <p className="text-xs text-deep-charcoal mt-2">JPG, PNG or GIF. Max 2MB.</p>
+            <p className="text-xs text-surface-900 mt-2">JPG, PNG or GIF. Max 2MB.</p>
           </div>
         </div>
       </div>
 
       {/* Display Name */}
       <div>
-        <label className="block text-sm font-medium text-deep-charcoal mb-2">Display Name</label>
+        <label className="block text-sm font-medium text-surface-900 mb-2">Display Name</label>
         <input
           type="text"
           value={displayName}
@@ -237,7 +237,7 @@ const ProfileSettings: React.FC<{
 
       {/* Email */}
       <div>
-        <label className="block text-sm font-medium text-deep-charcoal mb-2">Email Address</label>
+        <label className="block text-sm font-medium text-surface-900 mb-2">Email Address</label>
         <input
           type="email"
           value={email}
@@ -245,18 +245,18 @@ const ProfileSettings: React.FC<{
           className="input-field w-full px-4 py-3 rounded-lg"
           placeholder="your.email@example.com"
         />
-        <p className="text-xs text-deep-charcoal mt-1">This email is used for sign in and notifications</p>
+        <p className="text-xs text-surface-900 mt-1">This email is used for sign in and notifications</p>
       </div>
 
       {/* Bio */}
       <div>
-        <label className="block text-sm font-medium text-deep-charcoal mb-2">Bio</label>
+        <label className="block text-sm font-medium text-surface-900 mb-2">Bio</label>
         <textarea
           rows={4}
           className="input-field w-full px-4 py-3 rounded-lg resize-none"
           placeholder="Tell us about yourself..."
         />
-        <p className="text-xs text-deep-charcoal mt-1">Brief description for your profile. Max 200 characters.</p>
+        <p className="text-xs text-surface-900 mt-1">Brief description for your profile. Max 200 characters.</p>
       </div>
 
       <button type="submit" className="btn-primary px-6 py-3 rounded-lg">
@@ -276,14 +276,14 @@ const AccountSettings: React.FC<{
 }> = ({ timezone, setTimezone, language, setLanguage, onSave }) => (
   <div className="space-y-6">
     <div>
-      <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-2">Account Preferences</h2>
-      <p className="text-deep-charcoal">Manage your regional and display preferences</p>
+      <h2 className="text-2xl font-bold font-display text-surface-900 mb-2">Account Preferences</h2>
+      <p className="text-surface-900">Manage your regional and display preferences</p>
     </div>
 
     <div className="space-y-6">
       {/* Timezone */}
       <div>
-        <label className="block text-sm font-medium text-deep-charcoal mb-2">Timezone</label>
+        <label className="block text-sm font-medium text-surface-900 mb-2">Timezone</label>
         <select
           value={timezone}
           onChange={(e) => setTimezone(e.target.value)}
@@ -299,7 +299,7 @@ const AccountSettings: React.FC<{
 
       {/* Language */}
       <div>
-        <label className="block text-sm font-medium text-deep-charcoal mb-2">Language</label>
+        <label className="block text-sm font-medium text-surface-900 mb-2">Language</label>
         <select
           value={language}
           onChange={(e) => setLanguage(e.target.value)}
@@ -313,8 +313,8 @@ const AccountSettings: React.FC<{
       </div>
 
       {/* Privacy Settings */}
-      <div className="border-t border-warm-gray pt-6">
-        <h3 className="text-lg font-semibold text-deep-charcoal mb-4">Privacy</h3>
+      <div className="border-t border-surface-200 pt-6">
+        <h3 className="text-lg font-semibold text-surface-900 mb-4">Privacy</h3>
         <div className="space-y-3">
           <ToggleSetting label="Make profile public" description="Allow others to see your profile" />
           <ToggleSetting label="Show activity status" description="Let others know when you're active" />
@@ -349,13 +349,13 @@ const NotificationSettings: React.FC<{
 }) => (
   <div className="space-y-6">
     <div>
-      <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-2">Notification Preferences</h2>
-      <p className="text-deep-charcoal">Manage how you receive updates and alerts</p>
+      <h2 className="text-2xl font-bold font-display text-surface-900 mb-2">Notification Preferences</h2>
+      <p className="text-surface-900">Manage how you receive updates and alerts</p>
     </div>
 
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold text-deep-charcoal mb-4">Email Notifications</h3>
+        <h3 className="text-lg font-semibold text-surface-900 mb-4">Email Notifications</h3>
         <div className="space-y-3">
           <ToggleSetting
             label="Email notifications"
@@ -374,8 +374,8 @@ const NotificationSettings: React.FC<{
         </div>
       </div>
 
-      <div className="border-t border-warm-gray pt-6">
-        <h3 className="text-lg font-semibold text-deep-charcoal mb-4">Push Notifications</h3>
+      <div className="border-t border-surface-200 pt-6">
+        <h3 className="text-lg font-semibold text-surface-900 mb-4">Push Notifications</h3>
         <div className="space-y-3">
           <ToggleSetting
             label="Push notifications"
@@ -401,21 +401,21 @@ const SecuritySettings: React.FC<{
 }> = ({ onSubmit }) => (
   <div className="space-y-6">
     <div>
-      <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-2">Security Settings</h2>
-      <p className="text-deep-charcoal">Manage your password and security preferences</p>
+      <h2 className="text-2xl font-bold font-display text-surface-900 mb-2">Security Settings</h2>
+      <p className="text-surface-900">Manage your password and security preferences</p>
     </div>
 
     <form onSubmit={onSubmit} className="space-y-6">
       {/* Change Password */}
-      <div className="glass-card bg-warm-gray rounded-xl p-6">
+      <div className="glass-card bg-surface-100 rounded-xl p-6">
         <div className="flex items-start justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-deep-charcoal mb-2">Change Password</h3>
-            <p className="text-sm text-deep-charcoal mb-4">
+            <h3 className="text-lg font-semibold text-surface-900 mb-2">Change Password</h3>
+            <p className="text-sm text-surface-900 mb-4">
               We'll send you an email with instructions to reset your password
             </p>
           </div>
-          <Lock className="h-6 w-6 text-sage-green" />
+          <Lock className="h-6 w-6 text-brand-primary" />
         </div>
         <button type="submit" className="btn-secondary px-6 py-2 rounded-lg">
           Send Password Reset Email
@@ -423,13 +423,13 @@ const SecuritySettings: React.FC<{
       </div>
 
       {/* Two-Factor Authentication */}
-      <div className="glass-card bg-warm-gray rounded-xl p-6">
+      <div className="glass-card bg-surface-100 rounded-xl p-6">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <h3 className="text-lg font-semibold text-deep-charcoal mb-2">Two-Factor Authentication</h3>
-            <p className="text-sm text-deep-charcoal">Add an extra layer of security to your account</p>
+            <h3 className="text-lg font-semibold text-surface-900 mb-2">Two-Factor Authentication</h3>
+            <p className="text-sm text-surface-900">Add an extra layer of security to your account</p>
           </div>
-          <Shield className="h-6 w-6 text-sage-green" />
+          <Shield className="h-6 w-6 text-brand-primary" />
         </div>
         <button type="button" className="btn-secondary px-6 py-2 rounded-lg">
           Enable 2FA
@@ -438,18 +438,18 @@ const SecuritySettings: React.FC<{
 
       {/* Active Sessions */}
       <div>
-        <h3 className="text-lg font-semibold text-deep-charcoal mb-4">Active Sessions</h3>
-        <div className="glass-card bg-warm-gray rounded-xl p-6">
+        <h3 className="text-lg font-semibold text-surface-900 mb-4">Active Sessions</h3>
+        <div className="glass-card bg-surface-100 rounded-xl p-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <div className="font-medium text-deep-charcoal flex items-center">
+              <div className="font-medium text-surface-900 flex items-center">
                 Current Browser Session
-                <span className="ml-2 px-2 py-0.5 bg-sage-green text-white text-xs rounded-full">Active</span>
+                <span className="ml-2 px-2 py-0.5 bg-brand-primary text-white text-xs rounded-full">Active</span>
               </div>
-              <div className="text-sm text-deep-charcoal mt-1">You are currently signed in</div>
+              <div className="text-sm text-surface-900 mt-1">You are currently signed in</div>
             </div>
           </div>
-          <p className="text-sm text-deep-charcoal">
+          <p className="text-sm text-surface-900">
             Advanced session management (view all devices, remote sign out) will be available in a future update.
           </p>
         </div>
@@ -468,7 +468,7 @@ const BillingSettings: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sage-green"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div>
       </div>
     );
   }
@@ -541,15 +541,15 @@ const BillingSettings: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-2">Billing & Subscription</h2>
-        <p className="text-deep-charcoal">Manage your subscription and payment methods</p>
+        <h2 className="text-2xl font-bold font-display text-surface-900 mb-2">Billing & Subscription</h2>
+        <p className="text-surface-900">Manage your subscription and payment methods</p>
       </div>
 
       {/* Current Plan Card */}
-      <div className={`glass-card rounded-2xl p-8 text-white ${
+      <div className={`glass-card rounded-lg p-8 text-white ${
         isFreePlan
           ? 'bg-gradient-to-br from-gray-600 to-gray-700'
-          : 'bg-gradient-to-br from-sage-green to-soft-blue'
+          : 'bg-gradient-to-br from-brand-primary to-soft-blue'
       }`}>
         <div className="flex items-start justify-between mb-6">
           <div>
@@ -616,7 +616,7 @@ const BillingSettings: React.FC = () => {
           {isFreePlan && (
             <button
               onClick={() => navigate('/pricing')}
-              className="bg-white text-sage-green px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-all flex items-center space-x-2"
+              className="bg-white text-brand-primary px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-all flex items-center space-x-2"
             >
               <ArrowUpCircle className="h-5 w-5" />
               <span>Upgrade to Pro</span>
@@ -638,7 +638,7 @@ const BillingSettings: React.FC = () => {
                   }
                 }}
                 disabled={portalLoading}
-                className="bg-white text-sage-green px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-all flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-white text-brand-primary px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-all flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <CreditCard className="h-5 w-5" />
                 <span>{portalLoading ? 'Loading...' : 'Manage Subscription'}</span>
@@ -655,7 +655,7 @@ const BillingSettings: React.FC = () => {
           {isEnterprise && (
             <button
               onClick={() => window.location.href = 'mailto:sales@socialcraftai.com?subject=Enterprise Support'}
-              className="bg-white text-sage-green px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-all flex items-center space-x-2"
+              className="bg-white text-brand-primary px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-all flex items-center space-x-2"
             >
               <ExternalLink className="h-5 w-5" />
               <span>Contact Support</span>
@@ -667,11 +667,11 @@ const BillingSettings: React.FC = () => {
       {/* Plan Features */}
       {currentPlan && (
         <div>
-          <h3 className="text-lg font-semibold text-deep-charcoal mb-4">Your Plan Includes</h3>
+          <h3 className="text-lg font-semibold text-surface-900 mb-4">Your Plan Includes</h3>
           <div className="grid md:grid-cols-2 gap-3">
             {currentPlan.features.map((feature, idx) => (
               <div key={idx} className="flex items-start space-x-2 text-sm">
-                <CheckCircle className="h-5 w-5 text-sage-green flex-shrink-0 mt-0.5" />
+                <CheckCircle className="h-5 w-5 text-brand-primary flex-shrink-0 mt-0.5" />
                 <span className="text-gray-700">{feature}</span>
               </div>
             ))}
@@ -682,14 +682,14 @@ const BillingSettings: React.FC = () => {
       {/* Payment Method (Phase 2) */}
       {isPaidPlan && (
         <div>
-          <h3 className="text-lg font-semibold text-deep-charcoal mb-4">Payment Method</h3>
-          <div className="glass-card bg-warm-gray rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-surface-900 mb-4">Payment Method</h3>
+          <div className="glass-card bg-surface-100 rounded-xl p-6">
             {subscription.stripeCustomerId ? (
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <CreditCard className="h-5 w-5 text-sage-green" />
+                  <CreditCard className="h-5 w-5 text-brand-primary" />
                   <div>
-                    <p className="font-medium text-deep-charcoal">Card on file</p>
+                    <p className="font-medium text-surface-900">Card on file</p>
                     <p className="text-sm text-gray-600">Manage via Stripe Customer Portal</p>
                   </div>
                 </div>
@@ -727,8 +727,8 @@ const BillingSettings: React.FC = () => {
       {/* Billing History (Phase 2) */}
       {isPaidPlan && (
         <div>
-          <h3 className="text-lg font-semibold text-deep-charcoal mb-4">Billing History</h3>
-          <div className="glass-card bg-warm-gray rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-surface-900 mb-4">Billing History</h3>
+          <div className="glass-card bg-surface-100 rounded-xl p-6">
             <p className="text-gray-600 text-sm">
               Billing history will be available in Phase 2 via Stripe Customer Portal
             </p>
@@ -738,11 +738,11 @@ const BillingSettings: React.FC = () => {
 
       {/* Upgrade CTA for Free Users */}
       {isFreePlan && (
-        <div className="glass-card rounded-2xl p-8 bg-gradient-to-br from-sage-green/10 to-terracotta/10 border border-sage-green/20">
+        <div className="glass-card rounded-lg p-8 bg-gradient-to-br from-brand-primary/10 to-brand-glow/10 border border-brand-primary/20">
           <div className="flex items-start space-x-4">
-            <Sparkles className="h-8 w-8 text-sage-green flex-shrink-0" />
+            <Sparkles className="h-8 w-8 text-brand-primary flex-shrink-0" />
             <div className="flex-grow">
-              <h3 className="text-xl font-bold text-deep-charcoal mb-2">
+              <h3 className="text-xl font-bold text-surface-900 mb-2">
                 Unlock More with Pro
               </h3>
               <p className="text-gray-700 mb-4">
@@ -766,20 +766,20 @@ const BillingSettings: React.FC = () => {
 const DangerZone: React.FC = () => (
   <div className="space-y-6">
     <div>
-      <h2 className="text-2xl font-bold font-display text-deep-charcoal mb-2">Danger Zone</h2>
-      <p className="text-deep-charcoal">Irreversible actions that affect your account</p>
+      <h2 className="text-2xl font-bold font-display text-surface-900 mb-2">Danger Zone</h2>
+      <p className="text-surface-900">Irreversible actions that affect your account</p>
     </div>
 
     <div className="space-y-4">
       {/* Export Data */}
-      <div className="border-2 border-warm-gray rounded-xl p-6">
+      <div className="border-2 border-surface-200 rounded-xl p-6">
         <div className="flex items-start justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-deep-charcoal mb-2 flex items-center">
+            <h3 className="text-lg font-semibold text-surface-900 mb-2 flex items-center">
               <Download className="h-5 w-5 mr-2 text-soft-blue" />
               Export Your Data
             </h3>
-            <p className="text-sm text-deep-charcoal mb-4">
+            <p className="text-sm text-surface-900 mb-4">
               Download all your content, drafts, and analytics in a portable format
             </p>
             <button className="btn-secondary px-6 py-2 rounded-lg">
@@ -817,10 +817,10 @@ const ToggleSetting: React.FC<{
   checked?: boolean;
   onChange?: (value: boolean) => void;
 }> = ({ label, description, checked = false, onChange }) => (
-  <div className="flex items-center justify-between p-4 glass-card bg-warm-gray rounded-lg">
+  <div className="flex items-center justify-between p-4 glass-card bg-surface-100 rounded-lg">
     <div>
-      <div className="font-medium text-deep-charcoal">{label}</div>
-      <div className="text-sm text-deep-charcoal">{description}</div>
+      <div className="font-medium text-surface-900">{label}</div>
+      <div className="text-sm text-surface-900">{description}</div>
     </div>
     <label className="relative inline-flex items-center cursor-pointer">
       <input
@@ -829,7 +829,7 @@ const ToggleSetting: React.FC<{
         checked={checked}
         onChange={(e) => onChange?.(e.target.checked)}
       />
-      <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-sage-green rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sage-green"></div>
+      <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-brand-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-primary"></div>
     </label>
   </div>
 );
@@ -841,13 +841,13 @@ const SessionCard: React.FC<{
   lastActive: string;
   current?: boolean;
 }> = ({ device, location, lastActive, current }) => (
-  <div className="flex items-center justify-between p-4 glass-card bg-warm-gray rounded-lg">
+  <div className="flex items-center justify-between p-4 glass-card bg-surface-100 rounded-lg">
     <div>
-      <div className="font-medium text-deep-charcoal flex items-center">
+      <div className="font-medium text-surface-900 flex items-center">
         {device}
-        {current && <span className="ml-2 px-2 py-0.5 bg-sage-green text-white text-xs rounded-full">Current</span>}
+        {current && <span className="ml-2 px-2 py-0.5 bg-brand-primary text-white text-xs rounded-full">Current</span>}
       </div>
-      <div className="text-sm text-deep-charcoal">{location} • {lastActive}</div>
+      <div className="text-sm text-surface-900">{location} • {lastActive}</div>
     </div>
     {!current && (
       <button className="text-sm text-status-error hover:text-status-error/80 font-medium">
@@ -867,13 +867,13 @@ const UsageCard: React.FC<{
 
   return (
     <div className="glass-card rounded-xl p-4">
-      <div className="text-sm text-deep-charcoal mb-2">{label}</div>
-      <div className="text-2xl font-bold text-deep-charcoal mb-2">
-        {value} <span className="text-sm font-normal text-deep-charcoal">/ {max}</span>
+      <div className="text-sm text-surface-900 mb-2">{label}</div>
+      <div className="text-2xl font-bold text-surface-900 mb-2">
+        {value} <span className="text-sm font-normal text-surface-900">/ {max}</span>
       </div>
-      <div className="w-full bg-warm-gray rounded-full h-2">
+      <div className="w-full bg-surface-100 rounded-full h-2">
         <div
-          className="bg-gradient-to-r from-sage-green to-terracotta h-2 rounded-full transition-all"
+          className="bg-gradient-to-r from-brand-primary to-brand-glow h-2 rounded-full transition-all"
           style={{ width: `${percentage}%` }}
         ></div>
       </div>

@@ -43,47 +43,47 @@ const AcademicModeView: React.FC = () => {
                 <h1 className="text-4xl md:text-5xl font-extrabold font-display tracking-tight">
                     Academic <span className="gradient-text">Dissemination Mode</span>
                 </h1>
-                <p className="mt-4 max-w-2xl mx-auto text-lg text-deep-charcoal">
+                <p className="mt-4 max-w-2xl mx-auto text-lg text-surface-900">
                     Translate dense research papers into accessible social media content. Bridge the gap between academia and the public.
                 </p>
             </div>
 
-            <div className="max-w-4xl mx-auto glass-card rounded-2xl p-8 space-y-6">
+            <div className="max-w-4xl mx-auto glass-card rounded-lg p-8 space-y-6">
                 <div>
-                    <label className="block text-sm font-medium text-deep-charcoal mb-2">1. Your Research Abstract/URL:</label>
+                    <label className="block text-sm font-medium text-surface-900 mb-2">1. Your Research Abstract/URL:</label>
                     <textarea
                         value={sourceContent}
                         onChange={(e) => setSourceContent(e.target.value)}
                         placeholder="Paste your arXiv URL or the full abstract of your academic paper here..."
-                        className="w-full h-48 p-4 rounded-lg transition-all text-deep-charcoal placeholder-deep-charcoal resize-none input-field"
+                        className="w-full h-48 p-4 rounded-lg transition-all text-surface-900 placeholder-surface-700 resize-none input-field"
                     />
                 </div>
 
                  <div>
-                    <label className="block text-sm font-medium text-deep-charcoal mb-2 flex items-center">
+                    <label className="block text-sm font-medium text-surface-900 mb-2 flex items-center">
                         <UserCheck size={14} className="mr-2 text-green-600"/> 2. Researcher's Perspective (Optional):
                     </label>
                      <textarea
                         value={authorsVoice}
                         onChange={(e) => setAuthorsVoice(e.target.value)}
                         placeholder="Add a personal insight, the 'aha!' moment of the discovery, or the real-world implication of this research..."
-                        className="w-full h-24 p-4 rounded-lg transition-all text-deep-charcoal placeholder-deep-charcoal resize-none input-field"
+                        className="w-full h-24 p-4 rounded-lg transition-all text-surface-900 placeholder-surface-700 resize-none input-field"
                     />
-                     <p className="text-xs text-deep-charcoal mt-1">This helps humanize your research and demonstrate first-hand experience (E-E-A-T).</p>
+                     <p className="text-xs text-surface-900 mt-1">This helps humanize your research and demonstrate first-hand experience (E-E-A-T).</p>
                 </div>
 
 
                 <div className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-deep-charcoal mb-2">3. Select Platforms & Formats:</label>
+                        <label className="block text-sm font-medium text-surface-900 mb-2">3. Select Platforms & Formats:</label>
                         <AdvancedPlatformSelector selections={platformSelections} onSelectionChange={setPlatformSelections} />
                     </div>
                      <div>
-                        <label className="block text-sm font-medium text-deep-charcoal mb-2">4. Select a Tone (Optional):</label>
+                        <label className="block text-sm font-medium text-surface-900 mb-2">4. Select a Tone (Optional):</label>
                         <ToneSelector selectedTone={tone} onToneChange={setTone} />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-deep-charcoal mb-2">5. Optimize for Search Intent (Optional):</label>
+                        <label className="block text-sm font-medium text-surface-900 mb-2">5. Optimize for Search Intent (Optional):</label>
                         <SearchIntentSelector selectedIntent={searchIntent} onIntentChange={setSearchIntent} />
                     </div>
                 </div>

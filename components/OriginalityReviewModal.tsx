@@ -21,26 +21,26 @@ const OriginalityReviewModal: React.FC<OriginalityReviewModalProps> = ({ isOpen,
 
     return (
         <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4 animate-fade-in" onClick={onClose}>
-            <div className="bg-warm-gray rounded-2xl p-8 shadow-2xl max-w-lg w-full" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-surface-100 rounded-lg p-8 shadow-2xl max-w-lg w-full" onClick={(e) => e.stopPropagation()}>
                 <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-xl font-bold font-display text-deep-charcoal">Content Originality & Value Review</h3>
+                    <h3 className="text-xl font-bold font-display text-surface-900">Content Originality & Value Review</h3>
                      <button
                         onClick={onClose}
-                        className="p-2 rounded-full bg-warm-gray hover:bg-warm-gray/80 text-deep-charcoal transition-colors"
+                        className="p-2 rounded-full bg-surface-100 hover:bg-surface-100/80 text-surface-900 transition-colors"
                         aria-label="Close"
                     >
                         <X size={20} />
                     </button>
                 </div>
-                <p className="text-deep-charcoal mb-6">
+                <p className="text-surface-900 mb-6">
                     Use this checklist to ensure your AI-assisted content is original, helpful, and provides unique value to your audience. This is key to creating "people-first" content.
                 </p>
-                
+
                 <ul className="space-y-4">
                     {checklistItems.map((item, index) => (
                         <li key={index} className="flex items-start">
-                            <CheckCircle className="h-5 w-5 text-sage-green mr-3 mt-0.5 flex-shrink-0" />
-                            <span className="text-deep-charcoal">{item}</span>
+                            <CheckCircle className="h-5 w-5 text-brand-primary mr-3 mt-0.5 flex-shrink-0" />
+                            <span className="text-surface-900">{item}</span>
                         </li>
                     ))}
                 </ul>

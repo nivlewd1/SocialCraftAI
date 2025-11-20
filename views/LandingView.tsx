@@ -67,7 +67,7 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
   return (
     <div className="min-h-screen overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative pt-32 pb-24 overflow-hidden bg-gradient-to-br from-[#f5f5f4] via-[#ffffff] to-[#e8e6e1]">
+      <section className="relative pt-32 pb-24 overflow-hidden bg-gradient-to-br from-surface-50 via-white to-surface-100">
         
         {/* Visual Enhancement: Tech Grid Background Pattern */}
         <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none" 
@@ -75,7 +75,7 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
         </div>
 
         {/* Visual Enhancement: Ambient Aura to blend Globe with Light Background */}
-        <div className="absolute right-0 top-1/4 w-[800px] h-[800px] bg-[#8B9A8B] rounded-full mix-blend-multiply filter blur-[128px] opacity-10 pointer-events-none translate-x-1/2"></div>
+        <div className="absolute right-0 top-1/4 w-[800px] h-[800px] bg-brand-primary rounded-full mix-blend-multiply filter blur-[128px] opacity-10 pointer-events-none translate-x-1/2"></div>
 
         <div className="container mx-auto px-6 relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -87,20 +87,20 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
               variants={containerVariants}
             >
               <motion.div variants={itemVariants} className="inline-flex items-center px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-sm border border-stone-200">
-                <Sparkles className="h-4 w-4 text-[#C4A484] mr-2" />
+                <Sparkles className="h-4 w-4 text-brand-glow mr-2" />
                 <span className="text-sm font-medium text-slate-800">Algorithm-Optimized Content Engine</span>
               </motion.div>
 
               <motion.h1 variants={itemVariants} className="text-5xl lg:text-7xl font-extrabold font-display text-slate-900 leading-tight tracking-tight">
                 Create Content That{' '}
                 <span className="relative inline-block">
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#7A897A] via-[#8B9A8B] to-[#C4A484]">Gets Discovered</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-indigo-500 to-brand-glow">Gets Discovered</span>
                   {/* Enhanced Underline Animation */}
                   <svg className="absolute -bottom-3 left-0 w-full h-3" viewBox="0 0 300 12" fill="none">
-                    <motion.path 
-                      d="M2 10C100 2 200 2 298 10" 
-                      stroke="url(#gradient)" 
-                      strokeWidth="4" 
+                    <motion.path
+                      d="M2 10C100 2 200 2 298 10"
+                      stroke="url(#gradient)"
+                      strokeWidth="4"
                       strokeLinecap="round"
                       initial={{ pathLength: 0, opacity: 0 }}
                       animate={{ pathLength: 1, opacity: 1 }}
@@ -108,8 +108,8 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
                     />
                     <defs>
                       <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#8B9A8B" />
-                        <stop offset="100%" stopColor="#C4A484" />
+                        <stop offset="0%" stopColor="#4F46E5" />
+                        <stop offset="100%" stopColor="#a78bfa" />
                       </linearGradient>
                     </defs>
                   </svg>
@@ -123,14 +123,14 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
               <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 pt-2">
                 <button
                   onClick={handleGetStarted}
-                  className="px-8 py-4 rounded-2xl font-semibold text-lg text-white bg-slate-900 shadow-xl hover:shadow-2xl hover:bg-slate-800 hover:-translate-y-1 transition-all flex items-center justify-center group"
+                  className="px-8 py-4 rounded-xl font-semibold text-lg text-white bg-slate-900 shadow-xl hover:shadow-2xl hover:bg-slate-800 hover:-translate-y-1 transition-all flex items-center justify-center group"
                 >
                   Start Creating Content
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </button>
                 <button
                   onClick={handleTryDemo}
-                  className="px-8 py-4 rounded-2xl font-semibold text-lg text-slate-700 bg-white border border-stone-200 shadow-sm hover:border-stone-300 hover:shadow-md transition-all flex items-center justify-center"
+                  className="px-8 py-4 rounded-xl font-semibold text-lg text-slate-700 bg-white border border-stone-200 shadow-sm hover:border-stone-300 hover:shadow-md transition-all flex items-center justify-center"
                 >
                   Try Demo
                 </button>
@@ -139,13 +139,13 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
               <motion.div variants={itemVariants} className="flex items-center space-x-8 pt-4">
                 <div className="flex -space-x-3">
                   {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="w-12 h-12 rounded-full bg-gradient-to-br from-[#8B9A8B] to-[#C4A484] border-[3px] border-white flex items-center justify-center text-white text-sm font-bold shadow-sm">
+                    <div key={i} className="w-12 h-12 rounded-full bg-gradient-to-br from-brand-primary to-brand-glow border-[3px] border-white flex items-center justify-center text-white text-sm font-bold shadow-sm">
                       {String.fromCharCode(64 + i)}
                     </div>
                   ))}
                 </div>
                 <div>
-                  <div className="flex items-center text-[#C4A484] mb-1">
+                  <div className="flex items-center text-brand-glow mb-1">
                     {'★★★★★'.split('').map((star, i) => <span key={i} className="text-lg">{star}</span>)}
                   </div>
                   <p className="text-sm text-slate-500">Trusted by <span className="font-bold text-slate-800">10,000+</span> creators</p>
@@ -161,8 +161,8 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
               transition={{ duration: 0.8, delay: 0.2 }}
             >
                 {/* 1. Backlighting Integration (The Bridge) */}
-                {/* Using dark sage to bridge the black space globe to the light background */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-[#2C3E50] rounded-full blur-[80px] opacity-20 pointer-events-none mix-blend-multiply"></div>
+                {/* Using dark surface to bridge the black space globe to the light background */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-surface-900 rounded-full blur-[80px] opacity-20 pointer-events-none mix-blend-multiply"></div>
 
                 {/* 2. The Photorealistic Globe */}
                 <div className="relative z-10 w-96 h-96 rounded-full group">
@@ -187,10 +187,10 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
                         />
 
                         {/* Inner Shading - Adjusted for Palette Harmony */}
-                        <div className="absolute inset-0 rounded-full shadow-[inset_30px_0px_60px_0px_rgba(0,0,0,0.9),inset_-10px_0px_40px_0px_rgba(139,154,139,0.4)] pointer-events-none"></div>
-                        
+                        <div className="absolute inset-0 rounded-full shadow-[inset_30px_0px_60px_0px_rgba(0,0,0,0.9),inset_-10px_0px_40px_0px_rgba(79,70,229,0.4)] pointer-events-none"></div>
+
                         {/* Top Atmospheric Reflection */}
-                        <div className="absolute -top-12 left-0 right-0 h-48 bg-gradient-to-b from-[#C4A484]/20 to-transparent blur-2xl pointer-events-none rounded-t-full"></div>
+                        <div className="absolute -top-12 left-0 right-0 h-48 bg-gradient-to-b from-brand-glow/20 to-transparent blur-2xl pointer-events-none rounded-t-full"></div>
                     </div>
                 </div>
 
@@ -219,7 +219,7 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
                         >
                             <motion.div
                                 // REFINED GLASS ICON STYLING
-                                className="w-18 h-18 p-4 rounded-2xl flex items-center justify-center pointer-events-auto cursor-pointer bg-white/90 backdrop-blur-xl border border-white/50 transition-all duration-300"
+                                className="w-18 h-18 p-4 rounded-xl flex items-center justify-center pointer-events-auto cursor-pointer bg-white/90 backdrop-blur-xl border border-white/50 transition-all duration-300"
                                 style={{
                                     // Colored Shadow matching brand
                                     boxShadow: `0 8px 32px -8px ${platform.color}55`
@@ -260,7 +260,7 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-4xl lg:text-5xl font-bold font-display text-slate-900">
-              Algorithm-Powered <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B9A8B] to-[#C4A484]">Content Engine</span>
+              Algorithm-Powered <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-glow">Content Engine</span>
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
               Create content that every platform's algorithm loves. Our AI understands each platform's unique ranking factors.
@@ -270,7 +270,7 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
             <FeatureCard
               icon={<BookOpen className="h-8 w-8" />}
-              iconColor="from-[#8B9A8B] to-[#7A897A]"
+              iconColor="from-brand-primary to-indigo-600"
               title="Platform Algorithm Mastery"
               description="Our AI adapts your content to each platform's discovery algorithm—Twitter's engagement metrics, LinkedIn's dwell time, Instagram's visual signals."
               features={[
@@ -284,7 +284,7 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
 
             <FeatureCard
               icon={<MessageSquare className="h-8 w-8" />}
-              iconColor="from-[#C4A484] to-[#B39373]"
+              iconColor="from-brand-glow to-purple-400"
               title="Viral Playbooks"
               description="Access proven content frameworks with 85-94% success rates, each optimized for platform algorithms and user behavior patterns."
               features={[
@@ -314,7 +314,7 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
       </section>
 
       {/* CTA Section */}
-      <section id="pricing" className="py-24 bg-gradient-to-br from-[#8B9A8B] via-[#9CA99C] to-[#8B9A8B] relative overflow-hidden">
+      <section id="pricing" className="py-24 bg-gradient-to-br from-brand-primary via-indigo-500 to-brand-primary relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
@@ -336,7 +336,7 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <button
                 onClick={handleGetStarted}
-                className="bg-white text-[#5A665A] px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-50 transition-all shadow-lg inline-flex items-center justify-center group"
+                className="bg-white text-surface-900 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-50 transition-all shadow-lg inline-flex items-center justify-center group"
               >
                 Start Free Trial
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -365,7 +365,7 @@ const FeatureCard: React.FC<{
   delay?: number;
 }> = ({ icon, iconColor, title, description, features = [], delay = 0 }) => (
   <motion.div
-    className="feature-card p-8 group bg-white rounded-3xl border border-stone-200 shadow-sm hover:shadow-xl transition-all duration-300"
+    className="feature-card p-8 group bg-white rounded-lg border border-stone-200 shadow-sm hover:shadow-xl transition-all duration-300"
     initial={{ opacity: 0, y: 30 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
@@ -381,7 +381,7 @@ const FeatureCard: React.FC<{
       <ul className="space-y-3">
         {features.map((feature, index) => (
           <li key={index} className="flex items-start text-sm text-slate-600">
-            <span className="text-[#8B9A8B] mr-2 mt-1">•</span>
+            <span className="text-brand-primary mr-2 mt-1">•</span>
             <span>{feature}</span>
           </li>
         ))}

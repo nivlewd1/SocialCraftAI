@@ -59,16 +59,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
       onClick={onClose}
     >
       <div
-        className="glass-card rounded-2xl p-8 max-w-md w-full shadow-elevated animate-fade-in"
+        className="glass-card rounded-lg p-8 max-w-md w-full shadow-elevated animate-fade-in"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold font-display text-deep-charcoal">
+          <h2 className="text-2xl font-bold font-display text-surface-900">
             {isSignUp ? 'Create Account' : 'Sign In'}
           </h2>
           <button
             onClick={onClose}
-            className="text-deep-charcoal hover:text-sage-green transition-colors"
+            className="text-surface-900 hover:text-brand-primary transition-colors"
           >
             ✕
           </button>
@@ -81,7 +81,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
         )}
 
         {message && (
-          <div className="bg-sage-green/10 border border-sage-green/20 text-sage-green px-4 py-3 rounded-lg mb-4">
+          <div className="bg-brand-primary/10 border border-brand-primary/20 text-brand-primary px-4 py-3 rounded-lg mb-4">
             {message}
           </div>
         )}
@@ -89,7 +89,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
         <form onSubmit={handleEmailAuth} className="space-y-4">
           {isSignUp && (
             <div>
-              <label className="block text-sm font-medium text-deep-charcoal mb-2">
+              <label className="block text-sm font-medium text-surface-900 mb-2">
                 Full Name
               </label>
               <input
@@ -103,7 +103,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-deep-charcoal mb-2">
+            <label className="block text-sm font-medium text-surface-900 mb-2">
               Email
             </label>
             <input
@@ -117,7 +117,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-deep-charcoal mb-2">
+            <label className="block text-sm font-medium text-surface-900 mb-2">
               Password
             </label>
             <input
@@ -141,9 +141,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
         </form>
 
         <div className="my-6 flex items-center">
-          <div className="flex-1 border-t border-warm-gray"></div>
-          <span className="px-4 text-sm text-deep-charcoal">or</span>
-          <div className="flex-1 border-t border-warm-gray"></div>
+          <div className="flex-1 border-t border-surface-100"></div>
+          <span className="px-4 text-sm text-surface-900">or</span>
+          <div className="flex-1 border-t border-surface-100"></div>
         </div>
 
         <div className="space-y-3">
@@ -176,7 +176,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
           <button
             onClick={() => handleOAuthSignIn('github')}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 bg-deep-charcoal text-white py-3 px-4 rounded-lg hover:bg-deep-charcoal/80 transition-all disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-3 bg-surface-950 text-white py-3 px-4 rounded-lg hover:bg-surface-950/80 transition-all disabled:opacity-50"
           >
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
@@ -188,7 +188,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
         <div className="mt-6 text-center">
           <button
             onClick={() => setIsSignUp(!isSignUp)}
-            className="text-sm text-sage-green hover:underline transition-colors"
+            className="text-sm text-brand-primary hover:underline transition-colors"
           >
             {isSignUp
               ? 'Already have an account? Sign in'

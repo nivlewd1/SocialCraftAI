@@ -4,7 +4,7 @@ import { Twitter, Linkedin, Instagram, Mail } from 'lucide-react';
 
 const Footer: React.FC = () => {
     return (
-        <footer className="bg-deep-charcoal text-white mt-24">
+        <footer className="bg-surface-950 text-white mt-24">
             <div className="max-w-7xl mx-auto px-6 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {/* Brand */}
@@ -14,13 +14,13 @@ const Footer: React.FC = () => {
                             AI-powered social media content generation for creators, marketers, and businesses.
                         </p>
                         <div className="flex space-x-4">
-                            <a href="https://twitter.com/socialcraftai" className="hover:text-sage-green transition-colors">
+                            <a href="https://twitter.com/socialcraftai" className="hover:text-brand-primary transition-colors">
                                 <Twitter className="h-5 w-5" />
                             </a>
-                            <a href="https://linkedin.com/company/socialcraftai" className="hover:text-sage-green transition-colors">
+                            <a href="https://linkedin.com/company/socialcraftai" className="hover:text-brand-primary transition-colors">
                                 <Linkedin className="h-5 w-5" />
                             </a>
-                            <a href="https://instagram.com/socialcraftai" className="hover:text-sage-green transition-colors">
+                            <a href="https://instagram.com/socialcraftai" className="hover:text-brand-primary transition-colors">
                                 <Instagram className="h-5 w-5" />
                             </a>
                         </div>

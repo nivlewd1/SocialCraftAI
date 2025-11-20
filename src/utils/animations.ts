@@ -135,8 +135,8 @@ function initInteractiveElements() {
 export function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = `fixed top-20 right-6 z-50 p-4 rounded-lg shadow-lg max-w-sm ${
-        type === 'success' ? 'bg-sage-green text-white' :
-        type === 'warning' ? 'bg-terracotta text-white' :
+        type === 'success' ? 'bg-brand-primary text-white' :
+        type === 'warning' ? 'bg-brand-glow text-white' :
         type === 'error' ? 'bg-status-error text-white' :
         'bg-soft-blue text-white'
     }`;
