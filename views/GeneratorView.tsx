@@ -183,6 +183,10 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                                     </button>
                                 </div>
                             </div>
+                            <p className="text-xs text-gray-500 flex items-center gap-2">
+                                <span className="inline-block w-1 h-1 bg-gray-400 rounded-full"></span>
+                                <span><strong>Tip:</strong> Paste a blog URL, YouTube link, or describe your topic. The more context you provide, the better the output.</span>
+                            </p>
                         </motion.div>
 
                         {/* Section 2: Author's Voice */}
@@ -206,6 +210,9 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                                 />
                                 <PenTool className="absolute top-4 right-4 w-4 h-4 text-gray-300" />
                             </div>
+                            <p className="text-xs text-gray-500">
+                                <strong>Example:</strong> "As a SaaS founder who grew from 0 to $1M ARR..." or "In my 10 years of marketing experience..."
+                            </p>
                         </motion.div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

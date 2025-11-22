@@ -182,12 +182,18 @@ const ImageGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
     
     return (
         <div className="glass-card rounded-lg p-8 space-y-6">
-            <textarea
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder={uploadedImage ? "Describe the edits you want to make..." : "e.g., A robot holding a red skateboard."}
-                className="w-full h-24 p-4 rounded-lg text-surface-900 placeholder-surface-700 resize-none input-field"
-            />
+            <div className="space-y-2">
+                <label className="block text-sm font-medium text-surface-900">Describe your image</label>
+                <textarea
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    placeholder={uploadedImage ? "Describe the edits you want to make..." : "e.g., A robot holding a red skateboard in a neon-lit city"}
+                    className="w-full h-24 p-4 rounded-lg text-surface-900 placeholder-surface-700 resize-none input-field"
+                />
+                <p className="text-xs text-gray-500">
+                    <strong>Tips:</strong> Be specific about style, colors, and composition. E.g., "A minimalist tech workspace with soft natural lighting, isometric view, clean white background"
+                </p>
+            </div>
              <div className="space-y-2">
                  <label className="block text-sm font-medium text-surface-900">Upload an Image to Edit (Optional)</label>
                  {uploadedImage ? (
@@ -436,12 +442,18 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
                 </div>
             ) : (
                 <>
-                    <textarea
-                        value={prompt}
-                        onChange={(e) => setPrompt(e.target.value)}
-                        placeholder="e.g., A neon hologram of a cat driving at top speed"
-                        className="w-full h-24 p-4 rounded-lg text-surface-900 placeholder-surface-700 resize-none input-field"
-                    />
+                    <div className="space-y-2">
+                        <label className="block text-sm font-medium text-surface-900">Describe your video</label>
+                        <textarea
+                            value={prompt}
+                            onChange={(e) => setPrompt(e.target.value)}
+                            placeholder="e.g., A neon hologram of a cat driving at top speed through a futuristic city"
+                            className="w-full h-24 p-4 rounded-lg text-surface-900 placeholder-surface-700 resize-none input-field"
+                        />
+                        <p className="text-xs text-gray-500">
+                            <strong>Tips:</strong> Describe the scene, action, and camera movement. E.g., "Drone shot slowly rising above a sunrise over mountains, golden light, cinematic"
+                        </p>
+                    </div>
                     <div className="space-y-2">
                         <label className="block text-sm font-medium text-surface-900">Upload Reference Images (Optional, up to 5)</label>
                         <div className="flex flex-wrap gap-2">

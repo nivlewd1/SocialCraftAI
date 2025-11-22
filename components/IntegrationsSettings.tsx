@@ -161,6 +161,30 @@ const IntegrationsSettings: React.FC<IntegrationsSettingsProps> = ({
         </p>
       </div>
 
+      {/* Getting Started Hint */}
+      {connectedAccounts.length === 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+          <h4 className="font-semibold text-amber-800 mb-2">Get Started with Auto-Publishing</h4>
+          <ol className="text-sm text-amber-700 space-y-1.5">
+            <li className="flex items-start gap-2">
+              <span className="bg-amber-200 text-amber-800 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
+              <span>Click "Connect" on any platform below to authorize SocialCraft AI</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="bg-amber-200 text-amber-800 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
+              <span>Grant the requested permissions (we only ask for what's needed to post)</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="bg-amber-200 text-amber-800 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
+              <span>Your scheduled posts will automatically publish at the set times</span>
+            </li>
+          </ol>
+          <p className="text-xs text-amber-600 mt-3">
+            <strong>Note:</strong> You can disconnect anytime. We never post without your explicit scheduling.
+          </p>
+        </div>
+      )}
+
       {/* Message Alert */}
       {message && (
         <div

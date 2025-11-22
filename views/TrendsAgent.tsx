@@ -168,6 +168,9 @@ export const TrendsAgent: React.FC<TrendsAgentProps> = ({ onTrendsFound, onOpenA
                     placeholder="e.g. SaaS Marketing"
                   />
                 </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  <strong>Tip:</strong> Be specific! "AI for Healthcare" works better than just "AI". The agent searches live web data for trending topics in your niche.
+                </p>
               </div>
 
               <div className="bg-blue-50 border border-blue-100 p-4 rounded-lg">

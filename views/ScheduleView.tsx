@@ -225,12 +225,39 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onOpenAuth }) => {
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div>
                 </div>
             ) : posts.length === 0 ? (
-                <div className="text-center py-20 glass-card rounded-lg">
+                <div className="text-center py-16 glass-card rounded-lg">
                     <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <Calendar className="w-8 h-8 text-gray-400" />
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-900">No scheduled posts</h3>
-                    <p className="text-gray-500 mt-2">Use the Brand Amplifier to generate and schedule content.</p>
+                    <h3 className="text-xl font-semibold text-gray-900">No scheduled posts yet</h3>
+                    <p className="text-gray-500 mt-2 max-w-md mx-auto">
+                        Schedule your first post to get started. Posts will automatically publish at the scheduled time.
+                    </p>
+                    <div className="mt-6 space-y-3 max-w-sm mx-auto text-left bg-gray-50 p-4 rounded-lg">
+                        <h4 className="font-semibold text-sm text-gray-700">How to schedule posts:</h4>
+                        <ol className="text-sm text-gray-600 space-y-2">
+                            <li className="flex items-start gap-2">
+                                <span className="bg-brand-primary/10 text-brand-primary rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
+                                <span>Go to <a href="/generator" className="text-brand-primary font-medium hover:underline">Generator</a> and create content</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="bg-brand-primary/10 text-brand-primary rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
+                                <span>Click "Schedule" on any generated post</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="bg-brand-primary/10 text-brand-primary rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
+                                <span>Pick a time or use AI-suggested optimal slots</span>
+                            </li>
+                        </ol>
+                    </div>
+                    <div className="mt-6 flex gap-3 justify-center">
+                        <a href="/generator" className="btn-primary px-6 py-2 rounded-lg font-medium">
+                            Create Content
+                        </a>
+                        <a href="/trends-agent" className="px-6 py-2 rounded-lg font-medium border border-gray-200 hover:bg-gray-50 transition-colors">
+                            Find Trends
+                        </a>
+                    </div>
                 </div>
             ) : (
                 <div className="grid gap-6">

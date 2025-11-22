@@ -379,27 +379,39 @@ ${post.imagePrompt}` : ''}
                                 </button>
                             </div>
 
+                            <p className="text-xs text-gray-500 mb-3">
+                                Define your brand voice. This shapes how AI generates content that sounds authentically like you.
+                            </p>
                             <div className="space-y-3">
-                                <input
-                                    value={persona.name}
-                                    onChange={(e) => setPersona({ ...persona, name: e.target.value })}
-                                    className="w-full bg-white border border-gray-200 text-surface-900 p-3 rounded-lg text-sm focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all placeholder:text-gray-400"
-                                    placeholder="Persona Name (e.g., Tech Visionary)"
-                                />
+                                <div>
+                                    <input
+                                        value={persona.name}
+                                        onChange={(e) => setPersona({ ...persona, name: e.target.value })}
+                                        className="w-full bg-white border border-gray-200 text-surface-900 p-3 rounded-lg text-sm focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all placeholder:text-gray-400"
+                                        placeholder="Persona Name (e.g., Tech Visionary)"
+                                    />
+                                    <p className="text-xs text-gray-400 mt-1">Your brand identity or role</p>
+                                </div>
 
-                                <input
-                                    value={persona.audience}
-                                    onChange={(e) => setPersona({ ...persona, audience: e.target.value })}
-                                    className="w-full bg-white border border-gray-200 text-surface-900 p-3 rounded-lg text-sm focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all placeholder:text-gray-400"
-                                    placeholder="Target Audience (e.g. CTOs, Gen Z)"
-                                />
+                                <div>
+                                    <input
+                                        value={persona.audience}
+                                        onChange={(e) => setPersona({ ...persona, audience: e.target.value })}
+                                        className="w-full bg-white border border-gray-200 text-surface-900 p-3 rounded-lg text-sm focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all placeholder:text-gray-400"
+                                        placeholder="Target Audience (e.g. CTOs, Gen Z)"
+                                    />
+                                    <p className="text-xs text-gray-400 mt-1">Who you're trying to reach</p>
+                                </div>
 
-                                <textarea
-                                    value={persona.tone}
-                                    onChange={(e) => setPersona({ ...persona, tone: e.target.value })}
-                                    className="w-full bg-white border border-gray-200 text-surface-900 p-3 rounded-lg text-sm h-24 resize-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all placeholder:text-gray-400"
-                                    placeholder="Define the tone..."
-                                />
+                                <div>
+                                    <textarea
+                                        value={persona.tone}
+                                        onChange={(e) => setPersona({ ...persona, tone: e.target.value })}
+                                        className="w-full bg-white border border-gray-200 text-surface-900 p-3 rounded-lg text-sm h-24 resize-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all placeholder:text-gray-400"
+                                        placeholder="Define the tone (e.g., Professional yet approachable, data-driven, inspiring)"
+                                    />
+                                    <p className="text-xs text-gray-400 mt-1">How should your content sound? E.g., "Witty, bold, slightly provocative"</p>
+                                </div>
                             </div>
                         </div>
 
