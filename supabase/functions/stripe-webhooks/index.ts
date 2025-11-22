@@ -61,7 +61,7 @@ serve(async (req: Request) => {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
-        console.log(`Checkout session completed: ${session.id}`);
+        console.log(`Checkout session completed: ${session.id}, mode: ${session.mode}`);
 
         const userId = session.client_reference_id ?? session.metadata?.userId;
         if (!userId) {
@@ -69,9 +69,47 @@ serve(async (req: Request) => {
           break;
         }
 
-        const subscriptionId = session.subscription as string;
         const customerId = session.customer as string;
 
+        // Handle one-time payments (top-ups)
+        if (session.mode === 'payment') {
+          console.log('Processing one-time payment (top-up)');
+
+          // Get the price ID from the line items
+          const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 1 });
+          const priceId = lineItems.data[0]?.price?.id;
+
+          // Map price IDs to credit amounts
+          const topupCredits: Record<string, number> = {
+            [Deno.env.get('VITE_STRIPE_PRICE_TOPUP_SMALL') ?? '']: 500,
+            [Deno.env.get('VITE_STRIPE_PRICE_TOPUP_MEDIUM') ?? '']: 2500,
+            [Deno.env.get('VITE_STRIPE_PRICE_TOPUP_LARGE') ?? '']: 6000,
+          };
+
+          const creditsToAdd = priceId ? topupCredits[priceId] : 0;
+
+          if (creditsToAdd > 0) {
+            // Add purchased credits using the database function
+            const { data: result, error: addError } = await supabase.rpc('add_credits', {
+              p_user_id: userId,
+              p_amount: creditsToAdd,
+              p_credit_type: 'purchased',
+              p_action_type: 'topup_purchase',
+            });
+
+            if (addError) {
+              console.error('Error adding top-up credits:', addError);
+            } else {
+              console.log(`Added ${creditsToAdd} purchased credits for user ${userId}`, result);
+            }
+          } else {
+            console.warn('Unknown top-up price ID:', priceId);
+          }
+          break;
+        }
+
+        // Handle subscription payments
+        const subscriptionId = session.subscription as string;
         if (!subscriptionId) {
           console.error('Missing subscription ID in checkout session');
           break;
@@ -91,12 +129,28 @@ serve(async (req: Request) => {
         const planIdEnv = {
           starter: Deno.env.get('VITE_STRIPE_PRICE_STARTER') ?? '',
           pro: Deno.env.get('VITE_STRIPE_PRICE_PRO') ?? '',
-          enterprise: Deno.env.get('VITE_STRIPE_PRICE_ENTERPRISE') ?? '',
+          agency: Deno.env.get('VITE_STRIPE_PRICE_AGENCY') ?? '',
+        };
+
+        // Plan credit allocations
+        const planCredits: Record<string, number> = {
+          free: 150,
+          starter: 2500,
+          pro: 10000,
+          agency: 35000,
+        };
+
+        // Plan seat limits (-1 = unlimited)
+        const planSeats: Record<string, number> = {
+          free: 1,
+          starter: 1,
+          pro: 3,
+          agency: -1,
         };
 
         let planId = 'starter';
         if (priceId === planIdEnv.pro) planId = 'pro';
-        else if (priceId === planIdEnv.enterprise) planId = 'enterprise';
+        else if (priceId === planIdEnv.agency) planId = 'agency';
 
         const { error } = await supabase
           .from('subscriptions')
@@ -108,8 +162,10 @@ serve(async (req: Request) => {
               stripe_subscription_id: subscriptionId,
               subscription_status: subscription.status,
               current_period_end: toIsoUtc(subscription.current_period_end),
-              has_used_trial: true, // Mark trial as used when subscription is created
-              generations_used: 0,
+              subscription_credits: planCredits[planId], // Set credits based on plan
+              seats_limit: planSeats[planId], // Set seat limit based on plan
+              credits_reset_at: toIsoUtc(subscription.current_period_end), // Reset when period ends
+              has_used_trial: true,
               updated_at: new Date().toISOString(),
             },
             { onConflict: 'user_id' },
@@ -118,7 +174,7 @@ serve(async (req: Request) => {
         if (error) {
           console.error('Error upserting subscription:', error);
         } else {
-          console.log(`Subscription created/updated for user ${userId}`);
+          console.log(`Subscription created/updated for user ${userId} with plan ${planId} (${planCredits[planId]} credits)`);
         }
         break;
       }
@@ -179,18 +235,36 @@ serve(async (req: Request) => {
         const planIdEnv = {
           starter: Deno.env.get('VITE_STRIPE_PRICE_STARTER') ?? '',
           pro: Deno.env.get('VITE_STRIPE_PRICE_PRO') ?? '',
-          enterprise: Deno.env.get('VITE_STRIPE_PRICE_ENTERPRISE') ?? '',
+          agency: Deno.env.get('VITE_STRIPE_PRICE_AGENCY') ?? '',
+        };
+
+        // Plan credit allocations
+        const planCredits: Record<string, number> = {
+          free: 150,
+          starter: 2500,
+          pro: 10000,
+          agency: 35000,
+        };
+
+        // Plan seat limits (-1 = unlimited)
+        const planSeats: Record<string, number> = {
+          free: 1,
+          starter: 1,
+          pro: 3,
+          agency: -1,
         };
 
         let planId = 'starter';
         if (priceId === planIdEnv.pro) planId = 'pro';
-        else if (priceId === planIdEnv.enterprise) planId = 'enterprise';
+        else if (priceId === planIdEnv.agency) planId = 'agency';
 
         const { error } = await supabase
           .from('subscriptions')
           .update({
             plan_id: planId,
             subscription_status: sub.status,
+            subscription_credits: planCredits[planId], // Update credits on plan change
+            seats_limit: planSeats[planId], // Update seats on plan change
             current_period_end: toIsoUtc(sub.current_period_end),
             updated_at: new Date().toISOString(),
           })
@@ -198,6 +272,8 @@ serve(async (req: Request) => {
 
         if (error) {
           console.error('Error updating subscription:', error);
+        } else {
+          console.log(`Subscription updated to ${planId} with ${planCredits[planId]} credits`);
         }
         break;
       }

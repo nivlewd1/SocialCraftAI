@@ -5,6 +5,12 @@
 -- - Subscription credits (reset monthly)
 -- - Purchased credits (never expire)
 -- Credit costs: Text=1, Image=15, Video=150
+--
+-- Plan Credit Allocations:
+-- - Free ($0):    150 credits/month, 1 seat
+-- - Starter ($19): 2,500 credits/month, 1 seat
+-- - Pro ($59):     10,000 credits/month, 3 seats
+-- - Agency ($249): 35,000 credits/month, unlimited seats (-1)
 -- =====================================================
 
 -- =====================================================
@@ -357,7 +363,7 @@ DECLARE
     "free": 150,
     "starter": 2500,
     "pro": 10000,
-    "agency": 50000
+    "agency": 35000
   }'::jsonb;
 BEGIN
   -- Reset credits for subscriptions where:

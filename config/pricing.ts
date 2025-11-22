@@ -135,15 +135,15 @@ export const PRICING_PLANS: PricingPlan[] = [
   {
     id: 'agency',
     name: 'Agency',
-    description: 'For large agencies and brands',
-    price: 199,
+    description: 'For large agencies and enterprise teams',
+    price: 249,
     priceId: import.meta.env.VITE_STRIPE_PRICE_AGENCY,
     interval: 'month',
     features: [
-      '50,000 credits/month',
+      '35,000 credits/month',
       'Everything in Pro',
-      '25 social profiles',
-      '10 team seats',
+      'Unlimited team seats',
+      '10 client workspaces',
       'White-label options',
       'API access',
       'Enterprise analytics',
@@ -152,15 +152,15 @@ export const PRICING_PLANS: PricingPlan[] = [
       'Dedicated account manager'
     ],
     limits: {
-      monthlyCredits: 50000,
-      profiles: 25,
-      seats: 10,
+      monthlyCredits: 35000,
+      profiles: 10,
+      seats: -1, // -1 represents unlimited
       analytics: 'enterprise',
       support: 'priority',
       videoAccess: true,
       watermark: false,
     },
-    cta: 'Contact Sales'
+    cta: 'Start 14-Day Trial'
   }
 ];
 

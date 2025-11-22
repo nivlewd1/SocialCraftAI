@@ -144,10 +144,10 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
         totalCredits: subscriptionCredits + purchasedCredits,
         creditsResetAt: data.credits_reset_at,
 
-        // Plan limits
+        // Plan limits (-1 means unlimited seats for Agency)
         monthlyCreditsLimit: planInfo?.limits.monthlyCredits ?? 150,
         seatsUsed: data.seats_used ?? 1,
-        seatsLimit: planInfo?.limits.seats ?? 1,
+        seatsLimit: data.seats_limit === -1 ? Infinity : (planInfo?.limits.seats === -1 ? Infinity : planInfo?.limits.seats ?? 1),
 
         // Feature flags
         canAccessVideo: canGenerateVideo(data.plan_id as PlanType),

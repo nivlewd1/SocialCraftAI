@@ -56,11 +56,7 @@ const PricingView: React.FC<PricingViewProps> = ({ onOpenAuth }) => {
             return;
         }
 
-        if (planId === 'agency') {
-            // Agency - open contact form or email
-            window.location.href = 'mailto:sales@socialcraftai.com?subject=Agency Plan Inquiry';
-            return;
-        }
+        // Agency is now self-serve at $249 - no special handling needed
 
         // Check if user has already used their trial
         if (subscription?.hasUsedTrial && subscription.plan === 'free') {
@@ -95,7 +91,7 @@ const PricingView: React.FC<PricingViewProps> = ({ onOpenAuth }) => {
         // Not logged in
         if (!user || !subscription) {
             return {
-                text: planId === 'free' ? 'Get Started' : planId === 'agency' ? 'Contact Sales' : 'Start 14-Day Trial',
+                text: planId === 'free' ? 'Get Started' : 'Start 14-Day Trial',
                 disabled: false,
             };
         }
@@ -112,14 +108,6 @@ const PricingView: React.FC<PricingViewProps> = ({ onOpenAuth }) => {
         if (planId === 'free') {
             return {
                 text: 'Get Started',
-                disabled: false,
-            };
-        }
-
-        // Agency plan
-        if (planId === 'agency') {
-            return {
-                text: 'Contact Sales',
                 disabled: false,
             };
         }
