@@ -1,44 +1,76 @@
-export type PlanType = 'free' | 'starter' | 'pro' | 'enterprise';
+// =====================================================
+// SocialCraft AI - Credit-Based Pricing Configuration
+// =====================================================
+// Credit Exchange Rates:
+// - Text Generation: 1 credit
+// - Image Generation: 15 credits
+// - Video Generation: 150 credits
+// =====================================================
+
+export type PlanType = 'free' | 'starter' | 'pro' | 'agency';
+
+// Credit costs for different generation types
+export const CREDIT_COSTS = {
+  text: 1,
+  image: 15,
+  video: 150,
+} as const;
+
+export type GenerationType = keyof typeof CREDIT_COSTS;
 
 export interface PricingPlan {
   id: PlanType;
   name: string;
   description: string;
   price: number;
-  priceId?: string; // Stripe Price ID (set this after creating in Stripe Dashboard)
+  priceId?: string; // Stripe Price ID
   interval: 'month' | 'year';
   features: string[];
   limits: {
-    generations: number | 'unlimited';
+    monthlyCredits: number;
     profiles: number;
-    teamMembers: number;
+    seats: number;
     analytics: 'basic' | 'advanced' | 'enterprise';
     support: 'community' | 'email' | 'priority';
+    videoAccess: boolean;
+    watermark: boolean;
   };
   cta: string;
   popular?: boolean;
+}
+
+export interface TopUpPack {
+  id: string;
+  name: string;
+  credits: number;
+  price: number; // In dollars
+  priceId?: string; // Stripe Price ID
+  savings?: string; // e.g., "Save 44%"
 }
 
 export const PRICING_PLANS: PricingPlan[] = [
   {
     id: 'free',
     name: 'Free',
-    description: 'Perfect for trying out SocialCraft AI',
+    description: 'Explore SocialCraft AI with limited features',
     price: 0,
     interval: 'month',
     features: [
-      '50 AI generations per month',
+      '150 credits/month',
+      'Text & image generation',
       '1 social profile',
-      'Standard content formats',
       'Basic analytics',
-      'Community support'
+      'Community support',
+      'CSS watermark on exports'
     ],
     limits: {
-      generations: 50,
+      monthlyCredits: 150,
       profiles: 1,
-      teamMembers: 1,
+      seats: 1,
       analytics: 'basic',
-      support: 'community'
+      support: 'community',
+      videoAccess: false,
+      watermark: true,
     },
     cta: 'Get Started Free'
   },
@@ -47,23 +79,26 @@ export const PRICING_PLANS: PricingPlan[] = [
     name: 'Starter',
     description: 'For solopreneurs and content creators',
     price: 19,
-    priceId: import.meta.env.VITE_STRIPE_PRICE_STARTER, // TEST Price ID from .env
+    priceId: import.meta.env.VITE_STRIPE_PRICE_STARTER,
     interval: 'month',
     features: [
-      '200 AI generations per month',
+      '2,500 credits/month',
+      'Full access (text, image, video)',
       '3 social profiles',
-      'All platform formats',
       'Advanced analytics',
       'Email support',
       'Trend research',
-      'Schedule posts'
+      'Schedule & auto-publish',
+      'No watermarks'
     ],
     limits: {
-      generations: 200,
+      monthlyCredits: 2500,
       profiles: 3,
-      teamMembers: 1,
+      seats: 1,
       analytics: 'advanced',
-      support: 'email'
+      support: 'email',
+      videoAccess: true,
+      watermark: false,
     },
     cta: 'Start 14-Day Trial'
   },
@@ -71,57 +106,88 @@ export const PRICING_PLANS: PricingPlan[] = [
     id: 'pro',
     name: 'Pro',
     description: 'For agencies and growing businesses',
-    price: 49,
-    priceId: import.meta.env.VITE_STRIPE_PRICE_PRO, // TEST Price ID from .env
+    price: 59,
+    priceId: import.meta.env.VITE_STRIPE_PRICE_PRO,
     interval: 'month',
     popular: true,
     features: [
-      'Unlimited AI generations*',
+      '10,000 credits/month',
+      'Everything in Starter',
       '10 social profiles',
+      '3 team seats',
+      'Client portal access',
+      'Priority generation queue',
       'E-E-A-T optimization',
-      'Search intent targeting',
-      'Advanced analytics',
-      'Priority email support',
-      '3 team members',
       'Viral playbooks',
       'Media studio'
     ],
     limits: {
-      generations: 'unlimited',
+      monthlyCredits: 10000,
       profiles: 10,
-      teamMembers: 3,
+      seats: 3,
       analytics: 'advanced',
-      support: 'email'
+      support: 'email',
+      videoAccess: true,
+      watermark: false,
     },
     cta: 'Start 14-Day Trial'
   },
   {
-    id: 'enterprise',
-    name: 'Enterprise',
+    id: 'agency',
+    name: 'Agency',
     description: 'For large agencies and brands',
-    price: 149,
-    priceId: import.meta.env.VITE_STRIPE_PRICE_ENTERPRISE, // TEST Price ID from .env
+    price: 199,
+    priceId: import.meta.env.VITE_STRIPE_PRICE_AGENCY,
     interval: 'month',
     features: [
-      'Unlimited AI generations*',
-      '25 social profiles',
+      '50,000 credits/month',
       'Everything in Pro',
+      '25 social profiles',
+      '10 team seats',
       'White-label options',
       'API access',
       'Enterprise analytics',
       'Priority support',
-      '10 team members',
       'Custom playbooks',
       'Dedicated account manager'
     ],
     limits: {
-      generations: 'unlimited',
+      monthlyCredits: 50000,
       profiles: 25,
-      teamMembers: 10,
+      seats: 10,
       analytics: 'enterprise',
-      support: 'priority'
+      support: 'priority',
+      videoAccess: true,
+      watermark: false,
     },
     cta: 'Contact Sales'
+  }
+];
+
+// Top-up credit packs
+export const TOPUP_PACKS: TopUpPack[] = [
+  {
+    id: 'topup_small',
+    name: 'Starter Pack',
+    credits: 500,
+    price: 9,
+    priceId: import.meta.env.VITE_STRIPE_PRICE_TOPUP_SMALL,
+  },
+  {
+    id: 'topup_medium',
+    name: 'Growth Pack',
+    credits: 2500,
+    price: 25,
+    priceId: import.meta.env.VITE_STRIPE_PRICE_TOPUP_MEDIUM,
+    savings: 'Save 44%',
+  },
+  {
+    id: 'topup_large',
+    name: 'Bulk Pack',
+    credits: 6000,
+    price: 49,
+    priceId: import.meta.env.VITE_STRIPE_PRICE_TOPUP_LARGE,
+    savings: 'Save 54%',
   }
 ];
 
@@ -130,28 +196,71 @@ export const getPlanById = (planId: PlanType): PricingPlan | undefined => {
   return PRICING_PLANS.find(plan => plan.id === planId);
 };
 
-// Helper function to check if user has reached generation limit
-export const hasReachedGenerationLimit = (
-  currentUsage: number,
-  planId: PlanType
+// Helper function to get credit cost for generation type
+export const getCreditCost = (type: GenerationType): number => {
+  return CREDIT_COSTS[type];
+};
+
+// Helper function to check if user has enough credits
+export const hasEnoughCredits = (
+  subscriptionCredits: number,
+  purchasedCredits: number,
+  requiredCredits: number
 ): boolean => {
+  return (subscriptionCredits + purchasedCredits) >= requiredCredits;
+};
+
+// Helper function to check if plan allows video generation
+export const canGenerateVideo = (planId: PlanType): boolean => {
   const plan = getPlanById(planId);
-  if (!plan) return true;
+  return plan?.limits.videoAccess ?? false;
+};
 
-  if (plan.limits.generations === 'unlimited') {
-    // Fair use policy: 1000 generations/month
-    return currentUsage >= 1000;
+// Helper function to check if plan has watermarks
+export const hasWatermark = (planId: PlanType): boolean => {
+  const plan = getPlanById(planId);
+  return plan?.limits.watermark ?? true;
+};
+
+// Calculate what user can generate with their credits
+export const calculatePotentialGenerations = (totalCredits: number) => {
+  return {
+    text: Math.floor(totalCredits / CREDIT_COSTS.text),
+    image: Math.floor(totalCredits / CREDIT_COSTS.image),
+    video: Math.floor(totalCredits / CREDIT_COSTS.video),
+  };
+};
+
+// Format credits for display
+export const formatCredits = (credits: number): string => {
+  if (credits >= 1000) {
+    return `${(credits / 1000).toFixed(1).replace(/\.0$/, '')}k`;
   }
+  return credits.toLocaleString();
+};
 
-  return currentUsage >= plan.limits.generations;
+// Credit exchange rate explanation for UI
+export const CREDIT_EXCHANGE_INFO = {
+  text: {
+    cost: CREDIT_COSTS.text,
+    description: 'AI-generated social post draft',
+    icon: 'FileText',
+  },
+  image: {
+    cost: CREDIT_COSTS.image,
+    description: 'AI-generated image',
+    icon: 'Image',
+  },
+  video: {
+    cost: CREDIT_COSTS.video,
+    description: 'AI-generated video clip',
+    icon: 'Video',
+  },
 };
 
 // Stripe configuration
-// All values loaded from .env (TEST mode)
 export const STRIPE_CONFIG = {
-  // Stripe publishable key from .env (TEST mode: pk_test_...)
   publishableKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '',
-  // Test mode credit cards for testing checkout flow
   testCards: {
     success: '4242424242424242',
     decline: '4000000000000002',
@@ -159,5 +268,13 @@ export const STRIPE_CONFIG = {
   }
 };
 
-// Fair use policy note
-export const FAIR_USE_NOTE = '* Fair use policy: Unlimited plans are capped at 1,000 generations per month. Contact us if you need more.';
+// Margin analysis constants (internal use)
+export const MARGIN_ANALYSIS = {
+  apiCosts: {
+    text: 0.001,   // ~$0.001 per text generation (Gemini Flash)
+    image: 0.04,   // ~$0.04 per image (Imagen 4.0)
+    video: 0.50,   // ~$0.50 per video (Veo 3.1)
+  },
+  lowestBulkRate: 0.008, // $0.008 per credit at bulk pricing
+  targetMargin: 0.58,    // 58% target margin
+};

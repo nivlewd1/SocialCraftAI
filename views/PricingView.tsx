@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Check, Sparkles, Zap, Crown, Rocket } from 'lucide-react';
-import { PRICING_PLANS, FAIR_USE_NOTE, type PlanType } from '../config/pricing';
+import { Check, Sparkles, Zap, Crown, Rocket, FileText, Image, Video, Plus } from 'lucide-react';
+import { PRICING_PLANS, TOPUP_PACKS, CREDIT_COSTS, type PlanType } from '../config/pricing';
 import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../contexts/SubscriptionContext';
 import { useNavigate } from 'react-router-dom';
 import { redirectToCheckout } from '../utils/stripe';
+import TopUpModal from '../components/TopUpModal';
 
 interface PricingViewProps {
     onOpenAuth: () => void;
@@ -12,9 +13,35 @@ interface PricingViewProps {
 
 const PricingView: React.FC<PricingViewProps> = ({ onOpenAuth }) => {
     const { user } = useAuth();
-    const { subscription } = useSubscription();
+    const { subscription, refreshSubscription } = useSubscription();
     const navigate = useNavigate();
     const [billingInterval, setBillingInterval] = useState<'month' | 'year'>('month');
+    const [showTopUpModal, setShowTopUpModal] = useState(false);
+
+    const handleTopUpPurchase = async (packId: string) => {
+        if (!user) {
+            onOpenAuth();
+            return;
+        }
+
+        const pack = TOPUP_PACKS.find(p => p.id === packId);
+        if (!pack?.priceId) {
+            alert('Price ID not configured for this pack');
+            return;
+        }
+
+        try {
+            await redirectToCheckout({
+                priceId: pack.priceId,
+                userId: user.id,
+                userEmail: user.email || '',
+                mode: 'payment', // One-time payment for top-ups
+            });
+        } catch (error) {
+            console.error('Top-up checkout error:', error);
+            throw error;
+        }
+    };
 
     const handleSelectPlan = async (planId: PlanType) => {
         if (!user) {
@@ -29,9 +56,9 @@ const PricingView: React.FC<PricingViewProps> = ({ onOpenAuth }) => {
             return;
         }
 
-        if (planId === 'enterprise') {
-            // Enterprise - open contact form or email
-            window.location.href = 'mailto:sales@socialcraftai.com?subject=Enterprise Plan Inquiry';
+        if (planId === 'agency') {
+            // Agency - open contact form or email
+            window.location.href = 'mailto:sales@socialcraftai.com?subject=Agency Plan Inquiry';
             return;
         }
 
@@ -68,7 +95,7 @@ const PricingView: React.FC<PricingViewProps> = ({ onOpenAuth }) => {
         // Not logged in
         if (!user || !subscription) {
             return {
-                text: planId === 'free' ? 'Get Started' : planId === 'enterprise' ? 'Contact Sales' : 'Start 14-Day Trial',
+                text: planId === 'free' ? 'Get Started' : planId === 'agency' ? 'Contact Sales' : 'Start 14-Day Trial',
                 disabled: false,
             };
         }
@@ -89,8 +116,8 @@ const PricingView: React.FC<PricingViewProps> = ({ onOpenAuth }) => {
             };
         }
 
-        // Enterprise plan
-        if (planId === 'enterprise') {
+        // Agency plan
+        if (planId === 'agency') {
             return {
                 text: 'Contact Sales',
                 disabled: false,
@@ -120,7 +147,7 @@ const PricingView: React.FC<PricingViewProps> = ({ onOpenAuth }) => {
                 return <Rocket className="h-6 w-6" />;
             case 'pro':
                 return <Zap className="h-6 w-6" />;
-            case 'enterprise':
+            case 'agency':
                 return <Crown className="h-6 w-6" />;
         }
     };
@@ -251,9 +278,67 @@ const PricingView: React.FC<PricingViewProps> = ({ onOpenAuth }) => {
                 })}
             </div>
 
-            {/* Fair Use Note */}
-            <div className="text-center text-sm text-gray-500 max-w-3xl mx-auto">
-                {FAIR_USE_NOTE}
+            {/* Credit Exchange Rates */}
+            <div className="max-w-4xl mx-auto">
+                <div className="text-center mb-8">
+                    <h2 className="text-3xl font-bold text-surface-900 mb-2">Credit Exchange Rates</h2>
+                    <p className="text-gray-600">Different generation types cost different amounts of credits</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="glass-card rounded-xl p-6 text-center">
+                        <div className="w-12 h-12 mx-auto rounded-xl bg-green-100 flex items-center justify-center mb-4">
+                            <FileText className="h-6 w-6 text-green-600" />
+                        </div>
+                        <h3 className="text-xl font-bold text-surface-900 mb-1">Text Draft</h3>
+                        <p className="text-3xl font-extrabold text-green-600">{CREDIT_COSTS.text}</p>
+                        <p className="text-gray-500 text-sm">credit per generation</p>
+                    </div>
+                    <div className="glass-card rounded-xl p-6 text-center">
+                        <div className="w-12 h-12 mx-auto rounded-xl bg-blue-100 flex items-center justify-center mb-4">
+                            <Image className="h-6 w-6 text-blue-600" />
+                        </div>
+                        <h3 className="text-xl font-bold text-surface-900 mb-1">AI Image</h3>
+                        <p className="text-3xl font-extrabold text-blue-600">{CREDIT_COSTS.image}</p>
+                        <p className="text-gray-500 text-sm">credits per generation</p>
+                    </div>
+                    <div className="glass-card rounded-xl p-6 text-center">
+                        <div className="w-12 h-12 mx-auto rounded-xl bg-purple-100 flex items-center justify-center mb-4">
+                            <Video className="h-6 w-6 text-purple-600" />
+                        </div>
+                        <h3 className="text-xl font-bold text-surface-900 mb-1">AI Video</h3>
+                        <p className="text-3xl font-extrabold text-purple-600">{CREDIT_COSTS.video}</p>
+                        <p className="text-gray-500 text-sm">credits per generation</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Top-Up Packs */}
+            <div className="max-w-4xl mx-auto">
+                <div className="text-center mb-8">
+                    <h2 className="text-3xl font-bold text-surface-900 mb-2">Need More Credits?</h2>
+                    <p className="text-gray-600">Purchase additional credits anytime. Purchased credits never expire.</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {TOPUP_PACKS.map((pack) => (
+                        <div key={pack.id} className="glass-card rounded-xl p-6 text-center relative">
+                            {pack.savings && (
+                                <div className="absolute -top-3 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                                    {pack.savings}
+                                </div>
+                            )}
+                            <h3 className="text-xl font-bold text-surface-900 mb-2">{pack.name}</h3>
+                            <p className="text-3xl font-extrabold text-brand-primary mb-1">{pack.credits.toLocaleString()}</p>
+                            <p className="text-gray-500 text-sm mb-4">credits</p>
+                            <p className="text-2xl font-bold text-surface-900 mb-4">${pack.price}</p>
+                            <button
+                                onClick={() => setShowTopUpModal(true)}
+                                className="w-full py-2 px-4 rounded-lg font-medium bg-surface-100 text-surface-900 hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
+                            >
+                                <Plus className="h-4 w-4" /> Buy Now
+                            </button>
+                        </div>
+                    ))}
+                </div>
             </div>
 
             {/* FAQ Section */}
@@ -265,10 +350,28 @@ const PricingView: React.FC<PricingViewProps> = ({ onOpenAuth }) => {
                 <div className="space-y-6">
                     <div className="glass-card rounded-xl p-6">
                         <h3 className="text-lg font-semibold text-surface-900 mb-2">
-                            What happens when I reach my generation limit?
+                            How do credits work?
                         </h3>
                         <p className="text-gray-600">
-                            You'll receive a notification when you're approaching your limit. You can upgrade to a higher plan at any time to get more generations. Unused generations don't roll over to the next month.
+                            Credits are your currency for generating content. Text drafts cost 1 credit, images cost 15 credits, and videos cost 150 credits. Subscription credits reset monthly, while purchased credits never expire.
+                        </p>
+                    </div>
+
+                    <div className="glass-card rounded-xl p-6">
+                        <h3 className="text-lg font-semibold text-surface-900 mb-2">
+                            What happens when I run out of credits?
+                        </h3>
+                        <p className="text-gray-600">
+                            You'll receive a notification when you're running low. You can purchase additional credit packs anytime, or upgrade to a higher plan for more monthly credits.
+                        </p>
+                    </div>
+
+                    <div className="glass-card rounded-xl p-6">
+                        <h3 className="text-lg font-semibold text-surface-900 mb-2">
+                            Do unused credits roll over?
+                        </h3>
+                        <p className="text-gray-600">
+                            Monthly subscription credits reset at the start of each billing cycle. However, purchased credits never expire and carry forward indefinitely.
                         </p>
                     </div>
 
@@ -278,15 +381,6 @@ const PricingView: React.FC<PricingViewProps> = ({ onOpenAuth }) => {
                         </h3>
                         <p className="text-gray-600">
                             Yes! All plans can be canceled anytime. You'll retain access to your plan features until the end of your current billing period.
-                        </p>
-                    </div>
-
-                    <div className="glass-card rounded-xl p-6">
-                        <h3 className="text-lg font-semibold text-surface-900 mb-2">
-                            Do you offer refunds?
-                        </h3>
-                        <p className="text-gray-600">
-                            We offer a 14-day money-back guarantee on all paid plans. If you're not satisfied, contact us within 14 days of your purchase for a full refund.
                         </p>
                     </div>
 
@@ -333,6 +427,13 @@ const PricingView: React.FC<PricingViewProps> = ({ onOpenAuth }) => {
                     </button>
                 </div>
             </div>
+
+            {/* Top-Up Modal */}
+            <TopUpModal
+                isOpen={showTopUpModal}
+                onClose={() => setShowTopUpModal(false)}
+                onPurchase={handleTopUpPurchase}
+            />
         </div>
     );
 };

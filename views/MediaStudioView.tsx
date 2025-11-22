@@ -3,7 +3,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { generateImage, generateVideo, getVideosOperation, editImage } from '../services/geminiService';
 import { VideoOperation, SavedMedia, UploadedImage } from '../types';
 import Spinner from '../components/Spinner';
-import { Clapperboard, Image as ImageIcon, Sparkles, AlertTriangle, KeyRound, Download, Save, Check, UploadCloud, X } from 'lucide-react';
+import { Clapperboard, Image as ImageIcon, Sparkles, AlertTriangle, KeyRound, Download, Save, Check, UploadCloud, X, Lock, AlertCircle } from 'lucide-react';
+import { useSubscription } from '../contexts/SubscriptionContext';
+import { CreditBadge, WatermarkOverlay } from '../components/WatermarkOverlay';
+import { CREDIT_COSTS } from '../config/pricing';
 
 type AspectRatioImage = '1:1' | '16:9' | '9:16' | '4:3' | '3:4';
 type AspectRatioVideo = '16:9' | '9:16';
@@ -101,10 +104,14 @@ const ImagePreview: React.FC<{ src: string; name: string; onRemove: () => void; 
 
 
 const ImageGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt }) => {
+    const navigate = useNavigate();
+    const { subscription, canGenerateType, deductCredits } = useSubscription();
+
     const [prompt, setPrompt] = useState(initialPrompt || '');
     const [aspectRatio, setAspectRatio] = useState<AspectRatioImage>('1:1');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [creditError, setCreditError] = useState<string | null>(null);
     const [generatedImage, setGeneratedImage] = useState<string | null>(null);
     const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
     const [uploadedImage, setUploadedImage] = useState<UploadedImage | null>(null);
@@ -133,17 +140,34 @@ const ImageGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
         };
         reader.readAsDataURL(file);
     };
-    
+
     const handleGenerate = async () => {
         if (!prompt.trim()) {
             setError('Please enter a prompt.');
             return;
         }
+
+        // Check if user can afford image generation
+        if (!canGenerateType('image')) {
+            setCreditError('Insufficient credits for image generation. Please top up your credits.');
+            return;
+        }
+
         setIsLoading(true);
         setError(null);
+        setCreditError(null);
         setGeneratedImage(null);
         setSaveStatus('idle');
+
         try {
+            // Deduct credits before generation
+            const deductResult = await deductCredits('image');
+            if (!deductResult.success) {
+                setCreditError(deductResult.error || 'Failed to deduct credits');
+                setIsLoading(false);
+                return;
+            }
+
             let image;
             if (uploadedImage) {
                 image = await editImage(prompt, uploadedImage);
@@ -226,34 +250,71 @@ const ImageGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
             </div>
 
             {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-            
+
+            {/* Credit Error Display */}
+            {creditError && (
+                <div className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                    <div>
+                        <p className="text-sm text-red-700">{creditError}</p>
+                        <button
+                            onClick={() => navigate('/pricing')}
+                            className="mt-2 text-sm font-medium text-red-600 hover:text-red-800 underline"
+                        >
+                            View pricing & top-up options
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Credit cost and balance */}
+            <div className="flex items-center justify-between py-2 border-t border-gray-200">
+                <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-500">Credit cost:</span>
+                    <CreditBadge type="image" />
+                </div>
+                {subscription && (
+                    <span className="text-sm text-gray-500">
+                        Balance: {subscription.totalCredits.toLocaleString()} credits
+                    </span>
+                )}
+            </div>
+
             <button
                 onClick={handleGenerate}
-                disabled={isLoading}
+                disabled={isLoading || !canGenerateType('image')}
                 className="w-full flex items-center justify-center py-3 px-6 rounded-lg shadow-sm text-base font-medium btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 {isLoading ? <><Spinner /> {uploadedImage ? 'Editing Image...' : 'Generating Image...'}</> : <><Sparkles className="mr-2 h-5 w-5" /> {uploadedImage ? 'Edit Image' : 'Generate Image'}</>}
             </button>
-            
+
             {generatedImage && (
                 <div className="mt-6 border-t pt-6 animate-fade-in">
                      <h3 className="text-lg font-semibold text-surface-900 mb-4">Result</h3>
-                     <img src={generatedImage} alt={prompt} className="rounded-lg w-full object-contain mb-4" />
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                 <a
-                                                    href={generatedImage}
-                                                    download={`socialcraft-ai-${new Date().getTime()}.jpeg`}
-                                                    className="w-full flex items-center justify-center py-2.5 px-5 rounded-lg shadow-sm text-base font-medium btn-secondary"
-                                                 >
-                                                    <Download className="mr-2 h-5 w-5" /> Download
-                                                 </a>
-                                                 <button
-                                                    onClick={handleSaveImage}
-                                                    disabled={saveStatus !== 'idle'}
-                                                    className="w-full flex items-center justify-center py-2.5 px-5 rounded-lg shadow-sm text-base font-medium text-brand-primary bg-white border border-brand-primary hover:bg-surface-100 disabled:opacity-50 transition-all"
-                                                 >
-                                                    {saveStatus === 'saved' ? <><Check className="mr-2 h-5 w-5 text-brand-primary" /> Saved</> : <><Save className="mr-2 h-5 w-5" /> Save to Media</>}
-                                                 </button>                     </div>
+                     <WatermarkOverlay type="image">
+                         <img src={generatedImage} alt={prompt} className="rounded-lg w-full object-contain" />
+                     </WatermarkOverlay>
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                         <a
+                            href={subscription?.hasWatermark ? undefined : generatedImage}
+                            download={subscription?.hasWatermark ? undefined : `socialcraft-ai-${new Date().getTime()}.jpeg`}
+                            onClick={subscription?.hasWatermark ? () => navigate('/pricing') : undefined}
+                            className={`w-full flex items-center justify-center py-2.5 px-5 rounded-lg shadow-sm text-base font-medium ${subscription?.hasWatermark ? 'btn-secondary opacity-75' : 'btn-secondary'}`}
+                         >
+                            {subscription?.hasWatermark ? (
+                                <><Lock className="mr-2 h-5 w-5" /> Upgrade to Download</>
+                            ) : (
+                                <><Download className="mr-2 h-5 w-5" /> Download</>
+                            )}
+                         </a>
+                         <button
+                            onClick={handleSaveImage}
+                            disabled={saveStatus !== 'idle'}
+                            className="w-full flex items-center justify-center py-2.5 px-5 rounded-lg shadow-sm text-base font-medium text-brand-primary bg-white border border-brand-primary hover:bg-surface-100 disabled:opacity-50 transition-all"
+                         >
+                            {saveStatus === 'saved' ? <><Check className="mr-2 h-5 w-5 text-brand-primary" /> Saved</> : <><Save className="mr-2 h-5 w-5" /> Save to Media</>}
+                         </button>
+                     </div>
                 </div>
             )}
         </div>
@@ -261,11 +322,15 @@ const ImageGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
 };
 
 const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt }) => {
+    const navigate = useNavigate();
+    const { subscription, canGenerateType, deductCredits } = useSubscription();
+
     const [prompt, setPrompt] = useState(initialPrompt || '');
     const [aspectRatio, setAspectRatio] = useState<AspectRatioVideo>('16:9');
     const [resolution, setResolution] = useState<ResolutionVideo>('720p');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [creditError, setCreditError] = useState<string | null>(null);
     const [generatedVideoUrl, setGeneratedVideoUrl] = useState<string | null>(null);
     const [loadingMessage, setLoadingMessage] = useState('');
     const [hasApiKey, setHasApiKey] = useState(false);
@@ -353,10 +418,33 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
             setError('A prompt is required when using multiple reference images.');
             return;
         }
+
+        // Check if user can access video generation (blocked for free tier)
+        if (!subscription?.canAccessVideo) {
+            setCreditError('Video generation requires Starter plan or higher. Upgrade to unlock this feature.');
+            return;
+        }
+
+        // Check if user can afford video generation
+        if (!canGenerateType('video')) {
+            setCreditError('Insufficient credits for video generation. Please top up your credits.');
+            return;
+        }
+
         resetState();
+        setCreditError(null);
         setIsLoading(true);
         setLoadingMessage('Initializing video generation...');
+
         try {
+            // Deduct credits before generation
+            const deductResult = await deductCredits('video');
+            if (!deductResult.success) {
+                setCreditError(deductResult.error || 'Failed to deduct credits');
+                setIsLoading(false);
+                return;
+            }
+
             const initialOp = await generateVideo(prompt, isMultiImageMode ? '16:9' : aspectRatio, isMultiImageMode ? '720p' : resolution, uploadedImages);
             setOperation(initialOp);
         } catch (err) {
@@ -498,13 +586,67 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
                             Multi-image mode is active. Resolution is locked to 720p and aspect ratio to 16:9. A descriptive prompt is required.
                         </div>
                     )}
+
                     {error && <p className="text-status-error text-sm text-center flex items-center justify-center"><AlertTriangle size={16} className="mr-2"/>{error}</p>}
+
+                    {/* Video Access Restriction for Free Tier */}
+                    {!subscription?.canAccessVideo && (
+                        <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-3">
+                            <Lock className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                            <div>
+                                <p className="text-sm text-amber-800 font-medium">Video Generation Locked</p>
+                                <p className="text-sm text-amber-700 mt-1">Video generation is available on Starter plan and above. Upgrade to unlock this powerful feature.</p>
+                                <button
+                                    onClick={() => navigate('/pricing')}
+                                    className="mt-2 text-sm font-medium text-amber-600 hover:text-amber-800 underline"
+                                >
+                                    View upgrade options
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Credit Error Display */}
+                    {creditError && (
+                        <div className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+                            <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                            <div>
+                                <p className="text-sm text-red-700">{creditError}</p>
+                                <button
+                                    onClick={() => navigate('/pricing')}
+                                    className="mt-2 text-sm font-medium text-red-600 hover:text-red-800 underline"
+                                >
+                                    View pricing & top-up options
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Credit cost and balance */}
+                    <div className="flex items-center justify-between py-2 border-t border-gray-200">
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-500">Credit cost:</span>
+                            <CreditBadge type="video" />
+                        </div>
+                        {subscription && (
+                            <span className="text-sm text-gray-500">
+                                Balance: {subscription.totalCredits.toLocaleString()} credits
+                            </span>
+                        )}
+                    </div>
+
                     <button
                         onClick={handleGenerate}
-                        disabled={isLoading}
+                        disabled={isLoading || !subscription?.canAccessVideo || !canGenerateType('video')}
                         className="w-full flex items-center justify-center py-3 px-6 rounded-lg shadow-sm text-base font-medium btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        {isLoading ? <><Spinner /> {loadingMessage}</> : <><Sparkles className="mr-2 h-5 w-5" /> Generate Video</>}
+                        {isLoading ? (
+                            <><Spinner /> {loadingMessage}</>
+                        ) : !subscription?.canAccessVideo ? (
+                            <><Lock className="mr-2 h-5 w-5" /> Upgrade to Generate Video</>
+                        ) : (
+                            <><Sparkles className="mr-2 h-5 w-5" /> Generate Video</>
+                        )}
                     </button>
                 </>
             )}

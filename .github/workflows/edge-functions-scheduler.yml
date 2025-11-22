@@ -10,6 +10,8 @@ on:
     - cron: '0 2 * * *'
     # Analytics fetcher - every hour
     - cron: '0 * * * *'
+    # Credit reset - daily at 3 AM UTC (checks and resets credits where needed)
+    - cron: '0 3 * * *'
 
   # Allow manual trigger for testing
   workflow_dispatch:
@@ -24,6 +26,7 @@ on:
           - recurring-post-generator
           - token-refresh
           - analytics-fetcher
+          - credit-reset
 
 jobs:
   post-scheduler:
@@ -124,6 +127,34 @@ jobs:
           echo "Invoking analytics-fetcher at $(date -u)"
           response=$(curl -s -w "\n%{http_code}" -X POST \
             "${{ secrets.SUPABASE_URL }}/functions/v1/analytics-fetcher" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json")
+
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n-1)
+
+          echo "Response body: $body"
+          echo "HTTP status: $http_code"
+
+          if [ "$http_code" -ge 400 ]; then
+            echo "Error: Edge function returned HTTP $http_code"
+            exit 1
+          fi
+
+  credit-reset:
+    name: Credit Reset
+    runs-on: ubuntu-latest
+    # Run daily at 3 AM UTC OR on manual trigger
+    if: |
+      github.event.schedule == '0 3 * * *' ||
+      github.event_name == 'workflow_dispatch' && (github.event.inputs.function == 'credit-reset' || github.event.inputs.function == 'all')
+
+    steps:
+      - name: Invoke credit-reset edge function
+        run: |
+          echo "Invoking credit-reset at $(date -u)"
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            "${{ secrets.SUPABASE_URL }}/functions/v1/credit-reset" \
             -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
             -H "Content-Type: application/json")
 
