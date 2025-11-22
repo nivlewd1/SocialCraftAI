@@ -8,9 +8,12 @@ import ToneSelector from '../components/ToneSelector';
 import ResultsDisplay from '../components/ResultsDisplay';
 import Spinner from '../components/Spinner';
 import TrendAnalysisDisplay from '../components/TrendAnalysisDisplay';
-import { Sparkles, TrendingUp, UserCheck, ArrowRight, Zap, Globe, PenTool } from 'lucide-react';
+import { Sparkles, TrendingUp, UserCheck, ArrowRight, Zap, Globe, PenTool, AlertCircle } from 'lucide-react';
 import SearchIntentSelector from '../components/SearchIntentSelector';
 import { useAuth } from '../contexts/AuthContext';
+import { useSubscription } from '../contexts/SubscriptionContext';
+import { CreditBadge } from '../components/WatermarkOverlay';
+import { CREDIT_COSTS } from '../config/pricing';
 
 interface GeneratorViewProps {
     onOpenAuth: () => void;
@@ -20,8 +23,10 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const { user } = useAuth();
+    const { subscription, canGenerateType, deductCredits } = useSubscription();
 
     const [sourceContent, setSourceContent] = useState('');
+    const [creditError, setCreditError] = useState<string | null>(null);
     const [authorsVoice, setAuthorsVoice] = useState('');
     const [platformSelections, setPlatformSelections] = useState<PlatformSelections>({});
     const [tone, setTone] = useState<Tone>('Auto');
@@ -91,12 +96,27 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
             return;
         }
 
+        // Check if user can afford text generation
+        if (!canGenerateType('text')) {
+            setCreditError('Insufficient credits. Please top up your credits to continue generating content.');
+            return;
+        }
+
         setIsLoading(true);
         setError(null);
+        setCreditError(null);
         setTrendError(null);
         setGeneratedContent([]);
 
         try {
+            // Deduct credits before generation
+            const deductResult = await deductCredits('text');
+            if (!deductResult.success) {
+                setCreditError(deductResult.error || 'Failed to deduct credits');
+                setIsLoading(false);
+                return;
+            }
+
             const results = await generateViralContent(sourceContent, platformSelections, 'general', tone, searchIntent, authorsVoice);
             setGeneratedContent(results);
             // Scroll to results
@@ -111,7 +131,7 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
         } finally {
             setIsLoading(false);
         }
-    }, [sourceContent, platformSelections, tone, searchIntent, authorsVoice]);
+    }, [sourceContent, platformSelections, tone, searchIntent, authorsVoice, user, canGenerateType, deductCredits]);
 
     const containerVariants = {
         hidden: { opacity: 0, y: 20 },
@@ -249,11 +269,35 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                             </motion.div>
                         </div>
 
+                        {/* Credit Error Display */}
+                        {creditError && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3"
+                            >
+                                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                                <div>
+                                    <p className="text-sm text-red-700">{creditError}</p>
+                                    <button
+                                        onClick={() => navigate('/pricing')}
+                                        className="mt-2 text-sm font-medium text-red-600 hover:text-red-800 underline"
+                                    >
+                                        View pricing & top-up options
+                                    </button>
+                                </div>
+                            </motion.div>
+                        )}
+
                         {/* Action Button */}
                         <motion.div variants={itemVariants} className="pt-4">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-sm text-gray-500">Credit cost per generation:</span>
+                                <CreditBadge type="text" />
+                            </div>
                             <button
                                 onClick={handleGenerate}
-                                disabled={isLoading || isFindingTrends}
+                                disabled={isLoading || isFindingTrends || !canGenerateType('text')}
                                 className="relative w-full group overflow-hidden rounded-xl p-[2px] focus:outline-none focus:ring-4 focus:ring-brand-primary/30 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 <span className="absolute inset-0 bg-gradient-to-r from-brand-primary via-brand-glow to-brand-primary opacity-100 group-hover:opacity-100 animate-gradient-x"></span>
@@ -274,6 +318,11 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                                     )}
                                 </div>
                             </button>
+                            {subscription && (
+                                <p className="mt-2 text-center text-xs text-gray-500">
+                                    Credits remaining: {subscription.totalCredits.toLocaleString()}
+                                </p>
+                            )}
                         </motion.div>
 
                     </div>

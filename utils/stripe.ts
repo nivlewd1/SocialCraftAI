@@ -14,6 +14,7 @@ export interface CheckoutOptions {
   userEmail: string;
   successUrl?: string;
   cancelUrl?: string;
+  mode?: 'subscription' | 'payment'; // 'subscription' for recurring, 'payment' for one-time (top-ups)
 }
 
 /**
@@ -21,9 +22,9 @@ export interface CheckoutOptions {
  * Calls Supabase Edge Function to create checkout session
  */
 export const redirectToCheckout = async (options: CheckoutOptions) => {
-  const { priceId, userId, userEmail, successUrl, cancelUrl } = options;
+  const { priceId, userId, userEmail, successUrl, cancelUrl, mode = 'subscription' } = options;
 
-  console.log('Creating checkout session...');
+  console.log('Creating checkout session...', { mode });
 
   try {
     // Call Supabase Edge Function to create checkout session
@@ -36,6 +37,7 @@ export const redirectToCheckout = async (options: CheckoutOptions) => {
         priceId,
         userId,
         userEmail,
+        mode, // 'subscription' or 'payment' (for top-ups)
         successUrl: successUrl || `${window.location.origin}/#/checkout/success`,
         cancelUrl: cancelUrl || `${window.location.origin}/#/checkout/cancel`,
       }),
