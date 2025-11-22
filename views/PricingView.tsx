@@ -6,7 +6,11 @@ import { useSubscription } from '../contexts/SubscriptionContext';
 import { useNavigate } from 'react-router-dom';
 import { redirectToCheckout } from '../utils/stripe';
 
-const PricingView: React.FC = () => {
+interface PricingViewProps {
+    onOpenAuth: () => void;
+}
+
+const PricingView: React.FC<PricingViewProps> = ({ onOpenAuth }) => {
     const { user } = useAuth();
     const { subscription } = useSubscription();
     const navigate = useNavigate();
@@ -14,8 +18,8 @@ const PricingView: React.FC = () => {
 
     const handleSelectPlan = async (planId: PlanType) => {
         if (!user) {
-            // Redirect to auth if not logged in
-            navigate('/', { state: { openAuth: true } });
+            // Open auth modal if not logged in
+            onOpenAuth();
             return;
         }
 

@@ -2,7 +2,9 @@
 import React, { useState } from 'react';
 import { GeneratedContent, ScheduledPost } from '../types';
 import { getOptimalTimeSlots } from '../utils/scheduling';
-import { X, Calendar, Clock, Sparkles } from 'lucide-react';
+import { X, Calendar, Clock, Sparkles, AlertCircle } from 'lucide-react';
+import { supabase } from '../config/supabase';
+import { useAuth } from '../contexts/AuthContext';
 
 interface SchedulingModalProps {
     content: GeneratedContent;
@@ -11,23 +13,56 @@ interface SchedulingModalProps {
 }
 
 const SchedulingModal: React.FC<SchedulingModalProps> = ({ content, onClose, onSchedule }) => {
+    const { user } = useAuth();
     const [scheduleTime, setScheduleTime] = useState('');
+    const [isScheduling, setIsScheduling] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const optimalSlots = getOptimalTimeSlots(content.platform);
 
-    const handleSchedule = (time: Date) => {
-        const newPost: ScheduledPost = {
-            id: new Date().toISOString(),
-            scheduledAt: time.toISOString(),
-            status: 'scheduled',
-            content: content,
-        };
+    const handleSchedule = async (time: Date) => {
+        if (!user) {
+            setError('Please sign in to schedule posts');
+            return;
+        }
+
+        setIsScheduling(true);
+        setError(null);
+
         try {
-            const existingSchedule: ScheduledPost[] = JSON.parse(localStorage.getItem('socialcraft_schedule') || '[]');
-            localStorage.setItem('socialcraft_schedule', JSON.stringify([...existingSchedule, newPost]));
+            // Save to Supabase scheduled_posts table
+            const { data, error: dbError } = await supabase
+                .from('scheduled_posts')
+                .insert({
+                    user_id: user.id,
+                    platform: content.platform.toLowerCase(),
+                    content: {
+                        text: content.primaryContent,
+                        hashtags: content.hashtags || [],
+                        hook: content.hook || null,
+                        cta: content.cta || null,
+                        image_prompt: content.pinterestPin?.visualSuggestion || null
+                    },
+                    scheduled_at: time.toISOString(),
+                    status: 'scheduled'
+                })
+                .select()
+                .single();
+
+            if (dbError) throw dbError;
+
+            const newPost: ScheduledPost = {
+                id: data.id,
+                scheduledAt: time.toISOString(),
+                status: 'scheduled',
+                content: content,
+            };
+
             onSchedule(newPost);
-        } catch (error) {
-            console.error('Failed to schedule post:', error);
-            // Optionally show an error to the user
+        } catch (err) {
+            console.error('Failed to schedule post:', err);
+            setError('Failed to schedule post. Please try again.');
+        } finally {
+            setIsScheduling(false);
         }
     };
 
@@ -64,6 +99,19 @@ const SchedulingModal: React.FC<SchedulingModalProps> = ({ content, onClose, onS
                         <p className="text-surface-900 text-sm whitespace-pre-wrap font-sans">{content.primaryContent}</p>
                     </div>
 
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md flex items-center text-red-700 text-sm">
+                            <AlertCircle size={16} className="mr-2 flex-shrink-0" />
+                            {error}
+                        </div>
+                    )}
+
+                    {isScheduling && (
+                        <div className="mb-4 p-3 bg-brand-primary/10 border border-brand-primary/20 rounded-md text-brand-primary text-sm text-center">
+                            Scheduling your post...
+                        </div>
+                    )}
+
                     <div>
                         <h3 className="text-md font-semibold font-display text-surface-900 mb-3 flex items-center">
                             <Sparkles size={16} className="mr-2 text-brand-primary" />
@@ -74,7 +122,8 @@ const SchedulingModal: React.FC<SchedulingModalProps> = ({ content, onClose, onS
                                  <button
                                      key={slot.date.toISOString()}
                                      onClick={() => handleSchedule(slot.date)}
-                                     className="p-2 text-center rounded-md bg-brand-primary/10 text-brand-primary hover:bg-brand-primary/20 transition-colors"
+                                     disabled={isScheduling}
+                                     className="p-2 text-center rounded-md bg-brand-primary/10 text-brand-primary hover:bg-brand-primary/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                  >
                                      <p className="font-semibold text-sm">{slot.date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</p>
                                      <p className="text-xs">{slot.label.split(',')[0]}</p>
@@ -88,19 +137,20 @@ const SchedulingModal: React.FC<SchedulingModalProps> = ({ content, onClose, onS
                             Or Pick a Custom Time
                         </h3>
                         <div className="flex gap-2">
-                             <input 
+                             <input
                                 type="datetime-local"
                                 value={scheduleTime}
                                 onChange={(e) => setScheduleTime(e.target.value)}
                                 min={formatDateTimeLocal(new Date())}
                                 className="input-field rounded-md w-full"
+                                disabled={isScheduling}
                             />
                             <button
                                 onClick={handleCustomSchedule}
-                                disabled={!scheduleTime}
+                                disabled={!scheduleTime || isScheduling}
                                 className="btn-primary px-4 rounded-md disabled:opacity-50"
                             >
-                                Schedule
+                                {isScheduling ? 'Scheduling...' : 'Schedule'}
                             </button>
                         </div>
                     </div>
