@@ -4,9 +4,9 @@
 -- Purpose: Fix remaining Supabase security linter warnings
 --
 -- Issues addressed:
--- 1. invoke_edge_function has mutable search_path
--- 2. pg_net extension is in public schema
--- 3. auth_leaked_password_protection (Dashboard setting - see notes)
+-- 1. invoke_edge_function has mutable search_path - FIXED (dropped)
+-- 2. pg_net extension in public schema - CANNOT FIX (see notes)
+-- 3. auth_leaked_password_protection - Dashboard setting
 -- =====================================================
 
 -- =====================================================
@@ -17,35 +17,24 @@
 
 DROP FUNCTION IF EXISTS public.invoke_edge_function CASCADE;
 
--- If you need this function, recreate it with fixed search_path:
--- CREATE OR REPLACE FUNCTION public.invoke_edge_function(function_name text)
--- RETURNS void
--- LANGUAGE plpgsql
--- SECURITY DEFINER
--- SET search_path = public
--- AS $$
--- BEGIN
---   -- Function body here
--- END;
--- $$;
-
 -- =====================================================
--- 2. MOVE pg_net EXTENSION TO extensions SCHEMA
+-- 2. pg_net EXTENSION WARNING (Cannot Fix)
 -- =====================================================
--- Note: This requires the extensions schema to exist
--- Supabase projects typically have this schema already
-
--- Create extensions schema if it doesn't exist
-CREATE SCHEMA IF NOT EXISTS extensions;
-
--- Grant usage to necessary roles
-GRANT USAGE ON SCHEMA extensions TO postgres, anon, authenticated, service_role;
-
--- Move pg_net to extensions schema
--- Note: This may fail if pg_net has dependencies. If so, run manually:
---   1. DROP EXTENSION pg_net CASCADE;
---   2. CREATE EXTENSION pg_net SCHEMA extensions;
-ALTER EXTENSION pg_net SET SCHEMA extensions;
+-- The pg_net extension does NOT support SET SCHEMA.
+-- This is a known limitation and the warning can be safely ignored.
+--
+-- pg_net in public schema is:
+-- - How Supabase installs it by default
+-- - Required for HTTP requests from database
+-- - Safe to leave as-is (WARN level, not ERROR)
+--
+-- If you want to eliminate this warning, you would need to:
+-- 1. Drop all dependent objects
+-- 2. DROP EXTENSION pg_net;
+-- 3. CREATE EXTENSION pg_net SCHEMA extensions;
+-- 4. Recreate dependent objects
+--
+-- This is NOT recommended as it may break Supabase functionality.
 
 -- =====================================================
 -- 3. LEAKED PASSWORD PROTECTION (Manual Step)
@@ -64,11 +53,7 @@ ALTER EXTENSION pg_net SET SCHEMA extensions;
 -- COMPLETE!
 -- =====================================================
 -- After running this migration:
--- 1. invoke_edge_function - DROPPED (not used)
--- 2. pg_net extension - Moved to extensions schema
+-- 1. invoke_edge_function - DROPPED
+-- 2. pg_net extension - Cannot move (safe to ignore warning)
 -- 3. Leaked password protection - Enable in Dashboard manually
---
--- If ALTER EXTENSION fails, run these commands manually:
---   DROP EXTENSION pg_net CASCADE;
---   CREATE EXTENSION pg_net SCHEMA extensions;
 -- =====================================================
