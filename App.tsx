@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import LandingView from './views/LandingView';
 import GeneratorView from './views/GeneratorView';
@@ -23,7 +23,17 @@ import { BrandAmplifier } from "./views/BrandAmplifier";
 import { AuthModal } from './components/AuthModal';
 import Footer from './components/Footer';
 import { useAuth } from "./contexts/AuthContext";
+import { TrendReport } from "./types";
 import { Menu, X, Sparkles, Book, TrendingUp, Zap, LogOut, User, Layout, Calendar, Settings, Image, GraduationCap } from 'lucide-react';
+
+// Wrapper component to pass navigation state to BrandAmplifier
+const BrandAmplifierWrapper: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => {
+    const location = useLocation();
+    const state = location.state as { report?: TrendReport } | null;
+    const activeReport = state?.report || null;
+
+    return <BrandAmplifier activeReport={activeReport} onOpenAuth={onOpenAuth} />;
+};
 
 function App() {
     const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -155,7 +165,7 @@ function App() {
                         <Route path="/trends" element={<TrendsView />} />
                         <Route path="/playbooks" element={<PlaybooksView onOpenAuth={() => setIsAuthOpen(true)} />} />
                         <Route path="/trends-agent" element={<TrendsAgent onTrendsFound={() => { }} onOpenAuth={() => setIsAuthOpen(true)} />} />
-                        <Route path="/amplifier" element={<BrandAmplifier activeReport={null} onOpenAuth={() => setIsAuthOpen(true)} />} />
+                        <Route path="/amplifier" element={<BrandAmplifierWrapper onOpenAuth={() => setIsAuthOpen(true)} />} />
                         <Route path="/schedule" element={<ScheduleView onOpenAuth={() => setIsAuthOpen(true)} />} />
                         <Route path="/settings" element={<SettingsView />} />
                         <Route path="/media-studio" element={<MediaStudioView onOpenAuth={() => setIsAuthOpen(true)} />} />
