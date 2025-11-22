@@ -170,7 +170,7 @@ function App() {
                         <Route path="/settings" element={<SettingsView />} />
                         <Route path="/media-studio" element={<MediaStudioView onOpenAuth={() => setIsAuthOpen(true)} />} />
                         <Route path="/drafts" element={<DraftsView onOpenAuth={() => setIsAuthOpen(true)} />} />
-                        <Route path="/pricing" element={<PricingView />} />
+                        <Route path="/pricing" element={<PricingView onOpenAuth={() => setIsAuthOpen(true)} />} />
                         <Route path="/about" element={<AboutView />} />
                         <Route path="/privacy" element={<PrivacyPolicyView />} />
                         <Route path="/terms" element={<TermsOfServiceView />} />

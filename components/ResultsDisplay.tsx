@@ -176,7 +176,7 @@ const MediaSuggestionCard: React.FC<{ content: GeneratedContent }> = ({ content 
 
 
     const handleCreate = (tab: 'image' | 'video') => {
-        navigate('/media', { state: { prompt: suggestedPrompt, tab } });
+        navigate('/media-studio', { state: { prompt: suggestedPrompt, tab } });
     };
 
     return (

@@ -57,7 +57,7 @@ const DraftsView: React.FC = () => {
     };
 
     const handleLoadDraft = (draft: Draft) => {
-        navigate('/', { state: { draftToLoad: draft } });
+        navigate('/generator', { state: { draftToLoad: draft } });
     };
 
     const formatDate = (dateString: string) => {
