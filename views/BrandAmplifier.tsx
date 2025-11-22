@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { TrendReport, GeneratedPost, Platform, BrandPersona } from '../types';
 import { generateBrandedContent } from '../services/geminiService';
 import { IconZap, IconCopy, IconRefresh } from '../components/ui/Icons';
@@ -48,6 +49,7 @@ const DEMO_POSTS: GeneratedPost[] = [
 
 export const BrandAmplifier: React.FC<BrandAmplifierProps> = ({ activeReport, onOpenAuth }) => {
     const { user } = useAuth();
+    const navigate = useNavigate();
     // Initialize from localStorage or use default
     const [persona, setPersona] = useState<BrandPersona>(() => {
         const saved = localStorage.getItem('socialcraft_persona');
@@ -129,8 +131,8 @@ export const BrandAmplifier: React.FC<BrandAmplifierProps> = ({ activeReport, on
     const handleSelectReport = (report: TrendReport) => {
         setUseManualTopic(false);
         setManualTopic('');
-        // Navigate to amplifier with the selected report
-        window.location.href = `/trends-agent`;
+        // Navigate to amplifier with the selected report in state
+        navigate('/amplifier', { state: { report } });
     };
 
     // Handler for manual topic generation
