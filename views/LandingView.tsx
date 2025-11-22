@@ -92,9 +92,9 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
               </motion.div>
 
               <motion.h1 variants={itemVariants} className="text-5xl lg:text-7xl font-extrabold font-display text-slate-900 leading-tight tracking-tight">
-                Create, Schedule &{' '}
+                Content That{' '}
                 <span className="relative inline-block">
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-indigo-500 to-brand-glow">Auto-Publish</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-indigo-500 to-brand-glow">Gets Discovered</span>
                   {/* Enhanced Underline Animation */}
                   <svg className="absolute -bottom-3 left-0 w-full h-3" viewBox="0 0 300 12" fill="none">
                     <motion.path
@@ -114,6 +114,8 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
                     </defs>
                   </svg>
                 </span>
+                <br />
+                <span className="text-3xl lg:text-5xl">Created, Scheduled & Auto-Published</span>
               </motion.h1>
 
               <motion.p variants={itemVariants} className="text-xl text-slate-600 leading-relaxed max-w-xl font-light">
