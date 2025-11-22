@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Sparkles, ArrowRight, BookOpen, MessageSquare, Image as ImageIcon, Twitter, Linkedin, Instagram } from 'lucide-react';
+import { Sparkles, ArrowRight, BookOpen, MessageSquare, Image as ImageIcon, Twitter, Linkedin, Instagram, Calendar, RefreshCw, TrendingUp, Megaphone, BarChart3, Zap } from 'lucide-react';
 
 // --- Custom Brand Icons ---
 
@@ -88,11 +88,11 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
             >
               <motion.div variants={itemVariants} className="inline-flex items-center px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-sm border border-stone-200">
                 <Sparkles className="h-4 w-4 text-brand-glow mr-2" />
-                <span className="text-sm font-medium text-slate-800">Algorithm-Optimized Content Engine</span>
+                <span className="text-sm font-medium text-slate-800">AI-Powered Content Automation Platform</span>
               </motion.div>
 
               <motion.h1 variants={itemVariants} className="text-5xl lg:text-7xl font-extrabold font-display text-slate-900 leading-tight tracking-tight">
-                Create Content That{' '}
+                Content That{' '}
                 <span className="relative inline-block">
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-indigo-500 to-brand-glow">Gets Discovered</span>
                   {/* Enhanced Underline Animation */}
@@ -114,10 +114,12 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
                     </defs>
                   </svg>
                 </span>
+                <br />
+                <span className="text-3xl lg:text-5xl">Created, Scheduled & Auto-Published</span>
               </motion.h1>
 
               <motion.p variants={itemVariants} className="text-xl text-slate-600 leading-relaxed max-w-xl font-light">
-                Master every platform's algorithm with AI-powered content that maximizes visibility. Our intelligent system adapts your content to each platform's unique discovery patterns.
+                Generate algorithm-optimized content, schedule posts, and publish automatically to all your social platforms. Set it once, grow forever.
               </motion.p>
 
               <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 pt-2">
@@ -270,7 +272,7 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
         </div>
       </section>
 
-      {/* Smart Content Analysis Section */}
+      {/* Content Generation Section */}
       <section id="features" className="py-24 bg-white relative z-20">
         <div className="container mx-auto px-6">
           <motion.div
@@ -334,6 +336,134 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
         </div>
       </section>
 
+      {/* Automation Section */}
+      <section className="py-24 bg-surface-50 relative z-20">
+        <div className="container mx-auto px-6">
+          <motion.div
+            className="text-center mb-16 space-y-4"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-4xl lg:text-5xl font-bold font-display text-slate-900">
+              Complete <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-glow">Automation</span>
+            </h2>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+              Schedule once, publish forever. Automate your entire social media workflow from content creation to publishing.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            <FeatureCard
+              icon={<Calendar className="h-8 w-8" />}
+              iconColor="from-emerald-500 to-teal-600"
+              title="Smart Scheduling"
+              description="Schedule posts for the perfect time with a visual calendar. Choose exact dates and times for each platform."
+              features={[
+                "Visual calendar interface",
+                "Pick exact posting times",
+                "Multi-platform scheduling",
+                "Time zone support"
+              ]}
+              delay={0}
+            />
+
+            <FeatureCard
+              icon={<RefreshCw className="h-8 w-8" />}
+              iconColor="from-blue-500 to-cyan-600"
+              title="Recurring Posts"
+              description="Set automatic posting frequencies—daily, weekly, or monthly. Create once, let the system handle the rest."
+              features={[
+                "Daily, weekly, monthly schedules",
+                "Custom day selection",
+                "14-day advance generation",
+                "Pause and resume anytime"
+              ]}
+              delay={0.2}
+            />
+
+            <FeatureCard
+              icon={<Zap className="h-8 w-8" />}
+              iconColor="from-amber-500 to-orange-600"
+              title="Direct Publishing"
+              description="Connect your accounts and publish directly to Twitter, LinkedIn, Instagram, TikTok, and Pinterest."
+              features={[
+                "5 platform integrations",
+                "OAuth secure connections",
+                "Automatic token refresh",
+                "Rate limit protection"
+              ]}
+              delay={0.4}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* AI Tools Section */}
+      <section className="py-24 bg-white relative z-20">
+        <div className="container mx-auto px-6">
+          <motion.div
+            className="text-center mb-16 space-y-4"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-4xl lg:text-5xl font-bold font-display text-slate-900">
+              AI-Powered <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-glow">Tools</span>
+            </h2>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+              Discover trends, amplify your brand, and track performance with intelligent automation.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            <FeatureCard
+              icon={<TrendingUp className="h-8 w-8" />}
+              iconColor="from-rose-500 to-pink-600"
+              title="Trend Scout"
+              description="AI agent that analyzes real-time trends, discovers emerging topics, and provides actionable content insights."
+              features={[
+                "Real-time trend analysis",
+                "Google Search grounding",
+                "Emerging topic discovery",
+                "Content opportunity alerts"
+              ]}
+              delay={0}
+            />
+
+            <FeatureCard
+              icon={<Megaphone className="h-8 w-8" />}
+              iconColor="from-violet-500 to-purple-600"
+              title="Brand Amplifier"
+              description="Amplify your brand messaging across platforms with consistent voice and optimized formatting."
+              features={[
+                "Brand voice consistency",
+                "Cross-platform messaging",
+                "Tone adaptation",
+                "Message optimization"
+              ]}
+              delay={0.2}
+            />
+
+            <FeatureCard
+              icon={<BarChart3 className="h-8 w-8" />}
+              iconColor="from-sky-500 to-blue-600"
+              title="Analytics Dashboard"
+              description="Track engagement metrics from all connected platforms in one unified dashboard."
+              features={[
+                "Unified metrics view",
+                "Engagement tracking",
+                "Performance insights",
+                "Hourly data refresh"
+              ]}
+              delay={0.4}
+            />
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section id="pricing" className="py-24 bg-gradient-to-br from-brand-primary via-indigo-500 to-brand-primary relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
@@ -349,10 +479,10 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-4xl lg:text-5xl font-bold font-display text-white">
-              Ready to Get Discovered on Every Platform?
+              Ready to Automate Your Social Growth?
             </h2>
             <p className="text-xl text-white/90 leading-relaxed">
-              Join thousands of creators maximizing their social media visibility with algorithm-optimized content.
+              Join thousands of creators who generate, schedule, and auto-publish algorithm-optimized content across all platforms.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <button
