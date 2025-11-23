@@ -138,20 +138,8 @@ const LandingView: React.FC<LandingViewProps> = ({ onOpenAuth }) => {
                 </button>
               </motion.div>
 
-              <motion.div variants={itemVariants} className="flex items-center space-x-8 pt-4">
-                <div className="flex -space-x-3">
-                  {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="w-12 h-12 rounded-full bg-gradient-to-br from-brand-primary to-brand-glow border-[3px] border-white flex items-center justify-center text-white text-sm font-bold shadow-sm">
-                      {String.fromCharCode(64 + i)}
-                    </div>
-                  ))}
-                </div>
-                <div>
-                  <div className="flex items-center text-brand-glow mb-1">
-                    {'★★★★★'.split('').map((star, i) => <span key={i} className="text-lg">{star}</span>)}
-                  </div>
-                  <p className="text-sm text-slate-500">Trusted by <span className="font-bold text-slate-800">10,000+</span> creators</p>
-                </div>
+              <motion.div variants={itemVariants} className="flex items-center pt-4">
+                <p className="text-sm text-slate-500">Connect with <span className="font-bold text-slate-800">Instagram, TikTok, X, LinkedIn</span> & more</p>
               </motion.div>
             </motion.div>
 
