@@ -16,24 +16,24 @@ const intentOptions: { id: SearchIntent; label: string; description: string; ico
 
 const SearchIntentSelector: React.FC<SearchIntentSelectorProps> = ({ selectedIntent, onIntentChange }) => {
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
             {intentOptions.map(option => (
                 <button
                     key={option.id}
                     type="button"
                     onClick={() => onIntentChange(option.id)}
-                    className={`group relative text-left p-3 border rounded-lg transition-all duration-200 flex flex-col justify-between h-full ${
+                    className={`group relative text-left p-3 border rounded-lg transition-all duration-200 flex flex-col gap-2 ${
                         selectedIntent === option.id
                             ? 'border-brand-primary bg-brand-primary/10 text-brand-primary font-semibold'
                             : 'bg-surface-100/30 border-surface-100 text-surface-900 hover:border-brand-primary'
                     }`}
                     title={option.description}
                 >
-                    <div className="flex items-center space-x-2">
-                        {option.icon}
+                    <div className="flex items-center gap-2">
+                        <span className="flex-shrink-0">{option.icon}</span>
                         <span className="font-medium text-sm">{option.label}</span>
                     </div>
-                    <p className="text-xs text-surface-900 mt-1">{option.description}</p>
+                    <p className="text-xs text-surface-900/70 line-clamp-2">{option.description}</p>
                 </button>
             ))}
         </div>
