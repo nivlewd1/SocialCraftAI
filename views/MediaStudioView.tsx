@@ -7,6 +7,21 @@ import { Clapperboard, Image as ImageIcon, Sparkles, AlertTriangle, KeyRound, Do
 import { useSubscription } from '../contexts/SubscriptionContext';
 import { CreditBadge, WatermarkOverlay } from '../components/WatermarkOverlay';
 import { CREDIT_COSTS } from '../config/pricing';
+import { mediaService } from '../services/mediaService';
+
+// Helper function to convert base64 data URL to Blob
+const dataUrlToBlob = (dataUrl: string): Blob => {
+    const parts = dataUrl.split(',');
+    const mimeMatch = parts[0].match(/:(.*?);/);
+    const mime = mimeMatch ? mimeMatch[1] : 'image/png';
+    const byteString = atob(parts[1]);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const intArray = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+        intArray[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([intArray], { type: mime });
+};
 
 type AspectRatioImage = '1:1' | '16:9' | '9:16' | '4:3' | '3:4';
 type AspectRatioVideo = '16:9' | '9:16';
@@ -182,19 +197,12 @@ const ImageGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
         }
     };
     
-    const handleSaveImage = () => {
+    const handleSaveImage = async () => {
         if (!generatedImage || !prompt) return;
         setSaveStatus('saving');
-        const newMediaItem: SavedMedia = {
-            id: new Date().toISOString(),
-            type: 'image',
-            prompt,
-            url: generatedImage,
-            createdAt: new Date().toISOString(),
-        };
         try {
-            const existingMedia: SavedMedia[] = JSON.parse(localStorage.getItem('socialcraft_saved_media') || '[]');
-            localStorage.setItem('socialcraft_saved_media', JSON.stringify([newMediaItem, ...existingMedia]));
+            const blob = dataUrlToBlob(generatedImage);
+            await mediaService.uploadMedia(blob, 'image', prompt);
             setSaveStatus('saved');
         } catch (error) {
             console.error("Failed to save media:", error);
@@ -457,19 +465,14 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
         }
     };
 
-    const handleSaveVideo = () => {
+    const handleSaveVideo = async () => {
         if (!generatedVideoUrl || !prompt) return;
         setSaveStatus('saving');
-        const newMediaItem: SavedMedia = {
-            id: new Date().toISOString(),
-            type: 'video',
-            prompt,
-            url: generatedVideoUrl,
-            createdAt: new Date().toISOString(),
-        };
         try {
-            const existingMedia: SavedMedia[] = JSON.parse(localStorage.getItem('socialcraft_saved_media') || '[]');
-            localStorage.setItem('socialcraft_saved_media', JSON.stringify([newMediaItem, ...existingMedia]));
+            // Fetch the video from the remote URL and convert to Blob
+            const response = await fetch(generatedVideoUrl);
+            const blob = await response.blob();
+            await mediaService.uploadMedia(blob, 'video', prompt);
             setSaveStatus('saved');
         } catch (error) {
             console.error("Failed to save media:", error);
