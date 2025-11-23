@@ -37,7 +37,7 @@ const AdvancedPlatformSelector: React.FC<AdvancedPlatformSelectorProps> = ({ sel
     };
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-3 max-h-64 overflow-y-auto pr-1">
             {platformOptions.map((option) => {
                 const isSelected = !!selections[option.id];
                 const selectedFormat = selections[option.id]?.format || 'Auto';

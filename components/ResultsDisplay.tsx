@@ -5,6 +5,7 @@ import { Twitter, Linkedin, Instagram, Music, Lightbulb, MessageSquare, Copy, Ch
 import SchedulingModal from './SchedulingModal';
 import OriginalityReviewModal from './OriginalityReviewModal';
 import { generateVisualPrompt } from '../services/geminiService';
+import { draftsService } from '../services/draftsService';
 import Spinner from './Spinner';
 
 interface ResultsDisplayProps {
@@ -38,29 +39,25 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, sourceContent,
         }
     }, [results]);
 
-    const handleSaveDraft = () => {
+    const handleSaveDraft = async () => {
         setSaveStatus('saving');
-        const newDraft: Draft = {
-            id: new Date().toISOString(),
-            title: sourceContent.substring(0, 50) || 'Untitled Draft',
-            createdAt: new Date().toISOString(),
-            sourceContent,
-            authorsVoice,
-            platformSelections,
-            tone,
-            searchIntent,
-            results,
-        };
 
         try {
-            const existingDrafts: Draft[] = JSON.parse(localStorage.getItem('socialcraft_drafts') || '[]');
-            localStorage.setItem('socialcraft_drafts', JSON.stringify([newDraft, ...existingDrafts]));
+            await draftsService.createDraft({
+                title: sourceContent.substring(0, 50) || 'Untitled Draft',
+                sourceContent,
+                authorsVoice,
+                platformSelections,
+                tone,
+                searchIntent,
+                results,
+            });
             setSaveStatus('saved');
         } catch (error) {
             console.error("Failed to save draft:", error);
             setSaveStatus('idle');
         } finally {
-             setTimeout(() => setSaveStatus('idle'), 2000);
+            setTimeout(() => setSaveStatus('idle'), 2000);
         }
     };
 

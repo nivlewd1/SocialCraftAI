@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Draft, SavedMedia } from '../types';
 import { Save, Trash2, Clock, Edit, Eye, Image as ImageIcon, Video, AlertTriangle } from 'lucide-react';
 import DraftViewerModal from '../components/DraftViewerModal';
+import { draftsService } from '../services/draftsService';
+import { mediaService } from '../services/mediaService';
 
 const TabButton: React.FC<{ label: string; icon: React.ReactNode; isActive: boolean; onClick: () => void }> = ({ label, icon, isActive, onClick }) => (
     <button
@@ -28,31 +30,38 @@ const DraftsView: React.FC = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        try {
-            const savedDrafts = JSON.parse(localStorage.getItem('socialcraft_drafts') || '[]');
-            setDrafts(savedDrafts);
-            const savedMediaItems = JSON.parse(localStorage.getItem('socialcraft_saved_media') || '[]');
-            setSavedMedia(savedMediaItems);
-        } catch (error) {
-            console.error("Failed to load library items:", error);
-            setDrafts([]);
-            setSavedMedia([]);
-        }
+        const loadContent = async () => {
+            try {
+                const [fetchedDrafts, fetchedMedia] = await Promise.all([
+                    draftsService.getAllDrafts(),
+                    mediaService.getAllMedia()
+                ]);
+                setDrafts(fetchedDrafts);
+                setSavedMedia(fetchedMedia);
+            } catch (error) {
+                console.error("Failed to load library items:", error);
+                setDrafts([]);
+                setSavedMedia([]);
+            }
+        };
+        loadContent();
     }, []);
 
-    const handleConfirmDelete = () => {
+    const handleConfirmDelete = async () => {
         if (!confirmingDelete) return;
 
-        if (confirmingDelete.type === 'content') {
-            const updatedDrafts = drafts.filter(draft => draft.id !== confirmingDelete.id);
-            setDrafts(updatedDrafts);
-            localStorage.setItem('socialcraft_drafts', JSON.stringify(updatedDrafts));
-        } else if (confirmingDelete.type === 'media') {
-            const updatedMedia = savedMedia.filter(item => item.id !== confirmingDelete.id);
-            setSavedMedia(updatedMedia);
-            localStorage.setItem('socialcraft_saved_media', JSON.stringify(updatedMedia));
+        try {
+            if (confirmingDelete.type === 'content') {
+                await draftsService.deleteDraft(confirmingDelete.id);
+                setDrafts(drafts.filter(draft => draft.id !== confirmingDelete.id));
+            } else if (confirmingDelete.type === 'media') {
+                await mediaService.deleteMedia(confirmingDelete.id);
+                setSavedMedia(savedMedia.filter(item => item.id !== confirmingDelete.id));
+            }
+        } catch (error) {
+            console.error("Failed to delete item:", error);
         }
-        
+
         setConfirmingDelete(null);
     };
 
