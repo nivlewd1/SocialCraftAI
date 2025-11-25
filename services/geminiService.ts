@@ -3,10 +3,10 @@ import { GoogleGenAI, Modality, Type } from "@google/genai";
 import { Platform, GeneratedContent, VideoOperation, PlatformSelections, Tone, TrendAnalysisResult, GroundingSource, SearchIntent } from '../types';
 
 if (!process.env.API_KEY) {
-  // This is a placeholder for environments where the key is not set.
-  // In a real scenario, the key would be injected by the runtime.
-  console.warn("API_KEY environment variable not set. Using a placeholder.");
-  process.env.API_KEY = "YOUR_API_KEY_HERE";
+    // This is a placeholder for environments where the key is not set.
+    // In a real scenario, the key would be injected by the runtime.
+    console.warn("API_KEY environment variable not set. Using a placeholder.");
+    process.env.API_KEY = "YOUR_API_KEY_HERE";
 }
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
@@ -117,17 +117,17 @@ const fullSchema = {
 };
 
 const generatePrompt = (content: string, selections: PlatformSelections, context: 'general' | 'academic', tone: Tone, searchIntent: SearchIntent, authorsVoice?: string): string => {
-  const contextInstruction = context === 'academic'
-    ? "You are an expert science communicator specializing in translating complex academic research into engaging, accessible social media content. Break down the key findings, implications, and hooks."
-    : "You are SocialCraft AI, an expert content strategist. Your goal is to create high-value, 'people-first' content that is helpful, engaging, and trustworthy. Your secondary goal is algorithmic performance.";
-    
+    const contextInstruction = context === 'academic'
+        ? "You are an expert science communicator specializing in translating complex academic research into engaging, accessible social media content. Break down the key findings, implications, and hooks."
+        : "You are SocialCraft AI, an expert content strategist. Your goal is to create high-value, 'people-first' content that is helpful, engaging, and trustworthy. Your secondary goal is algorithmic performance.";
+
     const toneInstruction = tone !== 'Auto'
-    ? `\n**TONE:** The tone of all generated content MUST be strictly '${tone}'. This is a top priority.`
-    : "";
+        ? `\n**TONE:** The tone of all generated content MUST be strictly '${tone}'. This is a top priority.`
+        : "";
 
     const authorsVoiceInstruction = authorsVoice
-    ? `\n**AUTHOR'S VOICE (E-E-A-T):** This is the most critical instruction. You MUST naturally and seamlessly integrate the following personal anecdote, unique perspective, or specific data point into the generated content. This is to demonstrate first-hand **E**xperience, **E**xpertise, **A**uthoritativeness, and **T**rustworthiness. Here is the user's input to integrate:\n---${authorsVoice}\n---`
-    : "";
+        ? `\n**AUTHOR'S VOICE (E-E-A-T):** This is the most critical instruction. You MUST naturally and seamlessly integrate the following personal anecdote, unique perspective, or specific data point into the generated content. This is to demonstrate first-hand **E**xperience, **E**xpertise, **A**uthoritativeness, and **T**rustworthiness. Here is the user's input to integrate:\n---${authorsVoice}\n---`
+        : "";
 
     let intentInstruction = '';
     switch (searchIntent) {
@@ -165,14 +165,14 @@ const generatePrompt = (content: string, selections: PlatformSelections, context
         } else if (format === 'Poll') {
             linkedInInstruction += `You MUST generate a poll. Provide a question and 2-4 options in the 'poll' field. The 'primaryContent' should introduce the poll's topic.\n`;
         } else if (format === 'Text') {
-             linkedInInstruction += `You MUST generate a text-only post.\n`;
+            linkedInInstruction += `You MUST generate a text-only post.\n`;
         } else { // 'Auto' format lets the AI choose
-             linkedInInstruction += `Based on the source content, choose the BEST format: a text post, a carousel post, or a poll. Carousels and polls are high-engagement.\n`;
+            linkedInInstruction += `Based on the source content, choose the BEST format: a text post, a carousel post, or a poll. Carousels and polls are high-engagement.\n`;
         }
         linkedInInstruction += `    - **CRITICAL ALGORITHMIC RULE:** LinkedIn's algorithm heavily penalizes posts with external links. If a link is essential, it MUST be placed in a suggested 'firstComment'. The main post must provide full value on its own. Add an optimization tip warning the user that even links in comments can reduce reach.\n`;
         platformInstructions += linkedInInstruction;
     }
-    
+
     // Generate instruction for Instagram if selected, considering the chosen format
     if (selections.Instagram) {
         let instagramInstruction = `- Instagram: The platform prioritizes high-quality visuals and Reels. Captions are for engagement (comments/saves). ALWAYS include a clear CTA.\n`;
@@ -190,7 +190,7 @@ const generatePrompt = (content: string, selections: PlatformSelections, context
         } else { // 'Auto' or 'Text' format lets the AI choose or default to a standard post
             instagramInstruction += `    - Analyze the source content and choose the BEST format: a standard post, a multi-slide carousel, or a short-form Reel.\n`;
         }
-         instagramInstruction += `    - **Optimization Tips** MUST include reminders to use high-quality visuals and to avoid watermarks from other platforms like TikTok.\n`;
+        instagramInstruction += `    - **Optimization Tips** MUST include reminders to use high-quality visuals and to avoid watermarks from other platforms like TikTok.\n`;
         platformInstructions += instagramInstruction;
     }
 
@@ -222,7 +222,7 @@ const generatePrompt = (content: string, selections: PlatformSelections, context
     }
 
 
-  return `${contextInstruction}${toneInstruction}${intentInstruction}${authorsVoiceInstruction}
+    return `${contextInstruction}${toneInstruction}${intentInstruction}${authorsVoiceInstruction}
 
 Analyze the following content and generate optimized posts for these platforms: [${platforms.join(', ')}].
 
@@ -244,7 +244,7 @@ const handleApiError = (error: any, context: string): never => {
 
     if (error instanceof Error) {
         const errorMessage = error.message.toLowerCase();
-        
+
         if (errorMessage.includes("api key not valid") || errorMessage.includes("permission denied")) {
             message = 'Authentication error. Please ensure your API key is valid and has the required permissions.';
         } else if (errorMessage.includes("400") || errorMessage.includes("invalid argument")) {
@@ -259,18 +259,18 @@ const handleApiError = (error: any, context: string): never => {
         } else {
             // Use a cleaned up version of the original message if it's not a generic network error
             if (!errorMessage.includes("network error")) {
-                 message = error.message;
+                message = error.message;
             }
         }
     }
-    
+
     throw new Error(message);
 };
 
 
 export const generateViralContent = async (
-    content: string, 
-    selections: PlatformSelections, 
+    content: string,
+    selections: PlatformSelections,
     context: 'general' | 'academic' = 'general',
     tone: Tone = 'Auto',
     searchIntent: SearchIntent = 'Auto',
@@ -290,13 +290,13 @@ export const generateViralContent = async (
                 responseSchema: fullSchema
             }
         });
-        
+
         const jsonText = response.text.trim();
         const generatedData = JSON.parse(jsonText) as GeneratedContent[];
 
         // Ensure platforms in response match requested platforms
         return generatedData.filter(item => platforms.includes(item.platform));
-        
+
     } catch (error) {
         handleApiError(error, "content generation");
     }
@@ -337,11 +337,20 @@ export const findTrends = async (content: string): Promise<TrendAnalysisResult> 
                 tools: [{ googleSearch: {} }],
             }
         });
-        
-        // Clean the response to handle potential markdown code blocks from the AI
-        let jsonText = response.text.trim();
+
+        // Safely extract text from response
+        let jsonText: string;
+        if (response.text) {
+            jsonText = response.text.trim();
+        } else if (response.candidates?.[0]?.content?.parts?.[0]?.text) {
+            jsonText = response.candidates[0].content.parts[0].text.trim();
+        } else {
+            console.error("Gemini response missing text. Full response:", JSON.stringify(response, null, 2));
+            throw new Error("No text generated from AI model. The request might have been blocked or returned only tool calls.");
+        }
+
         if (jsonText.startsWith('```') && jsonText.endsWith('```')) {
-             jsonText = jsonText.replace(/^```(json)?\s*/, '').replace(/```$/, '').trim();
+            jsonText = jsonText.replace(/^```(json)?\s*/, '').replace(/```$/, '').trim();
         }
 
         const parsedData = JSON.parse(jsonText);
@@ -353,7 +362,7 @@ export const findTrends = async (content: string): Promise<TrendAnalysisResult> 
                 title: chunk.web?.title || 'Untitled Source'
             }))
             .filter((source: GroundingSource) => source.uri);
-            
+
         const uniqueSources = Array.from(new Map(sources.map(item => [item['uri'], item])).values());
 
         return { ...parsedData, sources: uniqueSources };
@@ -368,29 +377,29 @@ export const editImage = async (
 ): Promise<string> => {
     try {
         const response = await ai.models.generateContent({
-          model: 'gemini-2.5-flash-image',
-          contents: {
-            parts: [
-              {
-                inlineData: {
-                  data: imageData.data,
-                  mimeType: imageData.mimeType,
-                },
-              },
-              {
-                text: prompt,
-              },
-            ],
-          },
-          config: {
-              responseModalities: [Modality.IMAGE],
-          },
+            model: 'gemini-2.5-flash-image',
+            contents: {
+                parts: [
+                    {
+                        inlineData: {
+                            data: imageData.data,
+                            mimeType: imageData.mimeType,
+                        },
+                    },
+                    {
+                        text: prompt,
+                    },
+                ],
+            },
+            config: {
+                responseModalities: [Modality.IMAGE],
+            },
         });
         for (const part of response.candidates[0].content.parts) {
-          if (part.inlineData) {
-            const base64ImageBytes: string = part.inlineData.data;
-            return `data:${part.inlineData.mimeType};base64,${base64ImageBytes}`;
-          }
+            if (part.inlineData) {
+                const base64ImageBytes: string = part.inlineData.data;
+                return `data:${part.inlineData.mimeType};base64,${base64ImageBytes}`;
+            }
         }
         throw new Error("No image was generated from the edit.");
     } catch (error) {
@@ -430,7 +439,7 @@ export const generateVideo = async (
     const videoAi = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
     try {
         if (images && images.length > 1) {
-             // Multi-image reference mode
+            // Multi-image reference mode
             const referenceImagesPayload: VideoGenerationReferenceImage[] = images.map(img => ({
                 image: {
                     imageBytes: img.data,
@@ -460,7 +469,7 @@ export const generateVideo = async (
                     mimeType: images[0].mimeType
                 }
             } : {};
-            
+
             const operation = await videoAi.models.generateVideos({
                 model: 'veo-3.1-fast-generate-preview',
                 prompt,
@@ -561,9 +570,18 @@ Be specific and actionable.`;
                 tools: [{ googleSearch: {} }],
             }
         });
-        
-        const text = response.text.trim();
-        
+
+        // Safely extract text from response
+        let text: string;
+        if (response.text) {
+            text = response.text.trim();
+        } else if (response.candidates?.[0]?.content?.parts?.[0]?.text) {
+            text = response.candidates[0].content.parts[0].text.trim();
+        } else {
+            console.error("Gemini response missing text in agentic trends. Full response:", JSON.stringify(response, null, 2));
+            throw new Error("No text generated from AI model.");
+        }
+
         const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
         const sources = groundingChunks
             .map((chunk: any) => ({
@@ -571,7 +589,7 @@ Be specific and actionable.`;
                 url: chunk.web?.uri || ''
             }))
             .filter((source: { title: string; url: string }) => source.url);
-            
+
         const uniqueSources = Array.from(new Map(sources.map((item: { title: string; url: string }) => [item.url, item])).values());
 
         return { text, sources: uniqueSources };
@@ -614,12 +632,12 @@ Return a JSON array with objects containing: platform, content, hashtags (array)
                 responseMimeType: 'application/json',
             }
         });
-        
+
         let jsonText = response.text.trim();
         if (jsonText.startsWith('```') && jsonText.endsWith('```')) {
             jsonText = jsonText.replace(/^```(json)?\s*/, '').replace(/```$/, '').trim();
         }
-        
+
         return JSON.parse(jsonText);
     } catch (error) {
         handleApiError(error, "branded content generation");
