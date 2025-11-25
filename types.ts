@@ -117,10 +117,11 @@ export interface Trend {
 }
 
 export interface GroundingSource {
-    uri: string;
-    title: string;
+  uri: string;
+  title: string;
 }
 
+// Result from findTrends() - quick research in GeneratorView
 export interface TrendAnalysisResult {
   overallSummary: string;
   identifiedTrends: Trend[];
@@ -136,16 +137,31 @@ export interface ScheduledPost {
 }
 
 export interface UploadedImage {
-    data: string; // base64 encoded string
-    mimeType: string;
-    name: string;
+  data: string; // base64 encoded string
+  mimeType: string;
+  name: string;
 }
+
+// Source type for unified trend research
+export type TrendSourceType = 'quick' | 'deep';
+
+// Unified TrendReport type - works with both quick and deep research
 export interface TrendReport {
   id: string;
   date: string;
   niche: string;
-  content: string;
-  sources: { title: string; url: string; }[];
+  content: string | null;                    // Full markdown content (deep) or null (quick)
+  sources: { title: string; url: string }[];
+  sourceType: TrendSourceType;               // 'quick' = Generator, 'deep' = Trend Scout
+  identifiedTrends?: Trend[];                // Structured trends (quick research only)
+  relatedKeywords?: string[];                // Keywords (quick research only)
+  overallSummary?: string;                   // Summary (quick research only)
+}
+
+// Helper type for creating TrendReport from TrendAnalysisResult
+export interface QuickResearchInput {
+  topic: string;
+  analysisResult: TrendAnalysisResult;
 }
 
 export interface GeneratedPost {
@@ -159,4 +175,21 @@ export interface BrandPersona {
   name: string;
   tone: string;
   audience: string;
+}
+
+// Navigation state types for passing data between views
+export interface AmplifierNavigationState {
+  report?: TrendReport;
+  fromGenerator?: boolean;
+}
+
+export interface TrendScoutNavigationState {
+  initialTopic?: string;
+  quickResearch?: TrendAnalysisResult;
+}
+
+export interface GeneratorNavigationState {
+  playbookContent?: string;
+  draftToLoad?: Draft;
+  trendToUse?: Trend;
 }

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Platform, GeneratedContent, PlatformSelections, Tone, Draft, TrendAnalysisResult, Trend, SearchIntent } from '../types';
+import { Platform, GeneratedContent, PlatformSelections, Tone, Draft, TrendAnalysisResult, Trend, SearchIntent, GeneratorNavigationState } from '../types';
 import { generateViralContent, findTrends } from '../services/geminiService';
 import AdvancedPlatformSelector from '../components/AdvancedPlatformSelector';
 import ToneSelector from '../components/ToneSelector';
@@ -38,9 +38,12 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
     const [isFindingTrends, setIsFindingTrends] = useState(false);
     const [trendResults, setTrendResults] = useState<TrendAnalysisResult | null>(null);
     const [trendError, setTrendError] = useState<string | null>(null);
+    
+    // Store the original search topic for reference
+    const [searchTopic, setSearchTopic] = useState<string>('');
 
     useEffect(() => {
-        const state = location.state as { playbookContent?: string; draftToLoad?: Draft };
+        const state = location.state as GeneratorNavigationState | null;
         if (state?.playbookContent) {
             setSourceContent(state.playbookContent);
             navigate('.', { replace: true, state: {} });
@@ -53,12 +56,16 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
             setSearchIntent(draft.searchIntent || 'Auto');
             setGeneratedContent(draft.results);
             navigate('.', { replace: true, state: {} });
+        } else if (state?.trendToUse) {
+            // Coming from another page with a trend to use
+            const trend = state.trendToUse;
+            setSourceContent(`Topic: ${trend.trendTitle}\n\nDetails: ${trend.description}`);
+            navigate('.', { replace: true, state: {} });
         }
     }, [location.state, navigate]);
 
     const handleFindTrends = useCallback(async () => {
         if (!sourceContent.trim()) {
-            // Ideally use a toast notification here
             alert('Please provide a topic, text, or URL to research.');
             return;
         }
@@ -67,6 +74,7 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
         setTrendError(null);
         setTrendResults(null);
         setError(null);
+        setSearchTopic(sourceContent.trim()); // Store the search topic
 
         try {
             const results = await findTrends(sourceContent);
@@ -131,7 +139,7 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
         } finally {
             setIsLoading(false);
         }
-    }, [sourceContent, platformSelections, tone, searchIntent, authorsVoice, user, canGenerateType, deductCredits]);
+    }, [sourceContent, platformSelections, tone, searchIntent, authorsVoice, user, canGenerateType, deductCredits, onOpenAuth]);
 
     const containerVariants = {
         hidden: { opacity: 0, y: 20 },
@@ -289,6 +297,20 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                             </motion.div>
                         )}
 
+                        {/* Trend Error Display */}
+                        {trendError && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="p-4 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-3"
+                            >
+                                <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                                <div>
+                                    <p className="text-sm text-amber-700">{trendError}</p>
+                                </div>
+                            </motion.div>
+                        )}
+
                         {/* Action Button */}
                         <motion.div variants={itemVariants} className="pt-4">
                             <div className="flex items-center justify-between mb-2">
@@ -353,7 +375,9 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                     >
                         <TrendAnalysisDisplay
                             results={trendResults}
+                            sourceTopic={searchTopic}
                             onUseTrend={handleUseTrend}
+                            onOpenAuth={onOpenAuth}
                         />
                     </motion.div>
                 )}
@@ -376,6 +400,45 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                                 tone={tone}
                                 searchIntent={searchIntent}
                             />
+                            
+                            {/* Post-Generation Actions */}
+                            <div className="max-w-4xl mx-auto mt-8 p-6 glass-card rounded-lg">
+                                <h3 className="text-lg font-bold text-surface-900 mb-4">Continue Your Content Journey</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <button
+                                        onClick={() => navigate('/amplifier', { 
+                                            state: { 
+                                                fromGenerator: true,
+                                                // Pass the trend results if available for context
+                                                ...(trendResults && {
+                                                    report: {
+                                                        id: `temp-${Date.now()}`,
+                                                        date: new Date().toLocaleDateString(),
+                                                        niche: searchTopic || sourceContent.substring(0, 50),
+                                                        content: null,
+                                                        sources: trendResults.sources.map(s => ({ title: s.title, url: s.uri })),
+                                                        sourceType: 'quick' as const,
+                                                        identifiedTrends: trendResults.identifiedTrends,
+                                                        relatedKeywords: trendResults.relatedKeywords,
+                                                        overallSummary: trendResults.overallSummary
+                                                    }
+                                                })
+                                            } 
+                                        })}
+                                        className="flex items-center justify-center gap-2 px-4 py-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors font-medium"
+                                    >
+                                        <TrendingUp className="w-5 h-5" />
+                                        Refine in Brand Amplifier
+                                    </button>
+                                    <button
+                                        onClick={() => navigate('/media-studio')}
+                                        className="flex items-center justify-center gap-2 px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors font-medium"
+                                    >
+                                        <Sparkles className="w-5 h-5" />
+                                        Create Visuals in Media Studio
+                                    </button>
+                                </div>
+                            </div>
                         </motion.div>
                     )}
                 </AnimatePresence>

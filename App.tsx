@@ -23,13 +23,13 @@ import { BrandAmplifier } from "./views/BrandAmplifier";
 import { AuthModal } from './components/AuthModal';
 import Footer from './components/Footer';
 import { useAuth } from "./contexts/AuthContext";
-import { TrendReport } from "./types";
+import { TrendReport, AmplifierNavigationState } from "./types";
 import { Menu, X, Sparkles, Book, TrendingUp, Zap, LogOut, User, Layout, Calendar, Settings, Image, GraduationCap } from 'lucide-react';
 
 // Wrapper component to pass navigation state to BrandAmplifier
 const BrandAmplifierWrapper: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => {
     const location = useLocation();
-    const state = location.state as { report?: TrendReport } | null;
+    const state = location.state as AmplifierNavigationState | null;
     const activeReport = state?.report || null;
 
     return <BrandAmplifier activeReport={activeReport} onOpenAuth={onOpenAuth} />;

@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { fetchAgenticTrends } from '../services/geminiService';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { trendResearchService } from '../services/trendResearchService';
 import { IconSearch, IconRefresh, IconZap } from '../components/ui/Icons';
 import ReactMarkdown from 'react-markdown';
-import { TrendReport } from '../types';
-import { supabase } from '../config/supabase';
-import { useNavigate } from 'react-router-dom';
+import { TrendReport, TrendAnalysisResult, TrendScoutNavigationState } from '../types';
+import { fetchAgenticTrends } from '../services/geminiService';
 import { useAuth } from '../contexts/AuthContext';
-import { Search, Terminal, Cpu, ArrowRight, Globe, Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Search, Terminal, Cpu, ArrowRight, Globe, Clock, AlertCircle, CheckCircle2, Lightbulb, Info } from 'lucide-react';
 
 interface TrendsAgentProps {
   onTrendsFound: (report: TrendReport) => void;
@@ -15,10 +15,18 @@ interface TrendsAgentProps {
 
 export const TrendsAgent: React.FC<TrendsAgentProps> = ({ onTrendsFound, onOpenAuth }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
-  const [niche, setNiche] = useState('Generative AI Marketing');
+  
+  // Get navigation state if coming from Generator
+  const navState = location.state as TrendScoutNavigationState | null;
+  
+  const [niche, setNiche] = useState(navState?.initialTopic || 'Generative AI Marketing');
   const [isSearching, setIsSearching] = useState(false);
   const [currentReport, setCurrentReport] = useState<TrendReport | null>(null);
+  const [quickResearchContext, setQuickResearchContext] = useState<TrendAnalysisResult | null>(
+    navState?.quickResearch || null
+  );
 
   // State for dynamic logs
   const [logs, setLogs] = useState<Array<{ msg: string, type: 'info' | 'success' | 'warning' | 'error' }>>([
@@ -28,6 +36,26 @@ export const TrendsAgent: React.FC<TrendsAgentProps> = ({ onTrendsFound, onOpenA
 
   const logsEndRef = useRef<HTMLDivElement>(null);
   const isInitialMount = useRef(true);
+
+  // Clear navigation state after reading
+  useEffect(() => {
+    if (navState) {
+      navigate('.', { replace: true, state: {} });
+    }
+  }, []);
+
+  // Show context from quick research if available
+  useEffect(() => {
+    if (quickResearchContext) {
+      setLogs(prev => [
+        ...prev,
+        { msg: '> Quick research context loaded from Generator', type: 'info' },
+        { msg: `> Topic: ${niche}`, type: 'info' },
+        { msg: `> Found ${quickResearchContext.identifiedTrends.length} preliminary trends`, type: 'success' },
+        { msg: '> Ready for deep analysis...', type: 'warning' }
+      ]);
+    }
+  }, [quickResearchContext]);
 
   // Auto-scroll logs (but not on initial mount to prevent page scroll on load)
   useEffect(() => {
@@ -52,6 +80,14 @@ export const TrendsAgent: React.FC<TrendsAgentProps> = ({ onTrendsFound, onOpenA
       { msg: `> Target Niche: ${niche}`, type: 'info' },
       { msg: '> Initiating Agentic Search Loop...', type: 'warning' }
     ]);
+
+    // If we have quick research context, add that to the logs
+    if (quickResearchContext) {
+      setLogs(prev => [
+        ...prev,
+        { msg: '> Building on quick research from Generator...', type: 'info' }
+      ]);
+    }
 
     // Simulation of intermediate steps while awaiting API
     const steps = [
@@ -78,33 +114,22 @@ export const TrendsAgent: React.FC<TrendsAgentProps> = ({ onTrendsFound, onOpenA
         ...prev,
         { msg: '> Data received from Gemini.', type: 'success' },
         { msg: '> Formatting final report...', type: 'success' },
-        { msg: '> Report generated successfully.', type: 'success' }
+        { msg: '> Saving to database...', type: 'info' }
       ]);
 
-      // Save to Supabase
-      const { data: savedReport, error } = await (supabase as any)
-        .from('trend_reports')
-        .insert({
-          niche: niche,
-          content: text,
-          sources: sources,
-          user_id: user.id
-        })
-        .select()
-        .single();
+      // Use the unified trend research service
+      const report = await trendResearchService.saveDeepResearch(niche, text, sources);
 
-      if (error) throw error;
-
-      const report: TrendReport = {
-        id: savedReport.id,
-        date: new Date(savedReport.created_at).toLocaleDateString(),
-        niche: savedReport.niche,
-        content: savedReport.content,
-        sources: savedReport.sources as any
-      };
+      setLogs(prev => [
+        ...prev,
+        { msg: '> Report saved successfully.', type: 'success' }
+      ]);
 
       setCurrentReport(report);
       onTrendsFound(report);
+
+      // Clear the quick research context after successful deep research
+      setQuickResearchContext(null);
 
       // Navigate to Amplifier with the report
       navigate('/amplifier', { state: { report } });
@@ -154,6 +179,29 @@ export const TrendsAgent: React.FC<TrendsAgentProps> = ({ onTrendsFound, onOpenA
               </div>
               <h2 className="text-xl font-bold text-surface-900">Agent Control</h2>
             </div>
+
+            {/* Quick Research Context Banner */}
+            {quickResearchContext && (
+              <div className="p-4 bg-blue-50 border border-blue-100 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-sm font-bold text-blue-800">Continuing from Generator</h4>
+                    <p className="text-xs text-blue-600 mt-1">
+                      Found {quickResearchContext.identifiedTrends.length} preliminary trends. 
+                      Run deep analysis for comprehensive insights.
+                    </p>
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {quickResearchContext.identifiedTrends.slice(0, 3).map((trend, idx) => (
+                        <span key={idx} className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                          {trend.trendTitle.substring(0, 25)}...
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="space-y-4">
               <div>
@@ -246,6 +294,14 @@ export const TrendsAgent: React.FC<TrendsAgentProps> = ({ onTrendsFound, onOpenA
                   <p className="text-gray-500">
                     Enter your niche and run the agent to generate a real-time trend briefing.
                   </p>
+                  {quickResearchContext && (
+                    <div className="mt-4 p-4 bg-purple-50 rounded-lg border border-purple-100">
+                      <p className="text-sm text-purple-700">
+                        <Lightbulb className="w-4 h-4 inline mr-2" />
+                        You have quick research data ready. Run the agent for a comprehensive deep dive!
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             ) : (
@@ -260,6 +316,9 @@ export const TrendsAgent: React.FC<TrendsAgentProps> = ({ onTrendsFound, onOpenA
                         <span className="text-xs text-gray-400 flex items-center gap-1">
                           <Clock className="w-3 h-3" /> {currentReport.date}
                         </span>
+                        <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 text-xs font-medium">
+                          Deep Research
+                        </span>
                       </div>
                       <h3 className="text-2xl font-bold text-surface-900">Trend Briefing: {currentReport.niche}</h3>
                     </div>
@@ -273,7 +332,7 @@ export const TrendsAgent: React.FC<TrendsAgentProps> = ({ onTrendsFound, onOpenA
                 </div>
 
                 <div className="p-8 overflow-y-auto flex-1 prose prose-slate max-w-none prose-headings:font-display prose-headings:text-surface-900 prose-a:text-purple-600">
-                  <ReactMarkdown>{currentReport.content}</ReactMarkdown>
+                  <ReactMarkdown>{currentReport.content || ''}</ReactMarkdown>
                 </div>
 
                 <div className="p-6 bg-gray-50 border-t border-gray-100 text-sm">

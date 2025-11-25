@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { TrendReport, GeneratedPost, Platform, BrandPersona } from '../types';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { TrendReport, GeneratedPost, Platform, BrandPersona, AmplifierNavigationState } from '../types';
 import { generateBrandedContent } from '../services/geminiService';
+import { trendResearchService } from '../services/trendResearchService';
 import { IconZap, IconCopy, IconRefresh } from '../components/ui/Icons';
-import { supabase } from '../config/supabase';
 import { useAuth } from '../contexts/AuthContext';
-import { Calendar, Download, Copy, Check, Save, User, Sliders, FileText, Info, AlertCircle, Search, ArrowRight } from 'lucide-react';
+import { Calendar, Download, Copy, Check, Save, User, Sliders, FileText, Info, AlertCircle, Search, ArrowRight, TrendingUp, Lightbulb } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { supabase } from '../config/supabase';
 
 interface BrandAmplifierProps {
     activeReport: TrendReport | null;
@@ -29,7 +30,8 @@ Consumers are shifting away from loud logos and fast fashion towards high-qualit
     sources: [
         { title: 'Vogue Business: Sustainability Report', url: '#' },
         { title: 'The Business of Fashion: Consumer Shifts', url: '#' }
-    ]
+    ],
+    sourceType: 'deep'
 };
 
 const DEMO_POSTS: GeneratedPost[] = [
@@ -50,6 +52,12 @@ const DEMO_POSTS: GeneratedPost[] = [
 export const BrandAmplifier: React.FC<BrandAmplifierProps> = ({ activeReport, onOpenAuth }) => {
     const { user } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+    
+    // Check for navigation state (from Generator or Trend Scout)
+    const navState = location.state as AmplifierNavigationState | null;
+    const fromGenerator = navState?.fromGenerator || false;
+    
     // Initialize from localStorage or use default
     const [persona, setPersona] = useState<BrandPersona>(() => {
         const saved = localStorage.getItem('socialcraft_persona');
@@ -67,8 +75,8 @@ export const BrandAmplifier: React.FC<BrandAmplifierProps> = ({ activeReport, on
     const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
     // New state for enhanced functionality
-    const [previousReports, setPreviousReports] = useState<TrendReport[]>([]);
-    const [isLoadingReports, setIsLoadingReports] = useState(false);
+    const [allResearch, setAllResearch] = useState<TrendReport[]>([]);
+    const [isLoadingResearch, setIsLoadingResearch] = useState(false);
     const [manualTopic, setManualTopic] = useState('');
     const [useManualTopic, setUseManualTopic] = useState(false);
 
@@ -76,6 +84,13 @@ export const BrandAmplifier: React.FC<BrandAmplifierProps> = ({ activeReport, on
     const showDemo = !activeReport && !user;  // Demo only for guests
     const showEmptyState = !activeReport && user && !useManualTopic;  // CTA for authenticated users
     const currentReport = activeReport || (showDemo ? DEMO_REPORT : null);
+
+    // Clear navigation state after reading
+    useEffect(() => {
+        if (navState) {
+            navigate('.', { replace: true, state: {} });
+        }
+    }, []);
 
     // Clear posts when the active trend report changes, or load demo posts
     useEffect(() => {
@@ -86,44 +101,27 @@ export const BrandAmplifier: React.FC<BrandAmplifierProps> = ({ activeReport, on
         }
     }, [activeReport, showDemo]);
 
-    // Fetch previous reports for authenticated users
+    // Fetch all research (both quick and deep) for authenticated users
     useEffect(() => {
-        const fetchPreviousReports = async () => {
+        const fetchAllResearch = async () => {
             if (!user) return;
 
-            setIsLoadingReports(true);
+            setIsLoadingResearch(true);
             try {
-                const { data, error } = await (supabase as any)
-                    .from('trend_reports')
-                    .select('*')
-                    .eq('user_id', user.id)
-                    .order('created_at', { ascending: false })
-                    .limit(10);
-
-                if (error) throw error;
-
-                const reports: TrendReport[] = (data || []).map((item: any) => ({
-                    id: item.id,
-                    date: new Date(item.created_at).toLocaleDateString(),
-                    niche: item.niche,
-                    content: item.content,
-                    sources: item.sources || []
-                }));
-
-                setPreviousReports(reports);
+                const reports = await trendResearchService.getAllResearch(20);
+                setAllResearch(reports);
             } catch (error) {
-                console.error('Error fetching previous reports:', error);
+                console.error('Error fetching research:', error);
             } finally {
-                setIsLoadingReports(false);
+                setIsLoadingResearch(false);
             }
         };
 
-        fetchPreviousReports();
+        fetchAllResearch();
     }, [user]);
 
     const handleSavePersona = () => {
         localStorage.setItem('socialcraft_persona', JSON.stringify(persona));
-        // Ideally use a toast here
         alert("Brand Persona saved to local storage.");
     };
 
@@ -173,7 +171,14 @@ export const BrandAmplifier: React.FC<BrandAmplifierProps> = ({ activeReport, on
 
         setIsGenerating(true);
         try {
-            const contextToUse = currentReport?.content || `Topic: ${manualTopic}`;
+            // For quick research, generate markdown from structured data
+            let contextToUse: string;
+            if (currentReport?.sourceType === 'quick') {
+                contextToUse = trendResearchService.generateMarkdownFromQuickResearch(currentReport);
+            } else {
+                contextToUse = currentReport?.content || `Topic: ${manualTopic}`;
+            }
+
             const newPosts = await generateBrandedContent(
                 contextToUse,
                 persona,
@@ -261,6 +266,14 @@ ${post.imagePrompt}` : ''}
         setTimeout(() => setCopiedIndex(null), 2000);
     };
 
+    // Helper to get source type label
+    const getSourceTypeLabel = (report: TrendReport) => {
+        if (report.sourceType === 'quick') {
+            return { label: 'Quick Research', color: 'bg-blue-100 text-blue-700' };
+        }
+        return { label: 'Deep Research', color: 'bg-purple-100 text-purple-700' };
+    };
+
     return (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-32">
             {/* Configuration Panel */}
@@ -286,30 +299,58 @@ ${post.imagePrompt}` : ''}
                         </div>
                     )}
 
+                    {/* From Generator notification */}
+                    {fromGenerator && currentReport && (
+                        <div className="mb-6 p-4 bg-green-50 border border-green-100 rounded-xl flex items-start gap-3">
+                            <TrendingUp className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                            <div>
+                                <h4 className="text-sm font-bold text-green-800">Research Loaded</h4>
+                                <p className="text-xs text-green-600 mt-1">
+                                    Your research from the Generator has been loaded. Apply your brand voice below.
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Empty state for authenticated users without a report */}
                     {showEmptyState && (
                         <div className="mb-6 space-y-4">
-                            {/* Previous Reports Section */}
-                            {previousReports.length > 0 && (
+                            {/* All Research Section (unified quick + deep) */}
+                            {allResearch.length > 0 && (
                                 <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
                                     <h4 className="text-sm font-bold text-surface-900 mb-3 flex items-center gap-2">
                                         <FileText className="w-4 h-4 text-brand-primary" />
-                                        Your Previous Reports
+                                        Your Research History
                                     </h4>
-                                    <div className="space-y-2 max-h-32 overflow-y-auto">
-                                        {previousReports.map((report) => (
-                                            <button
-                                                key={report.id}
-                                                onClick={() => handleSelectReport(report)}
-                                                className="w-full text-left p-3 bg-white border border-gray-200 rounded-lg hover:border-brand-primary hover:bg-brand-primary/5 transition-all flex justify-between items-center group"
-                                            >
-                                                <div>
-                                                    <span className="text-sm font-medium text-surface-900">{report.niche}</span>
-                                                    <span className="text-xs text-gray-500 ml-2">{report.date}</span>
-                                                </div>
-                                                <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-brand-primary transition-colors" />
-                                            </button>
-                                        ))}
+                                    <div className="space-y-2 max-h-48 overflow-y-auto">
+                                        {allResearch.map((report) => {
+                                            const { label, color } = getSourceTypeLabel(report);
+                                            return (
+                                                <button
+                                                    key={report.id}
+                                                    onClick={() => handleSelectReport(report)}
+                                                    className="w-full text-left p-3 bg-white border border-gray-200 rounded-lg hover:border-brand-primary hover:bg-brand-primary/5 transition-all flex justify-between items-center group"
+                                                >
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center gap-2 mb-1">
+                                                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${color}`}>
+                                                                {label}
+                                                            </span>
+                                                            <span className="text-xs text-gray-400">{report.date}</span>
+                                                        </div>
+                                                        <span className="text-sm font-medium text-surface-900 truncate block">
+                                                            {report.niche}
+                                                        </span>
+                                                        {report.sourceType === 'quick' && report.identifiedTrends && (
+                                                            <span className="text-xs text-gray-500">
+                                                                {report.identifiedTrends.length} trends found
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-brand-primary transition-colors flex-shrink-0" />
+                                                </button>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             )}
@@ -321,7 +362,7 @@ ${post.imagePrompt}` : ''}
                                     Quick Generate
                                 </h4>
                                 <p className="text-xs text-purple-600 mb-3">
-                                    Enter a topic to generate content directly, or run the Trend Scout for deeper insights.
+                                    Enter a topic to generate content directly, or use your research history above.
                                 </p>
                                 <div className="flex gap-2">
                                     <input
@@ -341,20 +382,26 @@ ${post.imagePrompt}` : ''}
                                 </div>
                             </div>
 
-                            {/* Run Trend Scout CTA */}
+                            {/* CTA to start research */}
                             <div className="p-4 bg-amber-50 border border-amber-100 rounded-lg flex items-start gap-3">
                                 <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                                 <div>
-                                    <h4 className="text-sm font-bold text-amber-800">No Active Trend Report</h4>
+                                    <h4 className="text-sm font-bold text-amber-800">Start Fresh Research</h4>
                                     <p className="text-xs text-amber-600 mt-1">
-                                        For best results, run the{' '}
                                         <button
-                                            onClick={() => window.location.href = '/trends-agent'}
+                                            onClick={() => navigate('/generator')}
                                             className="underline font-semibold hover:text-amber-800"
                                         >
-                                            Trend Scout Agent
+                                            Quick research
                                         </button>
-                                        {' '}to discover what's trending in your niche.
+                                        {' '}in the Generator or run the{' '}
+                                        <button
+                                            onClick={() => navigate('/trends-agent')}
+                                            className="underline font-semibold hover:text-amber-800"
+                                        >
+                                            Trend Scout
+                                        </button>
+                                        {' '}for deep analysis.
                                     </p>
                                 </div>
                             </div>
@@ -448,7 +495,29 @@ ${post.imagePrompt}` : ''}
                                     </span>
                                 </div>
                                 {currentReport && !useManualTopic && (
-                                    <p className="text-xs text-gray-500 mt-1">{currentReport.date}</p>
+                                    <div className="flex items-center gap-2 mt-2">
+                                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${getSourceTypeLabel(currentReport).color}`}>
+                                            {getSourceTypeLabel(currentReport).label}
+                                        </span>
+                                        <span className="text-xs text-gray-500">{currentReport.date}</span>
+                                    </div>
+                                )}
+                                {currentReport?.sourceType === 'quick' && currentReport.identifiedTrends && (
+                                    <div className="mt-3 pt-3 border-t border-brand-primary/10">
+                                        <p className="text-xs text-gray-600 mb-2 flex items-center gap-1">
+                                            <Lightbulb className="w-3 h-3" />
+                                            Trends to amplify:
+                                        </p>
+                                        <div className="flex flex-wrap gap-1">
+                                            {currentReport.identifiedTrends.slice(0, 3).map((trend, idx) => (
+                                                <span key={idx} className="text-xs bg-brand-primary/10 text-brand-primary px-2 py-0.5 rounded">
+                                                    {trend.trendTitle.length > 30 
+                                                        ? trend.trendTitle.substring(0, 30) + '...' 
+                                                        : trend.trendTitle}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
                                 )}
                             </div>
                         )}
