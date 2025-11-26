@@ -3,12 +3,14 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Platform, GeneratedContent, PlatformSelections, Tone, Draft, TrendAnalysisResult, Trend, SearchIntent, GeneratorNavigationState } from '../types';
 import { generateViralContent, findTrends } from '../services/geminiService';
+import { BrandPersona } from '../services/brandPersonaService';
 import AdvancedPlatformSelector from '../components/AdvancedPlatformSelector';
 import ToneSelector from '../components/ToneSelector';
 import ResultsDisplay from '../components/ResultsDisplay';
 import Spinner from '../components/Spinner';
 import TrendAnalysisDisplay from '../components/TrendAnalysisDisplay';
-import { Sparkles, TrendingUp, UserCheck, ArrowRight, Zap, Globe, PenTool, AlertCircle } from 'lucide-react';
+import BrandPersonaSelector from '../components/BrandPersonaSelector';
+import { Sparkles, TrendingUp, UserCheck, ArrowRight, Zap, Globe, PenTool, AlertCircle, LayoutGrid } from 'lucide-react';
 import SearchIntentSelector from '../components/SearchIntentSelector';
 import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../contexts/SubscriptionContext';
@@ -41,6 +43,9 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
     
     // Store the original search topic for reference
     const [searchTopic, setSearchTopic] = useState<string>('');
+    
+    // Brand Persona state
+    const [selectedPersona, setSelectedPersona] = useState<BrandPersona | null>(null);
 
     useEffect(() => {
         const state = location.state as GeneratorNavigationState | null;
@@ -125,7 +130,16 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                 return;
             }
 
-            const results = await generateViralContent(sourceContent, platformSelections, 'general', tone, searchIntent, authorsVoice);
+            // Generate content with optional brand persona
+            const results = await generateViralContent(
+                sourceContent, 
+                platformSelections, 
+                'general', 
+                tone, 
+                searchIntent, 
+                authorsVoice,
+                selectedPersona  // Pass the brand persona
+            );
             setGeneratedContent(results);
             // Scroll to results
             setTimeout(() => {
@@ -139,7 +153,7 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
         } finally {
             setIsLoading(false);
         }
-    }, [sourceContent, platformSelections, tone, searchIntent, authorsVoice, user, canGenerateType, deductCredits, onOpenAuth]);
+    }, [sourceContent, platformSelections, tone, searchIntent, authorsVoice, selectedPersona, user, canGenerateType, deductCredits, onOpenAuth]);
 
     const containerVariants = {
         hidden: { opacity: 0, y: 20 },
@@ -242,6 +256,16 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                                 <strong>Example:</strong> "As a SaaS founder who grew from 0 to $1M ARR..." or "In my 10 years of marketing experience..."
                             </p>
                         </motion.div>
+                        
+                        {/* Section 2.5: Brand Persona (Collapsible) */}
+                        <motion.div variants={itemVariants}>
+                            <BrandPersonaSelector
+                                selectedPersona={selectedPersona}
+                                onPersonaChange={setSelectedPersona}
+                                onOpenAuth={onOpenAuth}
+                                collapsed={true}
+                            />
+                        </motion.div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             {/* Section 3: Platforms */}
@@ -265,8 +289,18 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
 
                                     <div className="space-y-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-600 mb-2">Tone of Voice</label>
-                                            <ToneSelector selectedTone={tone} onToneChange={setTone} />
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">
+                                                Tone of Voice
+                                                {selectedPersona && (
+                                                    <span className="ml-2 text-xs text-purple-600">
+                                                        (Persona tone will be used)
+                                                    </span>
+                                                )}
+                                            </label>
+                                            <ToneSelector 
+                                                selectedTone={tone} 
+                                                onToneChange={setTone} 
+                                            />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-600 mb-2">Search Intent Goal</label>
@@ -308,6 +342,33 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                                 <div>
                                     <p className="text-sm text-amber-700">{trendError}</p>
                                 </div>
+                            </motion.div>
+                        )}
+
+                        {/* Active Persona Indicator */}
+                        {selectedPersona && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="p-3 bg-purple-50 border border-purple-200 rounded-lg flex items-center gap-3"
+                            >
+                                <div className="w-8 h-8 rounded-full bg-purple-200 flex items-center justify-center">
+                                    <UserCheck className="w-4 h-4 text-purple-700" />
+                                </div>
+                                <div className="flex-1">
+                                    <p className="text-sm font-medium text-purple-900">
+                                        Generating as "{selectedPersona.name}"
+                                    </p>
+                                    <p className="text-xs text-purple-600">
+                                        {selectedPersona.audience} • {selectedPersona.tone}
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={() => setSelectedPersona(null)}
+                                    className="text-xs text-purple-500 hover:text-purple-700 underline"
+                                >
+                                    Remove
+                                </button>
                             </motion.div>
                         )}
 
@@ -404,12 +465,33 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                             {/* Post-Generation Actions */}
                             <div className="max-w-4xl mx-auto mt-8 p-6 glass-card rounded-lg">
                                 <h3 className="text-lg font-bold text-surface-900 mb-4">Continue Your Content Journey</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <button
+                                        onClick={() => navigate('/campaigns', { 
+                                            state: { 
+                                                fromGenerator: true,
+                                                generatedContent,
+                                                sourceContent,
+                                                persona: selectedPersona,
+                                                ...(trendResults && {
+                                                    trendData: {
+                                                        topic: searchTopic,
+                                                        trends: trendResults.identifiedTrends,
+                                                        keywords: trendResults.relatedKeywords,
+                                                        summary: trendResults.overallSummary
+                                                    }
+                                                })
+                                            } 
+                                        })}
+                                        className="flex items-center justify-center gap-2 px-4 py-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors font-medium"
+                                    >
+                                        <LayoutGrid className="w-5 h-5" />
+                                        Plan a Campaign
+                                    </button>
                                     <button
                                         onClick={() => navigate('/amplifier', { 
                                             state: { 
                                                 fromGenerator: true,
-                                                // Pass the trend results if available for context
                                                 ...(trendResults && {
                                                     report: {
                                                         id: `temp-${Date.now()}`,
@@ -428,14 +510,14 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                                         className="flex items-center justify-center gap-2 px-4 py-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors font-medium"
                                     >
                                         <TrendingUp className="w-5 h-5" />
-                                        Refine in Brand Amplifier
+                                        Refine in Amplifier
                                     </button>
                                     <button
                                         onClick={() => navigate('/media-studio')}
                                         className="flex items-center justify-center gap-2 px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors font-medium"
                                     >
                                         <Sparkles className="w-5 h-5" />
-                                        Create Visuals in Media Studio
+                                        Create Visuals
                                     </button>
                                 </div>
                             </div>

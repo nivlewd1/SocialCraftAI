@@ -5,6 +5,8 @@
 // - Text Generation: 1 credit
 // - Image Generation: 15 credits
 // - Video Generation: 150 credits
+// - Trend Research (Grounding): 5 credits
+// - Deep Analysis: 5 credits
 // =====================================================
 
 export type PlanType = 'free' | 'starter' | 'pro' | 'agency';
@@ -14,6 +16,9 @@ export const CREDIT_COSTS = {
   text: 1,
   image: 15,
   video: 150,
+  trend_research: 5,    // Google Search Grounding
+  deep_analysis: 5,     // Competitor/Performance analysis
+  campaign_text: 1,     // Same as text, tracked separately for campaigns
 } as const;
 
 export type GenerationType = keyof typeof CREDIT_COSTS;
@@ -34,6 +39,11 @@ export interface PricingPlan {
     support: 'community' | 'email' | 'priority';
     videoAccess: boolean;
     watermark: boolean;
+    // Campaign-specific limits
+    maxCampaigns: number;          // Active campaigns at once
+    maxPostsPerCampaign: number;   // Posts in a single campaign
+    competitorAnalysis: boolean;   // Access to competitor analysis
+    deepAnalysis: boolean;         // Access to deep performance analysis
   };
   cta: string;
   popular?: boolean;
@@ -71,6 +81,10 @@ export const PRICING_PLANS: PricingPlan[] = [
       support: 'community',
       videoAccess: false,
       watermark: true,
+      maxCampaigns: 1,
+      maxPostsPerCampaign: 5,
+      competitorAnalysis: false,
+      deepAnalysis: false,
     },
     cta: 'Get Started Free'
   },
@@ -99,6 +113,10 @@ export const PRICING_PLANS: PricingPlan[] = [
       support: 'email',
       videoAccess: true,
       watermark: false,
+      maxCampaigns: 3,
+      maxPostsPerCampaign: 15,
+      competitorAnalysis: false,
+      deepAnalysis: false,
     },
     cta: 'Start 14-Day Trial'
   },
@@ -119,7 +137,9 @@ export const PRICING_PLANS: PricingPlan[] = [
       'Priority generation queue',
       'E-E-A-T optimization',
       'Viral playbooks',
-      'Media studio'
+      'Media studio',
+      'Competitor analysis',
+      'Campaign manager'
     ],
     limits: {
       monthlyCredits: 10000,
@@ -129,6 +149,10 @@ export const PRICING_PLANS: PricingPlan[] = [
       support: 'email',
       videoAccess: true,
       watermark: false,
+      maxCampaigns: 10,
+      maxPostsPerCampaign: 30,
+      competitorAnalysis: true,
+      deepAnalysis: true,
     },
     cta: 'Start 14-Day Trial'
   },
@@ -149,7 +173,8 @@ export const PRICING_PLANS: PricingPlan[] = [
       'Enterprise analytics',
       'Priority support',
       'Custom playbooks',
-      'Dedicated account manager'
+      'Dedicated account manager',
+      'Unlimited campaigns'
     ],
     limits: {
       monthlyCredits: 35000,
@@ -159,6 +184,10 @@ export const PRICING_PLANS: PricingPlan[] = [
       support: 'priority',
       videoAccess: true,
       watermark: false,
+      maxCampaigns: -1, // Unlimited
+      maxPostsPerCampaign: 100,
+      competitorAnalysis: true,
+      deepAnalysis: true,
     },
     cta: 'Start 14-Day Trial'
   }
@@ -222,12 +251,38 @@ export const hasWatermark = (planId: PlanType): boolean => {
   return plan?.limits.watermark ?? true;
 };
 
+// Helper function to check if plan allows competitor analysis
+export const canUseCompetitorAnalysis = (planId: PlanType): boolean => {
+  const plan = getPlanById(planId);
+  return plan?.limits.competitorAnalysis ?? false;
+};
+
+// Helper function to check if plan allows deep analysis
+export const canUseDeepAnalysis = (planId: PlanType): boolean => {
+  const plan = getPlanById(planId);
+  return plan?.limits.deepAnalysis ?? false;
+};
+
+// Helper function to get max campaigns for a plan
+export const getMaxCampaigns = (planId: PlanType): number => {
+  const plan = getPlanById(planId);
+  return plan?.limits.maxCampaigns ?? 1;
+};
+
+// Helper function to get max posts per campaign
+export const getMaxPostsPerCampaign = (planId: PlanType): number => {
+  const plan = getPlanById(planId);
+  return plan?.limits.maxPostsPerCampaign ?? 5;
+};
+
 // Calculate what user can generate with their credits
 export const calculatePotentialGenerations = (totalCredits: number) => {
   return {
     text: Math.floor(totalCredits / CREDIT_COSTS.text),
     image: Math.floor(totalCredits / CREDIT_COSTS.image),
     video: Math.floor(totalCredits / CREDIT_COSTS.video),
+    trendResearch: Math.floor(totalCredits / CREDIT_COSTS.trend_research),
+    deepAnalysis: Math.floor(totalCredits / CREDIT_COSTS.deep_analysis),
   };
 };
 
@@ -256,6 +311,55 @@ export const CREDIT_EXCHANGE_INFO = {
     description: 'AI-generated video clip',
     icon: 'Video',
   },
+  trend_research: {
+    cost: CREDIT_COSTS.trend_research,
+    description: 'Real-time trend analysis',
+    icon: 'TrendingUp',
+  },
+  deep_analysis: {
+    cost: CREDIT_COSTS.deep_analysis,
+    description: 'Competitor or performance analysis',
+    icon: 'Search',
+  },
+  campaign_text: {
+    cost: CREDIT_COSTS.campaign_text,
+    description: 'Campaign post generation',
+    icon: 'Layout',
+  },
+};
+
+// Campaign credit estimation
+export const estimateCampaignCredits = (config: {
+  postCount: number;
+  withVariations: boolean;
+  withImages: boolean;
+  withVideo: boolean;
+  videoCount?: number;
+}): {
+  textCredits: number;
+  imageCredits: number;
+  videoCredits: number;
+  total: number;
+  breakdown: string;
+} => {
+  const actualPostCount = config.withVariations ? config.postCount * 2 : config.postCount;
+  
+  const textCredits = actualPostCount * CREDIT_COSTS.text;
+  const imageCredits = config.withImages ? actualPostCount * CREDIT_COSTS.image : 0;
+  const videoCredits = config.withVideo ? (config.videoCount || 1) * CREDIT_COSTS.video : 0;
+  const total = textCredits + imageCredits + videoCredits;
+
+  const parts = [`${actualPostCount} posts (${textCredits} credits)`];
+  if (config.withImages) parts.push(`${actualPostCount} images (${imageCredits} credits)`);
+  if (config.withVideo) parts.push(`${config.videoCount || 1} videos (${videoCredits} credits)`);
+
+  return {
+    textCredits,
+    imageCredits,
+    videoCredits,
+    total,
+    breakdown: parts.join(' + '),
+  };
 };
 
 // Stripe configuration
@@ -271,9 +375,11 @@ export const STRIPE_CONFIG = {
 // Margin analysis constants (internal use)
 export const MARGIN_ANALYSIS = {
   apiCosts: {
-    text: 0.001,   // ~$0.001 per text generation (Gemini Flash)
-    image: 0.04,   // ~$0.04 per image (Imagen 4.0)
-    video: 0.50,   // ~$0.50 per video (Veo 3.1)
+    text: 0.001,           // ~$0.001 per text generation (Gemini Flash)
+    image: 0.04,           // ~$0.04 per image (Imagen 4.0)
+    video: 0.50,           // ~$0.50 per video (Veo 3.1)
+    trend_research: 0.035, // ~$0.035 per grounding request
+    deep_analysis: 0.035,  // ~$0.035 per grounding request
   },
   lowestBulkRate: 0.008, // $0.008 per credit at bulk pricing
   targetMargin: 0.58,    // 58% target margin

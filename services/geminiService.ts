@@ -1,6 +1,7 @@
-
 import { GoogleGenAI, Modality, Type } from "@google/genai";
 import { Platform, GeneratedContent, VideoOperation, PlatformSelections, Tone, TrendAnalysisResult, GroundingSource, SearchIntent } from '../types';
+import type { BrandPersona } from './brandPersonaService';
+import { trendCacheService } from './trendCacheService';
 
 if (!process.env.API_KEY) {
     // This is a placeholder for environments where the key is not set.
@@ -24,6 +25,16 @@ interface VideoGenerationReferenceImage {
     referenceType: VideoGenerationReferenceType;
 }
 
+// Generation options with optional Brand Persona
+export interface GenerationOptions {
+    content: string;
+    selections: PlatformSelections;
+    context?: 'general' | 'academic';
+    tone?: Tone;
+    searchIntent?: SearchIntent;
+    authorsVoice?: string;
+    brandPersona?: BrandPersona | null;
+}
 
 const responseSchema = {
     type: Type.OBJECT,
@@ -116,14 +127,55 @@ const fullSchema = {
     items: responseSchema
 };
 
-const generatePrompt = (content: string, selections: PlatformSelections, context: 'general' | 'academic', tone: Tone, searchIntent: SearchIntent, authorsVoice?: string): string => {
+/**
+ * Generate the brand persona instruction for the prompt
+ */
+const generateBrandPersonaInstruction = (persona: BrandPersona): string => {
+    let instruction = `\n**BRAND VOICE PERSONA: "${persona.name}"**
+This is a CRITICAL instruction. ALL generated content MUST sound like it was written by this brand persona.
+
+- **Target Audience:** ${persona.audience}
+- **Tone & Style:** ${persona.tone}`;
+
+    if (persona.forbiddenWords && persona.forbiddenWords.length > 0) {
+        instruction += `\n- **FORBIDDEN WORDS/PHRASES (NEVER USE THESE):** ${persona.forbiddenWords.join(', ')}`;
+    }
+
+    if (persona.examplePosts && persona.examplePosts.length > 0) {
+        instruction += `\n\n**EXAMPLE POSTS (Match this exact style and voice):**`;
+        persona.examplePosts.forEach((example, index) => {
+            instruction += `\nExample ${index + 1} (${example.platform}):\n"${example.content}"`;
+        });
+    }
+
+    instruction += `\n\nCRITICAL: The generated content MUST authentically sound like this persona wrote it. Match the tone exactly.`;
+
+    return instruction;
+};
+
+const generatePrompt = (
+    content: string, 
+    selections: PlatformSelections, 
+    context: 'general' | 'academic', 
+    tone: Tone, 
+    searchIntent: SearchIntent, 
+    authorsVoice?: string,
+    brandPersona?: BrandPersona | null
+): string => {
     const contextInstruction = context === 'academic'
         ? "You are an expert science communicator specializing in translating complex academic research into engaging, accessible social media content. Break down the key findings, implications, and hooks."
         : "You are SocialCraft AI, an expert content strategist. Your goal is to create high-value, 'people-first' content that is helpful, engaging, and trustworthy. Your secondary goal is algorithmic performance.";
 
-    const toneInstruction = tone !== 'Auto'
-        ? `\n**TONE:** The tone of all generated content MUST be strictly '${tone}'. This is a top priority.`
-        : "";
+    // Brand Persona takes precedence over simple tone selection
+    let toneInstruction = "";
+    let brandPersonaInstruction = "";
+    
+    if (brandPersona) {
+        brandPersonaInstruction = generateBrandPersonaInstruction(brandPersona);
+        // If brand persona has a tone, that overrides the tone selector
+    } else if (tone !== 'Auto') {
+        toneInstruction = `\n**TONE:** The tone of all generated content MUST be strictly '${tone}'. This is a top priority.`;
+    }
 
     const authorsVoiceInstruction = authorsVoice
         ? `\n**AUTHOR'S VOICE (E-E-A-T):** This is the most critical instruction. You MUST naturally and seamlessly integrate the following personal anecdote, unique perspective, or specific data point into the generated content. This is to demonstrate first-hand **E**xperience, **E**xpertise, **A**uthoritativeness, and **T**rustworthiness. Here is the user's input to integrate:\n---${authorsVoice}\n---`
@@ -159,25 +211,23 @@ const generatePrompt = (content: string, selections: PlatformSelections, context
     if (selections.LinkedIn) {
         let linkedInInstruction = `- LinkedIn: Posts must be professional and designed for high 'dwell time'. `;
         const format = selections.LinkedIn.format;
-        // The AI is explicitly told which format to use based on user selection
         if (format === 'Carousel') {
             linkedInInstruction += `You MUST generate a carousel post. Provide content for 3-7 slides in the 'carouselSlides' field. The 'primaryContent' should serve as an introduction to the carousel.\n`;
         } else if (format === 'Poll') {
             linkedInInstruction += `You MUST generate a poll. Provide a question and 2-4 options in the 'poll' field. The 'primaryContent' should introduce the poll's topic.\n`;
         } else if (format === 'Text') {
             linkedInInstruction += `You MUST generate a text-only post.\n`;
-        } else { // 'Auto' format lets the AI choose
+        } else {
             linkedInInstruction += `Based on the source content, choose the BEST format: a text post, a carousel post, or a poll. Carousels and polls are high-engagement.\n`;
         }
         linkedInInstruction += `    - **CRITICAL ALGORITHMIC RULE:** LinkedIn's algorithm heavily penalizes posts with external links. If a link is essential, it MUST be placed in a suggested 'firstComment'. The main post must provide full value on its own. Add an optimization tip warning the user that even links in comments can reduce reach.\n`;
         platformInstructions += linkedInInstruction;
     }
 
-    // Generate instruction for Instagram if selected, considering the chosen format
+    // Generate instruction for Instagram if selected
     if (selections.Instagram) {
         let instagramInstruction = `- Instagram: The platform prioritizes high-quality visuals and Reels. Captions are for engagement (comments/saves). ALWAYS include a clear CTA.\n`;
         const format = selections.Instagram.format;
-        // The AI is explicitly told which format to use based on user selection
         if (format === 'Reel') {
             instagramInstruction += `    - You MUST generate a short-form Reel script. Provide a full, detailed concept in the 'reelScript' field.
     - **Hook:** The hook must be a scroll-stopping visual or statement for the first 3 seconds.
@@ -187,7 +237,7 @@ const generatePrompt = (content: string, selections: PlatformSelections, context
     - **Caption:** The 'primaryContent' field will be the final, engagement-optimized caption for the Reel.\n`;
         } else if (format === 'Carousel') {
             instagramInstruction += `    - You MUST generate a multi-slide carousel. Provide content for 3-7 slides in the 'carouselSlides' field. The 'primaryContent' is the introductory caption.\n`;
-        } else { // 'Auto' or 'Text' format lets the AI choose or default to a standard post
+        } else {
             instagramInstruction += `    - Analyze the source content and choose the BEST format: a standard post, a multi-slide carousel, or a short-form Reel.\n`;
         }
         instagramInstruction += `    - **Optimization Tips** MUST include reminders to use high-quality visuals and to avoid watermarks from other platforms like TikTok.\n`;
@@ -211,7 +261,7 @@ const generatePrompt = (content: string, selections: PlatformSelections, context
             pinterestInstruction += `    - You MUST generate a plan for a Video Pin. The visual suggestion should describe a short, engaging video (6-15 seconds).\n`;
         } else if (format === 'Idea Pin') {
             pinterestInstruction += `    - You MUST generate a plan for a multi-slide Idea Pin. The visual suggestion should outline 3-5 slides with tips or steps.\n`;
-        } else { // 'Auto' or 'Standard Pin'
+        } else {
             pinterestInstruction += `    - The plan should be for a standard, high-quality static image pin.\n`;
         }
         pinterestInstruction += `    - **SEO is paramount:** The 'title' and 'description' must be rich with relevant keywords. Identify 5-7 target 'keywords'.
@@ -222,7 +272,7 @@ const generatePrompt = (content: string, selections: PlatformSelections, context
     }
 
 
-    return `${contextInstruction}${toneInstruction}${intentInstruction}${authorsVoiceInstruction}
+    return `${contextInstruction}${brandPersonaInstruction}${toneInstruction}${intentInstruction}${authorsVoiceInstruction}
 
 Analyze the following content and generate optimized posts for these platforms: [${platforms.join(', ')}].
 
@@ -254,10 +304,8 @@ const handleApiError = (error: any, context: string): never => {
         } else if (errorMessage.includes("500") || errorMessage.includes("503") || errorMessage.includes("unavailable")) {
             message = `The AI service is currently unavailable. Please try again later.`;
         } else if (errorMessage.includes("requested entity was not found")) {
-            // This is specific to Veo key selection
             message = "API key not found or invalid. Please select a valid API key to proceed.";
         } else {
-            // Use a cleaned up version of the original message if it's not a generic network error
             if (!errorMessage.includes("network error")) {
                 message = error.message;
             }
@@ -267,14 +315,18 @@ const handleApiError = (error: any, context: string): never => {
     throw new Error(message);
 };
 
-
+/**
+ * Generate viral content with optional Brand Persona support
+ * This is the main generation function used by Generator
+ */
 export const generateViralContent = async (
     content: string,
     selections: PlatformSelections,
     context: 'general' | 'academic' = 'general',
     tone: Tone = 'Auto',
     searchIntent: SearchIntent = 'Auto',
-    authorsVoice?: string
+    authorsVoice?: string,
+    brandPersona?: BrandPersona | null
 ): Promise<GeneratedContent[]> => {
     const platforms = Object.keys(selections) as Platform[];
     if (platforms.length === 0) {
@@ -284,7 +336,7 @@ export const generateViralContent = async (
     try {
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
-            contents: generatePrompt(content, selections, context, tone, searchIntent, authorsVoice),
+            contents: generatePrompt(content, selections, context, tone, searchIntent, authorsVoice, brandPersona),
             config: {
                 responseMimeType: 'application/json',
                 responseSchema: fullSchema
@@ -294,12 +346,26 @@ export const generateViralContent = async (
         const jsonText = response.text.trim();
         const generatedData = JSON.parse(jsonText) as GeneratedContent[];
 
-        // Ensure platforms in response match requested platforms
         return generatedData.filter(item => platforms.includes(item.platform));
 
     } catch (error) {
         handleApiError(error, "content generation");
     }
+};
+
+/**
+ * Alternative generation function using options object
+ */
+export const generateViralContentWithOptions = async (options: GenerationOptions): Promise<GeneratedContent[]> => {
+    return generateViralContent(
+        options.content,
+        options.selections,
+        options.context ?? 'general',
+        options.tone ?? 'Auto',
+        options.searchIntent ?? 'Auto',
+        options.authorsVoice,
+        options.brandPersona
+    );
 };
 
 const generateTrendPrompt = (content: string) => {
@@ -325,10 +391,28 @@ Source Content:
 ---
 ${content}
 ---`;
-}
+};
 
-
+/**
+ * Find trends with automatic caching
+ * This function checks the cache first to avoid expensive API calls
+ * 
+ * COST OPTIMIZATION:
+ * - Google Search Grounding costs $0.035 per request
+ * - Cache TTL: 24 hours
+ * - Identical queries within 24h return cached results at $0 cost
+ */
 export const findTrends = async (content: string): Promise<TrendAnalysisResult> => {
+    // Check cache first
+    const cached = await trendCacheService.getCached(content);
+    if (cached) {
+        console.log('[findTrends] Returning cached result');
+        return cached;
+    }
+
+    // Cache miss - call the API
+    console.log('[findTrends] Cache miss - calling Gemini API with Grounding');
+    
     try {
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
@@ -338,7 +422,6 @@ export const findTrends = async (content: string): Promise<TrendAnalysisResult> 
             }
         });
 
-        // Safely extract text from response
         let jsonText: string;
         if (response.text) {
             jsonText = response.text.trim();
@@ -365,7 +448,64 @@ export const findTrends = async (content: string): Promise<TrendAnalysisResult> 
 
         const uniqueSources = Array.from(new Map(sources.map(item => [item['uri'], item])).values());
 
-        return { ...parsedData, sources: uniqueSources };
+        const result: TrendAnalysisResult = { ...parsedData, sources: uniqueSources };
+
+        // Store in cache for future requests
+        await trendCacheService.setCache(content, result);
+
+        return result;
+    } catch (error) {
+        handleApiError(error, "trend analysis");
+    }
+};
+
+/**
+ * Find trends WITHOUT using cache
+ * Use this for "force refresh" scenarios where user explicitly requests fresh data
+ */
+export const findTrendsNoCache = async (content: string): Promise<TrendAnalysisResult> => {
+    console.log('[findTrendsNoCache] Bypassing cache - fresh API call');
+    
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: generateTrendPrompt(content),
+            config: {
+                tools: [{ googleSearch: {} }],
+            }
+        });
+
+        let jsonText: string;
+        if (response.text) {
+            jsonText = response.text.trim();
+        } else if (response.candidates?.[0]?.content?.parts?.[0]?.text) {
+            jsonText = response.candidates[0].content.parts[0].text.trim();
+        } else {
+            throw new Error("No text generated from AI model.");
+        }
+
+        if (jsonText.startsWith('```') && jsonText.endsWith('```')) {
+            jsonText = jsonText.replace(/^```(json)?\s*/, '').replace(/```$/, '').trim();
+        }
+
+        const parsedData = JSON.parse(jsonText);
+
+        const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
+        const sources: GroundingSource[] = groundingChunks
+            .map((chunk: any) => ({
+                uri: chunk.web?.uri || '',
+                title: chunk.web?.title || 'Untitled Source'
+            }))
+            .filter((source: GroundingSource) => source.uri);
+
+        const uniqueSources = Array.from(new Map(sources.map(item => [item['uri'], item])).values());
+
+        const result: TrendAnalysisResult = { ...parsedData, sources: uniqueSources };
+
+        // Update cache with fresh data
+        await trendCacheService.setCache(content, result);
+
+        return result;
     } catch (error) {
         handleApiError(error, "trend analysis");
     }
@@ -435,11 +575,9 @@ export const generateVideo = async (
     resolution: '1080p' | '720p',
     images?: { data: string; mimeType: string }[]
 ): Promise<VideoOperation> => {
-    // Create a new instance to ensure the latest API key is used
     const videoAi = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
     try {
         if (images && images.length > 1) {
-            // Multi-image reference mode
             const referenceImagesPayload: VideoGenerationReferenceImage[] = images.map(img => ({
                 image: {
                     imageBytes: img.data,
@@ -450,19 +588,17 @@ export const generateVideo = async (
 
             const operation = await videoAi.models.generateVideos({
                 model: 'veo-3.1-generate-preview',
-                prompt, // Prompt is required for this model
+                prompt,
                 config: {
                     numberOfVideos: 1,
                     referenceImages: referenceImagesPayload,
-                    resolution: '720p', // Fixed for this model
-                    aspectRatio: '16:9', // Fixed for this model
+                    resolution: '720p',
+                    aspectRatio: '16:9',
                 }
             });
-            // FIX: Removed unnecessary type cast. The return type from the SDK is now correctly handled by the `VideoOperation` type alias.
             return operation;
 
         } else {
-            // Single or no image mode
             const imagePayload = images && images.length === 1 ? {
                 image: {
                     imageBytes: images[0].data,
@@ -480,7 +616,6 @@ export const generateVideo = async (
                     aspectRatio,
                 }
             });
-            // FIX: Removed unnecessary type cast. The return type from the SDK is now correctly handled by the `VideoOperation` type alias.
             return operation;
         }
 
@@ -490,11 +625,9 @@ export const generateVideo = async (
 };
 
 export const getVideosOperation = async (operation: VideoOperation): Promise<VideoOperation> => {
-    // Create a new instance to ensure the latest API key is used
     const videoAi = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
     try {
         const updatedOperation = await videoAi.operations.getVideosOperation({ operation });
-        // FIX: Removed unnecessary type cast. The return type from the SDK is now correctly handled by the `VideoOperation` type alias.
         return updatedOperation;
     } catch (error) {
         handleApiError(error, "checking video status");
@@ -546,7 +679,7 @@ ${JSON.stringify(postContent, null, 2)}
             model: 'gemini-2.5-flash',
             contents: prompt,
         });
-        return response.text.trim().replace(/"/g, ''); // Remove quotes from the response
+        return response.text.trim().replace(/"/g, '');
     } catch (error) {
         handleApiError(error, "visual prompt generation");
     }
@@ -571,7 +704,6 @@ Be specific and actionable.`;
             }
         });
 
-        // Safely extract text from response
         let text: string;
         if (response.text) {
             text = response.text.trim();
@@ -598,6 +730,10 @@ Be specific and actionable.`;
     }
 };
 
+/**
+ * @deprecated Use generateViralContent with brandPersona parameter instead
+ * This function is kept for backward compatibility with BrandAmplifier
+ */
 export const generateBrandedContent = async (
     trendContent: string,
     persona: { name: string; tone: string; audience: string },

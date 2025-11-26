@@ -18,13 +18,14 @@ import CheckoutSuccessView from "./views/CheckoutSuccessView";
 import CheckoutCancelView from "./views/CheckoutCancelView";
 import TemplatesView from "./views/TemplatesView";
 import AcademicModeView from "./views/AcademicModeView";
+import CampaignManagerView from "./views/CampaignManagerView";
 import { TrendsAgent } from "./views/TrendsAgent";
 import { BrandAmplifier } from "./views/BrandAmplifier";
 import { AuthModal } from './components/AuthModal';
 import Footer from './components/Footer';
 import { useAuth } from "./contexts/AuthContext";
 import { TrendReport, AmplifierNavigationState } from "./types";
-import { Menu, X, Sparkles, Book, TrendingUp, Zap, LogOut, User, Layout, Calendar, Settings, Image, GraduationCap } from 'lucide-react';
+import { Menu, X, Sparkles, Book, TrendingUp, Zap, LogOut, User, Layout, Calendar, Settings, Image, GraduationCap, LayoutGrid } from 'lucide-react';
 
 // Wrapper component to pass navigation state to BrandAmplifier
 const BrandAmplifierWrapper: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => {
@@ -69,10 +70,9 @@ function App() {
                         {/* Desktop Navigation */}
                         <div className="hidden md:flex items-center space-x-1">
                             <NavLink href="/generator" icon={<Zap className="w-4 h-4" />} label="Generator" active={location.pathname === '/generator'} />
+                            <NavLink href="/campaigns" icon={<LayoutGrid className="w-4 h-4" />} label="Campaigns" active={location.pathname.startsWith('/campaigns')} />
                             <NavLink href="/trends-agent" icon={<TrendingUp className="w-4 h-4" />} label="Trend Scout" active={location.pathname === '/trends-agent'} />
-                            <NavLink href="/amplifier" icon={<Layout className="w-4 h-4" />} label="Amplifier" active={location.pathname === '/amplifier'} />
                             <NavLink href="/media-studio" icon={<Image className="w-4 h-4" />} label="Media" active={location.pathname === '/media-studio'} />
-                            <NavLink href="/academic" icon={<GraduationCap className="w-4 h-4" />} label="Academic" active={location.pathname === '/academic'} />
                             <NavLink href="/schedule" icon={<Calendar className="w-4 h-4" />} label="Schedule" active={location.pathname === '/schedule'} />
                             <NavLink href="/drafts" icon={<Book className="w-4 h-4" />} label="Drafts" active={location.pathname === '/drafts'} />
                         </div>
@@ -121,12 +121,13 @@ function App() {
                 {isMobileMenuOpen && (
                     <div className="md:hidden absolute top-full left-0 w-full bg-white border-b border-surface-200 shadow-lg py-4 px-6 flex flex-col space-y-2">
                         <MobileNavLink href="/generator" icon={<Zap className="w-4 h-4" />} label="Generator" />
+                        <MobileNavLink href="/campaigns" icon={<LayoutGrid className="w-4 h-4" />} label="Campaigns" />
                         <MobileNavLink href="/trends-agent" icon={<TrendingUp className="w-4 h-4" />} label="Trend Scout" />
-                        <MobileNavLink href="/amplifier" icon={<Layout className="w-4 h-4" />} label="Amplifier" />
                         <MobileNavLink href="/media-studio" icon={<Image className="w-4 h-4" />} label="Media Studio" />
-                        <MobileNavLink href="/academic" icon={<GraduationCap className="w-4 h-4" />} label="Academic Mode" />
                         <MobileNavLink href="/schedule" icon={<Calendar className="w-4 h-4" />} label="Schedule" />
                         <MobileNavLink href="/drafts" icon={<Book className="w-4 h-4" />} label="Drafts" />
+                        <MobileNavLink href="/amplifier" icon={<Layout className="w-4 h-4" />} label="Amplifier" />
+                        <MobileNavLink href="/academic" icon={<GraduationCap className="w-4 h-4" />} label="Academic Mode" />
                         <div className="pt-4 border-t border-surface-100 mt-2">
                             {user ? (
                                 <div className="space-y-3">
@@ -161,6 +162,8 @@ function App() {
                     <Routes location={location} key={location.pathname}>
                         <Route path="/" element={<LandingView onOpenAuth={() => setIsAuthOpen(true)} />} />
                         <Route path="/generator" element={<GeneratorView onOpenAuth={() => setIsAuthOpen(true)} />} />
+                        <Route path="/campaigns" element={<CampaignManagerView onOpenAuth={() => setIsAuthOpen(true)} />} />
+                        <Route path="/campaigns/:id" element={<CampaignManagerView onOpenAuth={() => setIsAuthOpen(true)} />} />
                         <Route path="/docs" element={<DocsView />} />
                         <Route path="/trends" element={<TrendsView />} />
                         <Route path="/playbooks" element={<PlaybooksView onOpenAuth={() => setIsAuthOpen(true)} />} />
