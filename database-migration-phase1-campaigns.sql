@@ -122,19 +122,6 @@ ON public.trend_cache(query_hash);
 CREATE INDEX IF NOT EXISTS idx_trend_cache_expires 
 ON public.trend_cache(expires_at);
 
--- Function to clean up expired cache entries (run via cron)
-CREATE OR REPLACE FUNCTION cleanup_expired_trend_cache()
-RETURNS INTEGER AS $$
-DECLARE
-    deleted_count INTEGER;
-BEGIN
-    DELETE FROM public.trend_cache 
-    WHERE expires_at < NOW();
-    GET DIAGNOSTICS deleted_count = ROW_COUNT;
-    RETURN deleted_count;
-END;
-$$ LANGUAGE plpgsql;
-
 -- No RLS on trend_cache - it's shared across all users for cost savings
 -- But we'll still protect it at the API level
 
@@ -311,120 +298,172 @@ ON public.campaign_posts FOR DELETE
 USING (auth.uid() = user_id);
 
 -- ============================================
--- 5. HELPER FUNCTIONS
+-- 5. HELPER FUNCTIONS (with search_path set for security)
 -- ============================================
 
--- Function to get cached trend or return null
-CREATE OR REPLACE FUNCTION get_cached_trend(p_query_hash TEXT)
-RETURNS JSONB AS $$
+-- Function to clean up expired cache entries (run via cron)
+CREATE OR REPLACE FUNCTION public.cleanup_expired_trend_cache()
+RETURNS INTEGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 DECLARE
-    cached_result JSONB;
+    deleted_count INTEGER;
 BEGIN
-    -- Try to get non-expired cache entry
-    SELECT result_json INTO cached_result
-    FROM public.trend_cache
-    WHERE query_hash = p_query_hash
-      AND expires_at > NOW();
+    DELETE FROM public.trend_cache 
+    WHERE expires_at < NOW();
     
-    -- If found, increment hit count
-    IF cached_result IS NOT NULL THEN
-        UPDATE public.trend_cache 
-        SET hit_count = hit_count + 1
-        WHERE query_hash = p_query_hash;
-    END IF;
-    
-    RETURN cached_result;
+    GET DIAGNOSTICS deleted_count = ROW_COUNT;
+    RETURN deleted_count;
 END;
-$$ LANGUAGE plpgsql;
+$$;
+
+-- Function to get cached trend or return null
+CREATE OR REPLACE FUNCTION public.get_cached_trend(p_query_hash TEXT)
+RETURNS TABLE (
+    result_json JSONB,
+    sources JSONB,
+    hit_count INTEGER
+)
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+    -- Update hit count and return result if not expired
+    UPDATE public.trend_cache tc
+    SET hit_count = tc.hit_count + 1
+    WHERE tc.query_hash = p_query_hash
+      AND tc.expires_at > NOW();
+    
+    RETURN QUERY
+    SELECT tc.result_json, tc.sources, tc.hit_count
+    FROM public.trend_cache tc
+    WHERE tc.query_hash = p_query_hash
+      AND tc.expires_at > NOW();
+END;
+$$;
 
 -- Function to set trend cache
-CREATE OR REPLACE FUNCTION set_trend_cache(
+CREATE OR REPLACE FUNCTION public.set_trend_cache(
     p_query_hash TEXT,
     p_query_text TEXT,
     p_result_json JSONB,
     p_sources JSONB DEFAULT '[]',
     p_ttl_hours INTEGER DEFAULT 24
 )
-RETURNS VOID AS $$
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
     INSERT INTO public.trend_cache (query_hash, query_text, result_json, sources, expires_at)
     VALUES (
-        p_query_hash, 
-        p_query_text, 
-        p_result_json, 
+        p_query_hash,
+        LEFT(p_query_text, 500),
+        p_result_json,
         p_sources,
         NOW() + (p_ttl_hours || ' hours')::INTERVAL
     )
     ON CONFLICT (query_hash) 
-    DO UPDATE SET 
+    DO UPDATE SET
         result_json = EXCLUDED.result_json,
         sources = EXCLUDED.sources,
-        expires_at = NOW() + (p_ttl_hours || ' hours')::INTERVAL,
+        expires_at = EXCLUDED.expires_at,
         hit_count = 0;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 -- Function to update campaign post counts
-CREATE OR REPLACE FUNCTION update_campaign_counts()
-RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION public.update_campaign_counts()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
     IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
-        UPDATE public.campaigns
+        UPDATE public.campaigns c
         SET 
-            total_posts = (SELECT COUNT(*) FROM public.campaign_posts WHERE campaign_id = NEW.campaign_id),
-            posts_published = (SELECT COUNT(*) FROM public.campaign_posts WHERE campaign_id = NEW.campaign_id AND status = 'published'),
+            total_posts = (
+                SELECT COUNT(*) 
+                FROM public.campaign_posts cp 
+                WHERE cp.campaign_id = NEW.campaign_id
+            ),
+            posts_published = (
+                SELECT COUNT(*) 
+                FROM public.campaign_posts cp 
+                WHERE cp.campaign_id = NEW.campaign_id 
+                  AND cp.status = 'published'
+            ),
             updated_at = NOW()
-        WHERE id = NEW.campaign_id;
+        WHERE c.id = NEW.campaign_id;
         RETURN NEW;
     ELSIF TG_OP = 'DELETE' THEN
-        UPDATE public.campaigns
+        UPDATE public.campaigns c
         SET 
-            total_posts = (SELECT COUNT(*) FROM public.campaign_posts WHERE campaign_id = OLD.campaign_id),
-            posts_published = (SELECT COUNT(*) FROM public.campaign_posts WHERE campaign_id = OLD.campaign_id AND status = 'published'),
+            total_posts = (
+                SELECT COUNT(*) 
+                FROM public.campaign_posts cp 
+                WHERE cp.campaign_id = OLD.campaign_id
+            ),
+            posts_published = (
+                SELECT COUNT(*) 
+                FROM public.campaign_posts cp 
+                WHERE cp.campaign_id = OLD.campaign_id 
+                  AND cp.status = 'published'
+            ),
             updated_at = NOW()
-        WHERE id = OLD.campaign_id;
+        WHERE c.id = OLD.campaign_id;
         RETURN OLD;
     END IF;
+    RETURN NULL;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 -- Trigger for campaign post counts
 DROP TRIGGER IF EXISTS trigger_update_campaign_counts ON public.campaign_posts;
 CREATE TRIGGER trigger_update_campaign_counts
 AFTER INSERT OR UPDATE OR DELETE ON public.campaign_posts
-FOR EACH ROW EXECUTE FUNCTION update_campaign_counts();
+FOR EACH ROW EXECUTE FUNCTION public.update_campaign_counts();
 
 -- Function to update timestamps
-CREATE OR REPLACE FUNCTION update_updated_at()
-RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION public.update_updated_at()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
     NEW.updated_at = NOW();
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 -- Triggers for updated_at
 DROP TRIGGER IF EXISTS trigger_campaigns_updated_at ON public.campaigns;
 CREATE TRIGGER trigger_campaigns_updated_at
 BEFORE UPDATE ON public.campaigns
-FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 DROP TRIGGER IF EXISTS trigger_campaign_posts_updated_at ON public.campaign_posts;
 CREATE TRIGGER trigger_campaign_posts_updated_at
 BEFORE UPDATE ON public.campaign_posts
-FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 DROP TRIGGER IF EXISTS trigger_brand_personas_updated_at ON public.brand_personas;
 CREATE TRIGGER trigger_brand_personas_updated_at
 BEFORE UPDATE ON public.brand_personas
-FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 -- ============================================
 -- 6. VIEWS FOR ANALYTICS
 -- ============================================
 
 -- Campaign overview view
-CREATE OR REPLACE VIEW campaign_overview AS
+CREATE OR REPLACE VIEW public.campaign_overview AS
 SELECT 
     c.id,
     c.user_id,
@@ -449,7 +488,7 @@ FROM public.campaigns c
 LEFT JOIN public.brand_personas bp ON c.brand_persona_id = bp.id;
 
 -- Grant access to views
-GRANT SELECT ON campaign_overview TO authenticated;
+GRANT SELECT ON public.campaign_overview TO authenticated;
 
 -- ============================================
 -- 7. VERIFICATION
@@ -468,11 +507,22 @@ WHERE table_schema = 'public'
   AND table_name IN ('brand_personas', 'trend_cache', 'campaigns', 'campaign_posts')
 ORDER BY table_name;
 
--- Check brand_personas columns
-SELECT column_name, data_type, is_nullable
-FROM information_schema.columns
-WHERE table_name = 'brand_personas'
-ORDER BY ordinal_position;
+-- Verify functions have search_path set
+SELECT 
+    proname as function_name,
+    CASE 
+        WHEN proconfig @> ARRAY['search_path=public'] THEN '✅ Secured'
+        ELSE '⚠️ Missing search_path'
+    END as security_status
+FROM pg_proc 
+WHERE pronamespace = 'public'::regnamespace
+  AND proname IN (
+      'cleanup_expired_trend_cache',
+      'get_cached_trend', 
+      'set_trend_cache',
+      'update_campaign_counts',
+      'update_updated_at'
+  );
 
 -- ============================================
 -- MIGRATION COMPLETE

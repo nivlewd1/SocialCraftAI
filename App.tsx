@@ -19,6 +19,7 @@ import CheckoutCancelView from "./views/CheckoutCancelView";
 import TemplatesView from "./views/TemplatesView";
 import AcademicModeView from "./views/AcademicModeView";
 import CampaignManagerView from "./views/CampaignManagerView";
+import CampaignDetailView from "./views/CampaignDetailView";
 import { TrendsAgent } from "./views/TrendsAgent";
 import { BrandAmplifier } from "./views/BrandAmplifier";
 import { AuthModal } from './components/AuthModal';
@@ -163,7 +164,7 @@ function App() {
                         <Route path="/" element={<LandingView onOpenAuth={() => setIsAuthOpen(true)} />} />
                         <Route path="/generator" element={<GeneratorView onOpenAuth={() => setIsAuthOpen(true)} />} />
                         <Route path="/campaigns" element={<CampaignManagerView onOpenAuth={() => setIsAuthOpen(true)} />} />
-                        <Route path="/campaigns/:id" element={<CampaignManagerView onOpenAuth={() => setIsAuthOpen(true)} />} />
+                        <Route path="/campaigns/:id" element={<CampaignDetailView onOpenAuth={() => setIsAuthOpen(true)} />} />
                         <Route path="/docs" element={<DocsView />} />
                         <Route path="/trends" element={<TrendsView />} />
                         <Route path="/playbooks" element={<PlaybooksView onOpenAuth={() => setIsAuthOpen(true)} />} />
