@@ -20,7 +20,7 @@ const platformColors: Record<string, string> = {
     LinkedIn: 'bg-blue-700',
     Instagram: 'bg-gradient-to-br from-purple-500 to-pink-500',
     TikTok: 'bg-black',
-    Pinterest: 'bg-red-600',
+    Pinterest: 'bg-rose-600',
 };
 
 const platformIcons: Record<string, React.ReactNode> = {
@@ -187,7 +187,7 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
                             }}
                             className={`w-full flex items-center gap-1 px-1.5 py-0.5 rounded text-white text-xs truncate ${
                                 post.status === 'posted' ? 'opacity-60' :
-                                post.status === 'failed' ? 'bg-red-500' :
+                                post.status === 'failed' ? 'bg-orange-600' :
                                 platformColors[post.platform] || 'bg-gray-500'
                             }`}
                             whileHover={{ scale: 1.02 }}
@@ -278,6 +278,10 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
                         <div className="flex items-center gap-1">
                             <div className="w-3 h-3 rounded bg-gray-400 opacity-60" />
                             <span className="text-gray-600">Posted</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                            <div className="w-3 h-3 rounded bg-orange-600" />
+                            <span className="text-gray-600">Failed</span>
                         </div>
                     </div>
                 </div>

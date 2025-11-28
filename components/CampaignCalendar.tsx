@@ -20,7 +20,7 @@ const platformColors: Record<string, string> = {
     LinkedIn: 'bg-blue-700',
     Instagram: 'bg-gradient-to-br from-purple-500 to-pink-500',
     TikTok: 'bg-black',
-    Pinterest: 'bg-red-600',
+    Pinterest: 'bg-rose-600',
 };
 
 const platformIcons: Record<string, React.ReactNode> = {
