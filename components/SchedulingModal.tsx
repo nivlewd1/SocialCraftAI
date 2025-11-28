@@ -63,6 +63,24 @@ const SchedulingModal: React.FC<SchedulingModalProps> = ({ content, onClose, onS
         fetchTwitterTier();
     }, [user, content.platform]);
 
+    // Auto-select shortest variation that fits
+    const handleAutoSelectVariation = (): string | null => {
+        if (!content.variations || content.variations.length === 0) return null;
+
+        const limit = TWITTER_LIMITS[userTier];
+
+        // Find variations that fit within limit, sorted by length (shortest first)
+        const fittingVariations = content.variations
+            .filter(v => v.length <= limit)
+            .sort((a, b) => a.length - b.length);
+
+        if (fittingVariations.length > 0) {
+            return fittingVariations[0]; // Return shortest variation that fits
+        }
+
+        return null;
+    };
+
     // Handle truncation
     const handleTruncate = () => {
         const result = smartTruncate(content.primaryContent, {
@@ -229,7 +247,38 @@ const SchedulingModal: React.FC<SchedulingModalProps> = ({ content, onClose, onS
                                 <div className="mt-3 space-y-2">
                                     <p className="text-xs font-medium text-gray-700">Select a solution:</p>
 
-                                    <div className="grid grid-cols-2 gap-2">
+                                    <div className="grid grid-cols-3 gap-2">
+                                        {content.variations && content.variations.length > 0 && (
+                                            <button
+                                                onClick={() => {
+                                                    const variation = handleAutoSelectVariation();
+                                                    if (variation) {
+                                                        setTruncationPreview({
+                                                            truncated: variation,
+                                                            original: content.primaryContent,
+                                                            removed: content.primaryContent.length - variation.length,
+                                                            preservedHashtags: [],
+                                                            preservedMentions: []
+                                                        });
+                                                        setSelectedSolution('truncate');
+                                                    } else {
+                                                        setError('No variations fit within your character limit');
+                                                    }
+                                                }}
+                                                className={`p-2 text-left rounded-md border-2 transition-all ${
+                                                    selectedSolution === 'truncate' && truncationPreview && content.variations.includes(truncationPreview.truncated)
+                                                        ? 'border-brand-primary bg-brand-primary/10'
+                                                        : 'border-gray-200 hover:border-gray-300'
+                                                }`}
+                                            >
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <Sparkles className="w-4 h-4" />
+                                                    <span className="text-sm font-medium">Variation</span>
+                                                </div>
+                                                <p className="text-xs text-gray-600">Use shorter AI version</p>
+                                            </button>
+                                        )}
+
                                         <button
                                             onClick={handleTruncate}
                                             className={`p-2 text-left rounded-md border-2 transition-all ${
@@ -242,7 +291,7 @@ const SchedulingModal: React.FC<SchedulingModalProps> = ({ content, onClose, onS
                                                 <Scissors className="w-4 h-4" />
                                                 <span className="text-sm font-medium">Truncate</span>
                                             </div>
-                                            <p className="text-xs text-gray-600">Shorten while preserving hashtags</p>
+                                            <p className="text-xs text-gray-600">Smart shorten</p>
                                         </button>
 
                                         <button
@@ -257,7 +306,7 @@ const SchedulingModal: React.FC<SchedulingModalProps> = ({ content, onClose, onS
                                                 <List className="w-4 h-4" />
                                                 <span className="text-sm font-medium">Thread</span>
                                             </div>
-                                            <p className="text-xs text-gray-600">Split into {Math.ceil(validation.characterCount / TWITTER_LIMITS[userTier])} tweets</p>
+                                            <p className="text-xs text-gray-600">{Math.ceil(validation.characterCount / TWITTER_LIMITS[userTier])} tweets</p>
                                         </button>
                                     </div>
 
