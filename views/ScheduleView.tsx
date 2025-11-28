@@ -264,6 +264,56 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onOpenAuth }) => {
         }
     };
 
+    const handleRetrySingle = async (post: UnifiedScheduledPost) => {
+        setIsProcessing(true);
+        setError(null);
+        try {
+            const success = await scheduleService.retryFailedPost(post.id, post.source);
+            if (success) {
+                await loadSchedule();
+            } else {
+                setError('Failed to retry post');
+            }
+        } catch (err) {
+            setError('Failed to retry post');
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
+    const handleBulkRetry = async () => {
+        if (selectedPosts.size === 0) return;
+
+        setIsProcessing(true);
+        setError(null);
+
+        try {
+            const postsToRetry = filteredPosts
+                .filter(p => selectedPosts.has(p.id) && p.status === 'failed')
+                .map(p => ({ id: p.id, source: p.source }));
+
+            if (postsToRetry.length === 0) {
+                setError('No failed posts selected');
+                setIsProcessing(false);
+                return;
+            }
+
+            const result = await scheduleService.bulkRetryPosts(postsToRetry);
+
+            if (result.failed > 0) {
+                setError(`Retried ${result.success} posts. ${result.failed} failed.`);
+            }
+
+            setSelectedPosts(new Set());
+            await loadSchedule();
+        } catch (err) {
+            console.error('Error retrying posts:', err);
+            setError('Failed to retry posts');
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
     // Calendar handlers
     const handleCalendarPostClick = (post: UnifiedScheduledPost) => {
         setExpandedPost(post.id);
@@ -376,6 +426,17 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onOpenAuth }) => {
                                     >
                                         <ExternalLink className="w-3 h-3" />
                                         View Campaign
+                                    </button>
+                                )}
+
+                                {post.status === 'failed' && (
+                                    <button
+                                        onClick={() => handleRetrySingle(post)}
+                                        disabled={isProcessing}
+                                        className="p-1.5 rounded-md hover:bg-green-50 text-green-600 transition-colors disabled:opacity-50"
+                                        title="Retry posting"
+                                    >
+                                        <RefreshCw size={16} />
                                     </button>
                                 )}
 
@@ -565,6 +626,14 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onOpenAuth }) => {
                         >
                             <Trash2 className="w-4 h-4" />
                             Delete Selected
+                        </button>
+                        <button
+                            onClick={() => { handleBulkRetry(); setShowActionsMenu(false); }}
+                            disabled={selectedPosts.size === 0}
+                            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-green-600 hover:bg-green-50 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <RefreshCw className="w-4 h-4" />
+                            Retry Failed Posts
                         </button>
                         <div className="border-t border-gray-100 my-1" />
                         <button
