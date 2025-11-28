@@ -16,7 +16,15 @@ const publishToPlatform = async (platform, content, token) => {
 // Twitter Logic
 async function postToTwitter(content, token) {
     const client = new TwitterApi(token);
-    const payload = { text: content.primaryContent || content.content }; // Handle both field names
+
+    // Extract text content - support multiple formats for backward compatibility
+    const textContent = content.primaryContent || content.text || content.content || '';
+
+    if (!textContent) {
+        throw new Error('No text content found in post');
+    }
+
+    const payload = { text: textContent };
 
     // If media exists (public Supabase URL), fetch and upload
     if (content.media && content.media.length > 0) {
@@ -35,6 +43,13 @@ async function postToTwitter(content, token) {
 
 // LinkedIn Logic
 async function postToLinkedIn(content, token) {
+    // Extract text content - support multiple formats for backward compatibility
+    const textContent = content.primaryContent || content.text || content.content || '';
+
+    if (!textContent) {
+        throw new Error('No text content found in post');
+    }
+
     // Fetch User URN
     const me = await axios.get('https://api.linkedin.com/v2/me', {
         headers: { Authorization: `Bearer ${token}` }
@@ -45,7 +60,7 @@ async function postToLinkedIn(content, token) {
         lifecycleState: 'PUBLISHED',
         specificContent: {
             'com.linkedin.ugc.ShareContent': {
-                shareCommentary: { text: content.primaryContent || content.content },
+                shareCommentary: { text: textContent },
                 shareMediaCategory: 'NONE' // MVP: Text only first
             }
         },

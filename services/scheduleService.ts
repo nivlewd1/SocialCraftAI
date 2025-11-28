@@ -390,14 +390,20 @@ export const updatePostStatus = async (
  */
 export const exportScheduleToCSV = (posts: UnifiedScheduledPost[]): string => {
     const headers = ['Platform', 'Content', 'Scheduled At', 'Status', 'Source', 'Has Media'];
-    const rows = posts.map(post => [
-        post.platform,
-        `"${post.content.primaryContent.replace(/"/g, '""')}"`,
-        new Date(post.scheduledAt).toLocaleString(),
-        post.status,
-        post.source === 'campaign' ? `Campaign: ${post.sourceName}` : 'Quick Post',
-        post.hasMedia ? 'Yes' : 'No'
-    ]);
+    const rows = posts.map(post => {
+        // Safely extract content with fallback for backward compatibility
+        const contentText = post.content?.primaryContent || post.content?.text || (post.content as any)?.content || 'No content';
+        const escapedContent = contentText.replace(/"/g, '""');
+
+        return [
+            post.platform,
+            `"${escapedContent}"`,
+            new Date(post.scheduledAt).toLocaleString(),
+            post.status,
+            post.source === 'campaign' ? `Campaign: ${post.sourceName}` : 'Quick Post',
+            post.hasMedia ? 'Yes' : 'No'
+        ];
+    });
 
     return [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
 };

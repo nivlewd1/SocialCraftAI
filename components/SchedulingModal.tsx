@@ -36,11 +36,16 @@ const SchedulingModal: React.FC<SchedulingModalProps> = ({ content, onClose, onS
                     user_id: user.id,
                     platform: content.platform.toLowerCase(),
                     content: {
-                        text: content.primaryContent,
+                        platform: content.platform,
+                        primaryContent: content.primaryContent,
+                        engagementPotential: content.engagementPotential || 0,
+                        analysis: content.analysis || { emotionalTriggers: [], viralPatterns: [], audienceValue: '' },
                         hashtags: content.hashtags || [],
+                        variations: content.variations || [],
+                        optimizationTips: content.optimizationTips || [],
                         hook: content.hook || null,
                         cta: content.cta || null,
-                        image_prompt: content.pinterestPin?.visualSuggestion || null
+                        pinterestPin: content.pinterestPin || null
                     },
                     scheduled_at: time.toISOString(),
                     status: 'scheduled'
