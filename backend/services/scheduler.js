@@ -73,12 +73,26 @@ const processPost = async (post) => {
         // 3. Publish via Router
         const result = await publishToPlatform(post.platform, post.content, accessToken);
 
-        // 4. Success
-        await supabaseAdmin.from('scheduled_posts').update({
+        // 4. Store detected Twitter tier if available
+        if (result.tier && post.platform === 'twitter') {
+            await supabaseAdmin.from('connected_accounts').update({
+                twitter_tier: result.tier
+            }).eq('id', post.connected_accounts.id);
+        }
+
+        // 5. Success
+        const updateData = {
             status: 'posted',
             posted_at: new Date().toISOString(),
             metadata: { platform_id: result.id }
-        }).eq('id', post.id);
+        };
+
+        // Add warning if content was truncated
+        if (result.warning) {
+            updateData.error_message = result.warning; // Store as warning, not error
+        }
+
+        await supabaseAdmin.from('scheduled_posts').update(updateData).eq('id', post.id);
 
     } catch (err) {
         console.error(`Failed post ${post.id}:`, err.message);
