@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Book, Search, ChevronRight, Home, Zap, Layers, HelpCircle, DollarSign, TrendingUp, Layout, Share2, ShieldCheck, Image, GraduationCap, Calendar, RefreshCw, BarChart3, Link2, Clock, AlertTriangle } from 'lucide-react';
+import { Book, Search, ChevronRight, Home, Zap, Layers, HelpCircle, DollarSign, TrendingUp, Layout, Share2, ShieldCheck, Image, GraduationCap, Calendar, RefreshCw, BarChart3, Link2, Clock, AlertTriangle, Wrench } from 'lucide-react';
 
-type DocSection = 'getting-started' | 'features' | 'agentic-trends' | 'brand-amplifier' | 'media-studio' | 'academic-mode' | 'scheduling' | 'recurring-posts' | 'publishing' | 'connected-accounts' | 'analytics' | 'platforms' | 'billing' | 'security' | 'faq';
+type DocSection = 'getting-started' | 'features' | 'agentic-trends' | 'brand-amplifier' | 'media-studio' | 'academic-mode' | 'scheduling' | 'recurring-posts' | 'publishing' | 'connected-accounts' | 'analytics' | 'platforms' | 'billing' | 'security' | 'troubleshooting' | 'faq';
 
 const DocsView: React.FC = () => {
     const [activeSection, setActiveSection] = useState<DocSection>('getting-started');
@@ -22,6 +22,7 @@ const DocsView: React.FC = () => {
         { id: 'platforms' as DocSection, title: 'Platform Guides', icon: Layers },
         { id: 'security' as DocSection, title: 'Security', icon: ShieldCheck },
         { id: 'billing' as DocSection, title: 'Billing & Plans', icon: DollarSign },
+        { id: 'troubleshooting' as DocSection, title: 'Troubleshooting', icon: Wrench },
         { id: 'faq' as DocSection, title: 'FAQ', icon: HelpCircle },
     ];
 
@@ -88,6 +89,7 @@ const DocsView: React.FC = () => {
                     {activeSection === 'platforms' && <PlatformsDocs />}
                     {activeSection === 'security' && <SecurityDocs />}
                     {activeSection === 'billing' && <BillingDocs />}
+                    {activeSection === 'troubleshooting' && <TroubleshootingDocs />}
                     {activeSection === 'faq' && <FAQDocs />}
                 </div>
             </div>
@@ -1108,6 +1110,238 @@ const BillingDocs = () => (
                 <span>Visa</span>
                 <span>Mastercard</span>
                 <span>Amex</span>
+            </div>
+        </section>
+    </div>
+);
+
+const TroubleshootingDocs = () => (
+    <div className="space-y-12 animate-fade-in">
+        <div>
+            <h1 className="text-4xl font-bold font-display text-surface-900 mb-4">Troubleshooting</h1>
+            <p className="text-xl text-gray-600">
+                Common issues and how to resolve them quickly.
+            </p>
+        </div>
+
+        <section className="space-y-6">
+            <h2 className="text-2xl font-bold text-surface-900">Post Failed: "Access Token Expired"</h2>
+            <div className="bg-orange-50 rounded-xl p-6 border border-orange-200">
+                <div className="flex items-start">
+                    <AlertTriangle className="w-6 h-6 text-orange-600 mr-3 mt-1 flex-shrink-0" />
+                    <div className="flex-1">
+                        <h3 className="font-bold text-orange-900 mb-3">What This Means</h3>
+                        <p className="text-orange-800 mb-4">
+                            Your connected social media account's access token has expired. This is normal and happens periodically for security reasons. You need to reconnect your account to resume posting.
+                        </p>
+                        <h4 className="font-bold text-orange-900 mb-2">How to Fix</h4>
+                        <ol className="list-decimal list-inside space-y-2 text-orange-800">
+                            <li>Click on <strong>Settings</strong> in the main navigation menu (top right corner)</li>
+                            <li>Scroll down to the <strong>Connected Accounts</strong> section</li>
+                            <li>Find the platform showing an error (usually marked with a warning icon)</li>
+                            <li>Click <strong>Disconnect</strong> next to that platform</li>
+                            <li>Click <strong>Connect</strong> to reconnect the account</li>
+                            <li>Authorize SocialCraft AI when redirected to the platform</li>
+                            <li>Return to the Schedule page and retry your failed posts</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section className="space-y-6">
+            <h2 className="text-2xl font-bold text-surface-900">Finding the Integration/Settings Page</h2>
+            <div className="p-6 bg-white rounded-xl shadow-sm border border-gray-100">
+                <p className="text-gray-700 mb-4">
+                    The Settings page is where you manage all your connected social media accounts, billing, and preferences.
+                </p>
+                <div className="grid md:grid-cols-2 gap-6">
+                    <div className="p-4 bg-blue-50 rounded-lg">
+                        <h4 className="font-bold text-blue-900 mb-2">Desktop/Web</h4>
+                        <ul className="text-sm text-blue-800 space-y-1">
+                            <li>• Look for the <strong>Settings</strong> link in the top navigation bar (usually top right)</li>
+                            <li>• Or click on your profile picture/avatar and select Settings</li>
+                            <li>• The Connected Accounts section is in the main settings page</li>
+                        </ul>
+                    </div>
+                    <div className="p-4 bg-blue-50 rounded-lg">
+                        <h4 className="font-bold text-blue-900 mb-2">Quick Navigation</h4>
+                        <ul className="text-sm text-blue-800 space-y-1">
+                            <li>• From any page, you can access Settings from the main menu</li>
+                            <li>• Connected Accounts shows all linked platforms</li>
+                            <li>• Green checkmark = Active connection</li>
+                            <li>• Orange warning = Token needs refresh</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section className="space-y-6">
+            <h2 className="text-2xl font-bold text-surface-900">Refreshing Expired Platform Tokens</h2>
+            <div className="p-6 bg-white rounded-xl shadow-sm border border-gray-100">
+                <p className="text-gray-700 mb-4">
+                    OAuth tokens are automatically refreshed by our system daily. However, if a refresh fails or you see an expired token error:
+                </p>
+                <div className="bg-white/60 rounded-xl p-6 border border-blue-200">
+                    <h3 className="font-bold text-lg mb-4">Step-by-Step Token Refresh</h3>
+                    <ol className="list-decimal list-inside space-y-3 text-gray-700">
+                        <li>
+                            <strong>Navigate to Settings → Connected Accounts</strong>
+                            <p className="ml-6 text-sm text-gray-600 mt-1">Find the account with an expired token (marked with a warning icon or error message)</p>
+                        </li>
+                        <li>
+                            <strong>Disconnect the Account</strong>
+                            <p className="ml-6 text-sm text-gray-600 mt-1">Click the "Disconnect" button next to the affected platform</p>
+                        </li>
+                        <li>
+                            <strong>Reconnect Immediately</strong>
+                            <p className="ml-6 text-sm text-gray-600 mt-1">Click "Connect" on the same platform - you'll be redirected to authorize</p>
+                        </li>
+                        <li>
+                            <strong>Authorize Permissions</strong>
+                            <p className="ml-6 text-sm text-gray-600 mt-1">Grant the necessary permissions on the platform's authorization page</p>
+                        </li>
+                        <li>
+                            <strong>Verify Connection</strong>
+                            <p className="ml-6 text-sm text-gray-600 mt-1">You should see a green checkmark and "Connected" status</p>
+                        </li>
+                        <li>
+                            <strong>Retry Failed Posts</strong>
+                            <p className="ml-6 text-sm text-gray-600 mt-1">Go to Schedule page, find failed posts (orange color), and click "Retry"</p>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <section className="space-y-6">
+            <h2 className="text-2xl font-bold text-surface-900">Post Shows "No Content"</h2>
+            <div className="p-6 bg-white rounded-xl shadow-sm border border-gray-100">
+                <p className="text-gray-700 mb-4">
+                    This usually happens when content wasn't properly saved during scheduling.
+                </p>
+                <div className="grid md:grid-cols-2 gap-4">
+                    <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                        <h4 className="font-bold text-yellow-800 mb-2">Possible Causes</h4>
+                        <ul className="text-sm text-yellow-700 space-y-1">
+                            <li>• Content generator didn't complete</li>
+                            <li>• Browser connection interrupted</li>
+                            <li>• Content structure changed between versions</li>
+                        </ul>
+                    </div>
+                    <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                        <h4 className="font-bold text-green-800 mb-2">How to Fix</h4>
+                        <ul className="text-sm text-green-700 space-y-1">
+                            <li>• Delete the empty post from Schedule page</li>
+                            <li>• Generate new content in the Generator</li>
+                            <li>• Schedule again with new content</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section className="space-y-6">
+            <h2 className="text-2xl font-bold text-surface-900">Twitter Character Limit Exceeded</h2>
+            <div className="p-6 bg-white rounded-xl shadow-sm border border-gray-100">
+                <p className="text-gray-700 mb-4">
+                    Twitter has different character limits based on your subscription tier.
+                </p>
+                <div className="bg-white/60 rounded-xl p-6 border border-sky-200">
+                    <h3 className="font-bold text-lg mb-4">Character Limits by Tier</h3>
+                    <div className="space-y-3">
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                            <span className="font-medium">Twitter Free</span>
+                            <span className="text-gray-600">280 characters</span>
+                        </div>
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                            <span className="font-medium">Twitter Premium</span>
+                            <span className="text-gray-600">4,000 characters</span>
+                        </div>
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                            <span className="font-medium">Twitter Premium+</span>
+                            <span className="text-gray-600">25,000 characters</span>
+                        </div>
+                    </div>
+                    <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                        <h4 className="font-bold text-blue-900 mb-2">Solutions When Exceeding Limit</h4>
+                        <ul className="text-sm text-blue-800 space-y-2">
+                            <li>• <strong>Use Variation:</strong> Auto-select a shorter AI-generated version</li>
+                            <li>• <strong>Smart Truncate:</strong> Automatically shorten while preserving hashtags and mentions</li>
+                            <li>• <strong>Create Thread:</strong> Split content into multiple connected tweets</li>
+                            <li>• <strong>Edit Manually:</strong> Rewrite to fit within your tier's limit</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section className="space-y-6">
+            <h2 className="text-2xl font-bold text-surface-900">Understanding Calendar Colors</h2>
+            <div className="p-6 bg-white rounded-xl shadow-sm border border-gray-100">
+                <p className="text-gray-700 mb-4">
+                    The calendar uses different colors to indicate platforms and post statuses.
+                </p>
+                <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 className="font-bold mb-3">Platform Colors</h4>
+                        <div className="space-y-2">
+                            <div className="flex items-center gap-2">
+                                <div className="w-4 h-4 bg-sky-500 rounded" />
+                                <span className="text-sm">Twitter/X (Sky Blue)</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-4 h-4 bg-blue-700 rounded" />
+                                <span className="text-sm">LinkedIn (Dark Blue)</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-4 h-4 bg-gradient-to-br from-purple-500 to-pink-500 rounded" />
+                                <span className="text-sm">Instagram (Purple-Pink)</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-4 h-4 bg-black rounded" />
+                                <span className="text-sm">TikTok (Black)</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-4 h-4 bg-rose-600 rounded" />
+                                <span className="text-sm">Pinterest (Rose)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 className="font-bold mb-3">Status Indicators</h4>
+                        <div className="space-y-2">
+                            <div className="flex items-center gap-2">
+                                <div className="w-4 h-4 bg-orange-600 rounded" />
+                                <span className="text-sm">Failed Post (Orange) - Needs attention</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-4 h-4 bg-gray-400 opacity-60 rounded" />
+                                <span className="text-sm">Posted (Faded) - Successfully published</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-4 h-4 border-2 border-blue-500 rounded" />
+                                <span className="text-sm">Today's Date (Blue outline)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section className="space-y-6">
+            <h2 className="text-2xl font-bold text-surface-900">Need More Help?</h2>
+            <div className="p-6 bg-brand-glow/10 rounded-xl border border-brand-glow/20">
+                <h4 className="font-bold text-brand-primary mb-3">Contact Support</h4>
+                <p className="text-surface-900 mb-4">
+                    If you're still experiencing issues after trying these troubleshooting steps:
+                </p>
+                <ul className="space-y-2 text-surface-900">
+                    <li>• <strong>Email:</strong> support@socialcraft.ai</li>
+                    <li>• <strong>Response Time:</strong> Within 24 hours (Pro/Business: 4 hours)</li>
+                    <li>• <strong>Include:</strong> Screenshots, error messages, and steps you've tried</li>
+                </ul>
             </div>
         </section>
     </div>
