@@ -64,10 +64,15 @@ GROUP BY twitter_tier;
 -- =====================================================
 
 -- Function to update Twitter tier when detected by backend
+-- Security: Uses immutable search_path to prevent injection attacks
 CREATE OR REPLACE FUNCTION update_twitter_tier(
     p_user_id UUID,
     p_tier TEXT
-) RETURNS VOID AS $$
+) RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
     UPDATE connected_accounts
     SET twitter_tier = p_tier,
@@ -75,7 +80,7 @@ BEGIN
     WHERE user_id = p_user_id
     AND platform = 'twitter';
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
 -- Grant execute permission to authenticated users
 GRANT EXECUTE ON FUNCTION update_twitter_tier(UUID, TEXT) TO authenticated;

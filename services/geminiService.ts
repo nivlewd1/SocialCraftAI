@@ -204,7 +204,12 @@ const generatePrompt = (
 
     // Generate instruction for Twitter if selected
     if (selections.Twitter) {
-        platformInstructions += `- Twitter: Posts must be concise and punchy. If the content is complex, create a thread of 2-4 tweets in the 'thread' field. The first tweet should be the 'primaryContent'. Crucially, also provide an 'engagementStrategy' with 2-3 suggested replies to post on your own tweet to spark conversation, as replies are the most important engagement signal on X.\n`;
+        platformInstructions += `- Twitter: Posts must be concise and punchy.
+    - **CHARACTER LIMITS:** Twitter Free tier has a 280 character limit, Premium has 4,000, and Premium+ has 25,000.
+    - **CRITICAL:** The 'primaryContent' MUST be under 280 characters to ensure it works for all users. If you need more space, use the 'thread' field or provide shorter 'variations'.
+    - **VARIATIONS:** Provide 2-3 alternative versions in the 'variations' field with DIFFERENT lengths (e.g., one under 200 chars, one under 150 chars) to give users flexibility.
+    - **THREADS:** If the content is complex, create a thread of 2-4 tweets in the 'thread' field. The first tweet should be the 'primaryContent' (under 280 chars).
+    - **ENGAGEMENT:** Provide an 'engagementStrategy' with 2-3 suggested replies to post on your own tweet to spark conversation, as replies are the most important engagement signal on X.\n`;
     }
 
     // Generate instruction for LinkedIn if selected, considering the chosen format
