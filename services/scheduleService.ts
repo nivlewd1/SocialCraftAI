@@ -360,9 +360,9 @@ export const updatePostStatus = async (
     status: ScheduleStatus
 ): Promise<boolean> => {
     const table = source === 'campaign' ? 'campaign_posts' : 'scheduled_posts';
-    
+
     const updateData: Record<string, any> = {
-        status: source === 'campaign' 
+        status: source === 'campaign'
             ? (status === 'posted' ? 'published' : status)
             : status,
         updated_at: new Date().toISOString()
@@ -386,18 +386,84 @@ export const updatePostStatus = async (
 };
 
 /**
+ * Retry a failed post by resetting it to scheduled status
+ */
+export const retryFailedPost = async (
+    postId: string,
+    source: ScheduleSource,
+    newScheduledAt?: string
+): Promise<boolean> => {
+    const table = source === 'campaign' ? 'campaign_posts' : 'scheduled_posts';
+
+    const updateData: Record<string, any> = {
+        status: source === 'campaign' ? 'scheduled' : 'scheduled',
+        error_message: null,
+        updated_at: new Date().toISOString()
+    };
+
+    // If a new scheduled time is provided, update it
+    if (newScheduledAt) {
+        updateData.scheduled_at = newScheduledAt;
+    } else {
+        // Otherwise, schedule for 5 minutes from now
+        const fiveMinutesFromNow = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+        updateData.scheduled_at = fiveMinutesFromNow;
+    }
+
+    const { error } = await supabase
+        .from(table)
+        .update(updateData)
+        .eq('id', postId);
+
+    if (error) {
+        console.error('Error retrying post:', error);
+        return false;
+    }
+
+    return true;
+};
+
+/**
+ * Bulk retry failed posts
+ */
+export const bulkRetryPosts = async (
+    posts: { id: string; source: ScheduleSource }[],
+    newScheduledAt?: string
+): Promise<{ success: number; failed: number }> => {
+    let success = 0;
+    let failed = 0;
+
+    for (const post of posts) {
+        const result = await retryFailedPost(post.id, post.source, newScheduledAt);
+        if (result) {
+            success++;
+        } else {
+            failed++;
+        }
+    }
+
+    return { success, failed };
+};
+
+/**
  * Export schedule to CSV
  */
 export const exportScheduleToCSV = (posts: UnifiedScheduledPost[]): string => {
     const headers = ['Platform', 'Content', 'Scheduled At', 'Status', 'Source', 'Has Media'];
-    const rows = posts.map(post => [
-        post.platform,
-        `"${post.content.primaryContent.replace(/"/g, '""')}"`,
-        new Date(post.scheduledAt).toLocaleString(),
-        post.status,
-        post.source === 'campaign' ? `Campaign: ${post.sourceName}` : 'Quick Post',
-        post.hasMedia ? 'Yes' : 'No'
-    ]);
+    const rows = posts.map(post => {
+        // Safely extract content with fallback for backward compatibility
+        const contentText = post.content?.primaryContent || post.content?.text || (post.content as any)?.content || 'No content';
+        const escapedContent = contentText.replace(/"/g, '""');
+
+        return [
+            post.platform,
+            `"${escapedContent}"`,
+            new Date(post.scheduledAt).toLocaleString(),
+            post.status,
+            post.source === 'campaign' ? `Campaign: ${post.sourceName}` : 'Quick Post',
+            post.hasMedia ? 'Yes' : 'No'
+        ];
+    });
 
     return [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
 };
@@ -426,6 +492,8 @@ export const scheduleService = {
     deleteScheduledPost,
     bulkDeletePosts,
     updatePostStatus,
+    retryFailedPost,
+    bulkRetryPosts,
     exportScheduleToCSV,
     downloadScheduleCSV,
 };

@@ -16,20 +16,12 @@ const initScheduler = () => {
     cron.schedule('* * * * *', async () => {
         const now = new Date().toISOString();
 
-        // Efficient Query using the new Index
+        // Fetch due posts
         const { data: posts, error } = await supabaseAdmin
             .from('scheduled_posts')
-            .select(`
-                *,
-                connected_accounts!inner (
-                    access_token,
-                    platform,
-                    token_expires_at
-                )
-            `)
+            .select('*')
             .eq('status', 'scheduled')
             .lte('scheduled_at', now)
-            .eq('connected_accounts.platform', supabaseAdmin.raw('scheduled_posts.platform'))
             .limit(20); // Processing batch size
 
         if (error) {
@@ -39,7 +31,33 @@ const initScheduler = () => {
 
         if (posts?.length > 0) {
             console.log(`⚡ Processing ${posts.length} due posts...`);
-            await Promise.all(posts.map(processPost));
+
+            // Fetch connected accounts for these posts
+            const userIds = [...new Set(posts.map(p => p.user_id))];
+            const { data: accounts, error: accountsError } = await supabaseAdmin
+                .from('connected_accounts')
+                .select('*')
+                .in('user_id', userIds);
+
+            if (accountsError) {
+                console.error('Failed to fetch connected accounts:', accountsError.message);
+                return;
+            }
+
+            // Match posts with their connected accounts
+            const postsWithAccounts = posts.map(post => {
+                const account = accounts?.find(acc =>
+                    acc.user_id === post.user_id &&
+                    acc.platform === post.platform
+                );
+                return { ...post, connected_accounts: account };
+            }).filter(post => post.connected_accounts); // Only process posts with connected accounts
+
+            if (postsWithAccounts.length > 0) {
+                await Promise.all(postsWithAccounts.map(processPost));
+            } else {
+                console.log('No posts with matching connected accounts found');
+            }
         }
     });
 };
