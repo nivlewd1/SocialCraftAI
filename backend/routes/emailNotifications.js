@@ -28,6 +28,18 @@ const createTransporter = () => {
 };
 
 /**
+ * Check if email notifications are available
+ */
+router.get('/status', (req, res) => {
+    res.json({
+        enabled: isEmailConfigured(),
+        message: isEmailConfigured()
+            ? 'Email notifications are enabled'
+            : 'SMTP not configured. Email notifications are disabled.'
+    });
+});
+
+/**
  * Send email notification for failed post
  */
 router.post('/failed-post', async (req, res) => {

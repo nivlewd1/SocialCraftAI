@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Check, AlertCircle, Loader } from 'lucide-react';
+import { Mail, Check, AlertCircle, Loader, Lock, ExternalLink } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { emailNotificationService, EmailNotificationSettings } from '../services/emailNotificationService';
 
@@ -10,10 +10,28 @@ const EmailNotificationSettingsComponent: React.FC = () => {
     const [isSaving, setIsSaving] = useState(false);
     const [saveSuccess, setSaveSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [smtpEnabled, setSmtpEnabled] = useState(false);
+    const [smtpChecked, setSmtpChecked] = useState(false);
 
     useEffect(() => {
-        loadSettings();
+        checkSmtpStatus();
+        if (user) {
+            loadSettings();
+        }
     }, [user]);
+
+    const checkSmtpStatus = async () => {
+        try {
+            const response = await fetch('/api/notifications/status');
+            const data = await response.json();
+            setSmtpEnabled(data.enabled);
+            setSmtpChecked(true);
+        } catch (err) {
+            console.error('Error checking SMTP status:', err);
+            setSmtpEnabled(false);
+            setSmtpChecked(true);
+        }
+    };
 
     const loadSettings = async () => {
         if (!user) return;
@@ -89,10 +107,88 @@ const EmailNotificationSettingsComponent: React.FC = () => {
         });
     };
 
-    if (isLoading) {
+    if (isLoading || !smtpChecked) {
         return (
             <div className="flex items-center justify-center p-8">
                 <Loader className="w-6 h-6 animate-spin text-brand-primary" />
+            </div>
+        );
+    }
+
+    // Show disabled state if SMTP is not configured
+    if (!smtpEnabled) {
+        return (
+            <div className="space-y-6">
+                {/* Header */}
+                <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gray-200 rounded-lg">
+                        <Mail className="w-5 h-5 text-gray-500" />
+                    </div>
+                    <div>
+                        <h3 className="text-lg font-bold text-surface-900">Email Notifications</h3>
+                        <p className="text-sm text-gray-600">
+                            Receive email alerts for important events
+                        </p>
+                    </div>
+                </div>
+
+                {/* Disabled Notice */}
+                <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6">
+                    <div className="flex items-start gap-3">
+                        <Lock className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-1" />
+                        <div className="flex-1">
+                            <h4 className="font-bold text-yellow-900 mb-2">
+                                Email Notifications Not Available
+                            </h4>
+                            <p className="text-sm text-yellow-800 mb-4">
+                                Email notifications are currently disabled because an email provider (SMTP) has not been configured on the server.
+                            </p>
+                            <div className="bg-white rounded-lg p-4 mb-4">
+                                <p className="text-sm font-medium text-gray-900 mb-2">
+                                    What You Can Still Do:
+                                </p>
+                                <ul className="text-sm text-gray-700 space-y-1 list-disc list-inside">
+                                    <li>View real-time error notifications in the app</li>
+                                    <li>Check failed posts in the Schedule page</li>
+                                    <li>Manually retry failed posts</li>
+                                    <li>Monitor post status in real-time</li>
+                                </ul>
+                            </div>
+                            <p className="text-xs text-yellow-700">
+                                <strong>For Administrators:</strong> To enable email notifications, configure SMTP settings (SMTP_USER, SMTP_PASSWORD) in the server environment variables.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Feature Preview (Disabled State) */}
+                <div className="opacity-50 pointer-events-none">
+                    <div className="space-y-4">
+                        <div className="flex items-start justify-between p-4 bg-gray-100 border border-gray-200 rounded-lg">
+                            <div className="flex-1">
+                                <h4 className="font-medium text-gray-600">Failed Posts</h4>
+                                <p className="text-sm text-gray-500 mt-1">
+                                    Get notified when a scheduled post fails to publish
+                                </p>
+                            </div>
+                            <div className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-300">
+                                <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-1" />
+                            </div>
+                        </div>
+
+                        <div className="flex items-start justify-between p-4 bg-gray-100 border border-gray-200 rounded-lg">
+                            <div className="flex-1">
+                                <h4 className="font-medium text-gray-600">Token Expiration</h4>
+                                <p className="text-sm text-gray-500 mt-1">
+                                    Receive alerts when social media tokens expire
+                                </p>
+                            </div>
+                            <div className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-300">
+                                <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-1" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
