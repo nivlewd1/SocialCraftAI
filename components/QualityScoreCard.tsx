@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import { AlertTriangle, CheckCircle, Info, ThumbsUp, ThumbsDown, Minus } from 'lucide-react';
 import { qualityService } from '../services/qualityService';
-import { complianceService, Platform } from '../services/complianceService';
+import { complianceService } from '../services/complianceService';
+import { Platform } from '../types';
 
 interface QualityScoreCardProps {
     content: string;
