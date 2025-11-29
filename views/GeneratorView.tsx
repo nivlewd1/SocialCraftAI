@@ -115,7 +115,12 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
 
         // Check if user can afford text generation
         if (!canGenerateType('text')) {
-            setCreditError('Insufficient credits. Please top up your credits to continue generating content.');
+            // Redirect to pricing instead of just showing error
+            if (confirm('Insufficient credits. Would you like to view pricing plans?')) {
+                navigate('/pricing');
+            } else {
+                setCreditError('Insufficient credits. Please top up your credits to continue generating content.');
+            }
             return;
         }
 

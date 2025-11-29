@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import LandingView from './views/LandingView';
 import GeneratorView from './views/GeneratorView';
 import DocsView from './views/DocsView';
@@ -26,7 +26,7 @@ import { AuthModal } from './components/AuthModal';
 import Footer from './components/Footer';
 import { useAuth } from "./contexts/AuthContext";
 import { TrendReport, AmplifierNavigationState } from "./types";
-import { Menu, X, Sparkles, Book, TrendingUp, Zap, LogOut, User, Layout, Calendar, Settings, Image, GraduationCap, LayoutGrid } from 'lucide-react';
+import { Menu, X, Sparkles, Book, TrendingUp, Zap, LogOut, User, Layout, Calendar, Settings, Image, GraduationCap, LayoutGrid, ChevronDown } from 'lucide-react';
 import ErrorNotification from './components/ErrorNotification';
 
 // Wrapper component to pass navigation state to BrandAmplifier
@@ -71,13 +71,23 @@ function App() {
                         </a>
 
                         {/* Desktop Navigation */}
-                        <div className="hidden md:flex items-center space-x-1">
-                            <NavLink href="/generator" icon={<Zap className="w-4 h-4" />} label="Generator" active={location.pathname === '/generator'} />
-                            <NavLink href="/campaigns" icon={<LayoutGrid className="w-4 h-4" />} label="Campaigns" active={location.pathname.startsWith('/campaigns')} />
-                            <NavLink href="/trends-agent" icon={<TrendingUp className="w-4 h-4" />} label="Trend Scout" active={location.pathname === '/trends-agent'} />
-                            <NavLink href="/media-studio" icon={<Image className="w-4 h-4" />} label="Media" active={location.pathname === '/media-studio'} />
-                            <NavLink href="/schedule" icon={<Calendar className="w-4 h-4" />} label="Schedule" active={location.pathname === '/schedule'} />
-                            <NavLink href="/drafts" icon={<Book className="w-4 h-4" />} label="Drafts" active={location.pathname === '/drafts'} />
+                        <div className="hidden md:flex items-center space-x-2">
+                            <NavDropdown label="Create" icon={<Zap className="w-4 h-4" />}>
+                                <DropdownLink href="/generator" icon={<Zap className="w-4 h-4" />} label="Generator" active={location.pathname === '/generator'} />
+                                <DropdownLink href="/academic" icon={<GraduationCap className="w-4 h-4" />} label="Academic Mode" active={location.pathname === '/academic'} />
+                                <DropdownLink href="/amplifier" icon={<Layout className="w-4 h-4" />} label="Brand Amplifier" active={location.pathname === '/amplifier'} />
+                                <DropdownLink href="/media-studio" icon={<Image className="w-4 h-4" />} label="Media Studio" active={location.pathname === '/media-studio'} />
+                            </NavDropdown>
+
+                            <NavDropdown label="Discover" icon={<TrendingUp className="w-4 h-4" />}>
+                                <DropdownLink href="/trends-agent" icon={<TrendingUp className="w-4 h-4" />} label="Trend Scout" active={location.pathname === '/trends-agent'} />
+                            </NavDropdown>
+
+                            <NavDropdown label="Manage" icon={<LayoutGrid className="w-4 h-4" />}>
+                                <DropdownLink href="/schedule" icon={<Calendar className="w-4 h-4" />} label="Schedule" active={location.pathname === '/schedule'} />
+                                <DropdownLink href="/campaigns" icon={<LayoutGrid className="w-4 h-4" />} label="Campaigns" active={location.pathname.startsWith('/campaigns')} />
+                                <DropdownLink href="/drafts" icon={<Book className="w-4 h-4" />} label="Drafts" active={location.pathname === '/drafts'} />
+                            </NavDropdown>
                         </div>
 
                         {/* Auth Buttons */}
@@ -224,3 +234,50 @@ const MobileNavLink = ({ href, icon, label }: { href: string; icon: React.ReactN
 );
 
 export default App;
+
+// NavDropdown Component
+const NavDropdown = ({ label, icon, children }: { label: string; icon: React.ReactNode; children: React.ReactNode }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <div
+            className="relative"
+            onMouseEnter={() => setIsOpen(true)}
+            onMouseLeave={() => setIsOpen(false)}
+        >
+            <button className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${isOpen ? 'bg-surface-100 text-surface-900' : 'text-surface-600 hover:text-surface-900 hover:bg-surface-50'}`}>
+                <span className={isOpen ? "text-brand-primary" : "text-surface-400"}>{icon}</span>
+                <span>{label}</span>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 text-surface-400 ${isOpen ? 'rotate-180 text-surface-600' : ''}`} />
+            </button>
+
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                        transition={{ duration: 0.15, ease: "easeOut" }}
+                        className="absolute left-0 mt-1 w-60 rounded-xl bg-white shadow-xl border border-surface-100 overflow-hidden z-50 p-1.5"
+                    >
+                        {children}
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+};
+
+// Dropdown Link Component
+const DropdownLink = ({ href, icon, label, active }: { href: string; icon: React.ReactNode; label: string; active: boolean }) => (
+    <a
+        href={href}
+        className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${active
+            ? 'bg-surface-50 text-brand-primary'
+            : 'text-surface-600 hover:text-surface-900 hover:bg-surface-50'
+            }`}
+    >
+        <span className={active ? "text-brand-primary" : "text-surface-400"}>{icon}</span>
+        <span>{label}</span>
+    </a>
+);

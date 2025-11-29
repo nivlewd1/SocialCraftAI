@@ -115,11 +115,11 @@ const CampaignManagerView: React.FC<CampaignManagerViewProps> = ({ onOpenAuth })
         const startDate = new Date(newCampaign.dateRangeStart);
         const endDate = new Date(newCampaign.dateRangeEnd);
         const days = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-        
+
         const frequency = POSTING_FREQUENCIES.find(f => f.value === newCampaign.postingFrequency);
         const postsPerDay = (frequency?.postsPerWeek || 7) / 7;
         const basePosts = Math.min(Math.floor(days * postsPerDay * newCampaign.targetPlatforms.length), maxPostsPerCampaign);
-        
+
         const estimate = estimateCampaignCredits({
             postCount: basePosts,
             withVariations: newCampaign.includeVariations,
@@ -187,7 +187,7 @@ const CampaignManagerView: React.FC<CampaignManagerViewProps> = ({ onOpenAuth })
         if (state?.fromGenerator) {
             setNavState(state);
             setShowCreateWizard(true);
-            
+
             // Pre-fill from navigation state
             if (state.trendData) {
                 setNewCampaign(prev => ({
@@ -217,6 +217,13 @@ const CampaignManagerView: React.FC<CampaignManagerViewProps> = ({ onOpenAuth })
 
         const estimates = calculateEstimates();
 
+        if (subscription && estimates.total > subscription.totalCredits) {
+            if (confirm(`Insufficient credits. This campaign requires ${estimates.total} credits, but you only have ${subscription.totalCredits}. Would you like to view pricing plans?`)) {
+                navigate('/pricing');
+            }
+            return;
+        }
+
         try {
             const { data, error } = await supabase
                 .from('campaigns')
@@ -241,8 +248,8 @@ const CampaignManagerView: React.FC<CampaignManagerViewProps> = ({ onOpenAuth })
             if (error) throw error;
 
             // Navigate to campaign detail for text generation
-            navigate(`/campaigns/${data.id}`, { 
-                state: { 
+            navigate(`/campaigns/${data.id}`, {
+                state: {
                     newCampaign: true,
                     estimates,
                     includeVariations: newCampaign.includeVariations,
@@ -266,7 +273,7 @@ const CampaignManagerView: React.FC<CampaignManagerViewProps> = ({ onOpenAuth })
 
             if (error) throw error;
 
-            setCampaigns(prev => prev.map(c => 
+            setCampaigns(prev => prev.map(c =>
                 c.id === campaignId ? { ...c, status: newStatus } : c
             ));
         } catch (error) {
@@ -284,8 +291,8 @@ const CampaignManagerView: React.FC<CampaignManagerViewProps> = ({ onOpenAuth })
             archived: 'bg-gray-200 text-gray-500',
         };
 
-        const progress = campaign.totalPosts > 0 
-            ? Math.round((campaign.postsPublished / campaign.totalPosts) * 100) 
+        const progress = campaign.totalPosts > 0
+            ? Math.round((campaign.postsPublished / campaign.totalPosts) * 100)
             : 0;
 
         return (
@@ -312,7 +319,7 @@ const CampaignManagerView: React.FC<CampaignManagerViewProps> = ({ onOpenAuth })
                         <span>{progress}%</span>
                     </div>
                     <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                        <div 
+                        <div
                             className="h-full bg-gradient-to-r from-brand-primary to-brand-glow transition-all"
                             style={{ width: `${progress}%` }}
                         />
@@ -351,7 +358,7 @@ const CampaignManagerView: React.FC<CampaignManagerViewProps> = ({ onOpenAuth })
                         <Eye className="w-4 h-4" />
                         View
                     </button>
-                    
+
                     {campaign.status === 'draft' && (
                         <button
                             onClick={() => handleStatusChange(campaign.id, 'active')}
@@ -360,7 +367,7 @@ const CampaignManagerView: React.FC<CampaignManagerViewProps> = ({ onOpenAuth })
                             <Play className="w-4 h-4" />
                         </button>
                     )}
-                    
+
                     {campaign.status === 'active' && (
                         <button
                             onClick={() => handleStatusChange(campaign.id, 'paused')}
@@ -369,7 +376,7 @@ const CampaignManagerView: React.FC<CampaignManagerViewProps> = ({ onOpenAuth })
                             <Pause className="w-4 h-4" />
                         </button>
                     )}
-                    
+
                     {campaign.status === 'paused' && (
                         <button
                             onClick={() => handleStatusChange(campaign.id, 'active')}
@@ -406,22 +413,20 @@ const CampaignManagerView: React.FC<CampaignManagerViewProps> = ({ onOpenAuth })
                     <div className="p-6 border-b border-gray-100">
                         <h2 className="text-2xl font-bold text-surface-900">Create New Campaign</h2>
                         <p className="text-gray-500 mt-1">Plan and schedule your content strategy</p>
-                        
+
                         {/* Step indicator */}
                         <div className="flex items-center gap-2 mt-4">
                             {[1, 2, 3].map(step => (
                                 <div key={step} className="flex items-center">
-                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                                        wizardStep >= step 
-                                            ? 'bg-brand-primary text-white' 
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${wizardStep >= step
+                                            ? 'bg-brand-primary text-white'
                                             : 'bg-gray-100 text-gray-400'
-                                    }`}>
+                                        }`}>
                                         {step}
                                     </div>
                                     {step < 3 && (
-                                        <div className={`w-12 h-1 mx-1 ${
-                                            wizardStep > step ? 'bg-brand-primary' : 'bg-gray-100'
-                                        }`} />
+                                        <div className={`w-12 h-1 mx-1 ${wizardStep > step ? 'bg-brand-primary' : 'bg-gray-100'
+                                            }`} />
                                     )}
                                 </div>
                             ))}
@@ -467,11 +472,10 @@ const CampaignManagerView: React.FC<CampaignManagerViewProps> = ({ onOpenAuth })
                                             <button
                                                 key={preset.name}
                                                 onClick={() => setNewCampaign({ ...newCampaign, contentMix: preset.mix })}
-                                                className={`p-3 rounded-lg border text-center transition-colors ${
-                                                    JSON.stringify(newCampaign.contentMix) === JSON.stringify(preset.mix)
+                                                className={`p-3 rounded-lg border text-center transition-colors ${JSON.stringify(newCampaign.contentMix) === JSON.stringify(preset.mix)
                                                         ? 'border-brand-primary bg-brand-primary/5'
                                                         : 'border-gray-200 hover:border-gray-300'
-                                                }`}
+                                                    }`}
                                             >
                                                 <span className="text-sm font-medium">{preset.name}</span>
                                             </button>
@@ -528,11 +532,10 @@ const CampaignManagerView: React.FC<CampaignManagerViewProps> = ({ onOpenAuth })
                                                         : [...newCampaign.targetPlatforms, platform];
                                                     setNewCampaign({ ...newCampaign, targetPlatforms: platforms });
                                                 }}
-                                                className={`p-3 rounded-lg border text-center transition-colors ${
-                                                    newCampaign.targetPlatforms.includes(platform)
+                                                className={`p-3 rounded-lg border text-center transition-colors ${newCampaign.targetPlatforms.includes(platform)
                                                         ? 'border-brand-primary bg-brand-primary/5'
                                                         : 'border-gray-200 hover:border-gray-300'
-                                                }`}
+                                                    }`}
                                             >
                                                 <span className="text-sm">{platform}</span>
                                             </button>
@@ -574,11 +577,10 @@ const CampaignManagerView: React.FC<CampaignManagerViewProps> = ({ onOpenAuth })
                                             <button
                                                 key={freq.value}
                                                 onClick={() => setNewCampaign({ ...newCampaign, postingFrequency: freq.value as any })}
-                                                className={`p-3 rounded-lg border text-center transition-colors ${
-                                                    newCampaign.postingFrequency === freq.value
+                                                className={`p-3 rounded-lg border text-center transition-colors ${newCampaign.postingFrequency === freq.value
                                                         ? 'border-brand-primary bg-brand-primary/5'
                                                         : 'border-gray-200 hover:border-gray-300'
-                                                }`}
+                                                    }`}
                                             >
                                                 <span className="text-sm font-medium">{freq.label}</span>
                                             </button>
@@ -589,7 +591,7 @@ const CampaignManagerView: React.FC<CampaignManagerViewProps> = ({ onOpenAuth })
                                 {/* Competitor Analysis (Pro+) */}
                                 <div className={!canUseCompetitor ? 'opacity-50' : ''}>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Competitor Handles 
+                                        Competitor Handles
                                         {!canUseCompetitor && (
                                             <span className="ml-2 text-xs text-orange-600 flex items-center gap-1">
                                                 <Lock className="w-3 h-3" /> Pro+ only
@@ -600,8 +602,8 @@ const CampaignManagerView: React.FC<CampaignManagerViewProps> = ({ onOpenAuth })
                                         type="text"
                                         disabled={!canUseCompetitor}
                                         placeholder="@competitor1, @competitor2"
-                                        onChange={(e) => setNewCampaign({ 
-                                            ...newCampaign, 
+                                        onChange={(e) => setNewCampaign({
+                                            ...newCampaign,
                                             competitorHandles: e.target.value.split(',').map(h => h.trim()).filter(Boolean)
                                         })}
                                         className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none disabled:bg-gray-50"
@@ -649,9 +651,8 @@ const CampaignManagerView: React.FC<CampaignManagerViewProps> = ({ onOpenAuth })
                                             <span className="text-xs text-gray-400">{CREDIT_COSTS.image} credits each</span>
                                         </label>
 
-                                        <label className={`flex items-center gap-3 p-3 border border-gray-200 rounded-lg ${
-                                            canAccessVideo ? 'cursor-pointer hover:bg-gray-50' : 'opacity-50 cursor-not-allowed'
-                                        }`}>
+                                        <label className={`flex items-center gap-3 p-3 border border-gray-200 rounded-lg ${canAccessVideo ? 'cursor-pointer hover:bg-gray-50' : 'opacity-50 cursor-not-allowed'
+                                            }`}>
                                             <input
                                                 type="checkbox"
                                                 checked={newCampaign.includeVideo && canAccessVideo}
@@ -676,7 +677,7 @@ const CampaignManagerView: React.FC<CampaignManagerViewProps> = ({ onOpenAuth })
                                 {/* Cost estimate */}
                                 <div className="bg-gray-50 rounded-xl p-4">
                                     <h4 className="font-medium text-surface-900 mb-3">Campaign Summary</h4>
-                                    
+
                                     <div className="space-y-2 text-sm">
                                         <div className="flex justify-between">
                                             <span className="text-gray-600">Platforms:</span>
@@ -737,7 +738,7 @@ const CampaignManagerView: React.FC<CampaignManagerViewProps> = ({ onOpenAuth })
                                     <div className="text-sm">
                                         <p className="font-medium text-blue-700">"Text First" Generation</p>
                                         <p className="text-blue-600">
-                                            Text drafts will be generated first (~{estimates.textCredits} credits). 
+                                            Text drafts will be generated first (~{estimates.textCredits} credits).
                                             After reviewing, you can generate visuals for selected posts.
                                         </p>
                                     </div>

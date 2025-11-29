@@ -4,6 +4,7 @@ import { generateImage, generateVideo, getVideosOperation, editImage } from '../
 import { VideoOperation, SavedMedia, UploadedImage } from '../types';
 import Spinner from '../components/Spinner';
 import { Clapperboard, Image as ImageIcon, Sparkles, AlertTriangle, KeyRound, Download, Save, Check, UploadCloud, X, Lock, AlertCircle } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../contexts/SubscriptionContext';
 import { CreditBadge, WatermarkOverlay } from '../components/WatermarkOverlay';
 import { CREDIT_COSTS } from '../config/pricing';
@@ -31,7 +32,11 @@ const MAX_FILE_SIZE_MB = 5;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
-const MediaStudioView: React.FC = () => {
+interface MediaStudioViewProps {
+    onOpenAuth: () => void;
+}
+
+const MediaStudioView: React.FC<MediaStudioViewProps> = ({ onOpenAuth }) => {
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -45,8 +50,8 @@ const MediaStudioView: React.FC = () => {
             setActiveTab(location.state.tab);
         }
     }, [location.state?.tab]);
-    
-     useEffect(() => {
+
+    useEffect(() => {
         // Clear state after it's been used to avoid it persisting on reload
         if (location.state) {
             navigate('.', { replace: true, state: {} });
@@ -80,8 +85,8 @@ const MediaStudioView: React.FC = () => {
                     />
                 </div>
                 <div className="mt-6">
-                    {activeTab === 'image' && <ImageGenerator initialPrompt={initialPrompt} />}
-                    {activeTab === 'video' && <VideoGenerator initialPrompt={initialPrompt} />}
+                    {activeTab === 'image' && <ImageGenerator initialPrompt={initialPrompt} onOpenAuth={onOpenAuth} />}
+                    {activeTab === 'video' && <VideoGenerator initialPrompt={initialPrompt} onOpenAuth={onOpenAuth} />}
                 </div>
             </div>
         </div>
@@ -91,11 +96,10 @@ const MediaStudioView: React.FC = () => {
 const TabButton: React.FC<{ label: string; icon: React.ReactNode; isActive: boolean; onClick: () => void }> = ({ label, icon, isActive, onClick }) => (
     <button
         onClick={onClick}
-        className={`flex items-center space-x-2 px-4 py-3 font-medium text-sm transition-colors border-b-2 ${
-            isActive
-                ? 'border-brand-primary text-brand-primary'
-                : 'border-transparent text-surface-900 hover:text-brand-primary hover:border-surface-200'
-        }`}
+        className={`flex items-center space-x-2 px-4 py-3 font-medium text-sm transition-colors border-b-2 ${isActive
+            ? 'border-brand-primary text-brand-primary'
+            : 'border-transparent text-surface-900 hover:text-brand-primary hover:border-surface-200'
+            }`}
     >
         {icon}
         <span>{label}</span>
@@ -106,7 +110,7 @@ const ImagePreview: React.FC<{ src: string; name: string; onRemove: () => void; 
     <div className="relative group w-24 h-24 border border-gray-300 rounded-md overflow-hidden flex-shrink-0">
         <img src={src} alt={name} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-             <button
+            <button
                 onClick={onRemove}
                 className="p-1.5 rounded-full bg-white/80 hover:bg-white text-status-error"
                 title="Remove image"
@@ -118,8 +122,9 @@ const ImagePreview: React.FC<{ src: string; name: string; onRemove: () => void; 
 );
 
 
-const ImageGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt }) => {
+const ImageGenerator: React.FC<{ initialPrompt?: string; onOpenAuth: () => void }> = ({ initialPrompt, onOpenAuth }) => {
     const navigate = useNavigate();
+    const { user } = useAuth();
     const { subscription, canGenerateType, deductCredits } = useSubscription();
 
     const [prompt, setPrompt] = useState(initialPrompt || '');
@@ -162,9 +167,19 @@ const ImageGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
             return;
         }
 
+        // Check authentication
+        if (!user) {
+            onOpenAuth();
+            return;
+        }
+
         // Check if user can afford image generation
         if (!canGenerateType('image')) {
-            setCreditError('Insufficient credits for image generation. Please top up your credits.');
+            if (confirm('Insufficient credits for image generation. Would you like to view pricing plans?')) {
+                navigate('/pricing');
+            } else {
+                setCreditError('Insufficient credits for image generation. Please top up your credits.');
+            }
             return;
         }
 
@@ -196,7 +211,7 @@ const ImageGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
             setIsLoading(false);
         }
     };
-    
+
     const handleSaveImage = async () => {
         if (!generatedImage || !prompt) return;
         setSaveStatus('saving');
@@ -211,7 +226,7 @@ const ImageGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
             setTimeout(() => setSaveStatus('idle'), 2000);
         }
     };
-    
+
     return (
         <div className="glass-card rounded-lg p-8 space-y-6">
             <div className="space-y-2">
@@ -226,22 +241,22 @@ const ImageGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
                     <strong>Tips:</strong> Be specific about style, colors, and composition. E.g., "A minimalist tech workspace with soft natural lighting, isometric view, clean white background"
                 </p>
             </div>
-             <div className="space-y-2">
-                 <label className="block text-sm font-medium text-surface-900">Upload an Image to Edit (Optional)</label>
-                 {uploadedImage ? (
-                    <ImagePreview 
-                        src={`data:${uploadedImage.mimeType};base64,${uploadedImage.data}`} 
-                        name={uploadedImage.name} 
-                        onRemove={() => setUploadedImage(null)} 
+            <div className="space-y-2">
+                <label className="block text-sm font-medium text-surface-900">Upload an Image to Edit (Optional)</label>
+                {uploadedImage ? (
+                    <ImagePreview
+                        src={`data:${uploadedImage.mimeType};base64,${uploadedImage.data}`}
+                        name={uploadedImage.name}
+                        onRemove={() => setUploadedImage(null)}
                     />
-                 ) : (
+                ) : (
                     <label className="w-full flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-surface-100/50 transition-colors">
                         <UploadCloud className="h-8 w-8 text-surface-900" />
                         <span className="mt-2 text-sm text-surface-900">Click to upload or drag and drop</span>
                         <span className="text-xs text-surface-900">PNG, JPG, WEBP (Max {MAX_FILE_SIZE_MB}MB)</span>
                         <input type="file" className="hidden" accept={ALLOWED_IMAGE_TYPES.join(',')} onChange={handleFileChange} />
                     </label>
-                 )}
+                )}
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
@@ -249,7 +264,7 @@ const ImageGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
                     <label className="block text-sm font-medium text-surface-900 mb-2">Aspect Ratio:</label>
                     <div className="grid grid-cols-5 gap-2">
                         {(['1:1', '16:9', '9:16', '4:3', '3:4'] as AspectRatioImage[]).map(ar => (
-                             <button key={ar} onClick={() => setAspectRatio(ar)} disabled={!!uploadedImage} className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${aspectRatio === ar ? 'bg-brand-primary text-white' : 'bg-white hover:bg-surface-100'} disabled:cursor-not-allowed`}>
+                            <button key={ar} onClick={() => setAspectRatio(ar)} disabled={!!uploadedImage} className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${aspectRatio === ar ? 'bg-brand-primary text-white' : 'bg-white hover:bg-surface-100'} disabled:cursor-not-allowed`}>
                                 {ar}
                             </button>
                         ))}
@@ -298,39 +313,40 @@ const ImageGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
 
             {generatedImage && (
                 <div className="mt-6 border-t pt-6 animate-fade-in">
-                     <h3 className="text-lg font-semibold text-surface-900 mb-4">Result</h3>
-                     <WatermarkOverlay type="image">
-                         <img src={generatedImage} alt={prompt} className="rounded-lg w-full object-contain" />
-                     </WatermarkOverlay>
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                         <a
+                    <h3 className="text-lg font-semibold text-surface-900 mb-4">Result</h3>
+                    <WatermarkOverlay type="image">
+                        <img src={generatedImage} alt={prompt} className="rounded-lg w-full object-contain" />
+                    </WatermarkOverlay>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                        <a
                             href={subscription?.hasWatermark ? undefined : generatedImage}
                             download={subscription?.hasWatermark ? undefined : `socialcraft-ai-${new Date().getTime()}.jpeg`}
                             onClick={subscription?.hasWatermark ? () => navigate('/pricing') : undefined}
                             className={`w-full flex items-center justify-center py-2.5 px-5 rounded-lg shadow-sm text-base font-medium ${subscription?.hasWatermark ? 'btn-secondary opacity-75' : 'btn-secondary'}`}
-                         >
+                        >
                             {subscription?.hasWatermark ? (
                                 <><Lock className="mr-2 h-5 w-5" /> Upgrade to Download</>
                             ) : (
                                 <><Download className="mr-2 h-5 w-5" /> Download</>
                             )}
-                         </a>
-                         <button
+                        </a>
+                        <button
                             onClick={handleSaveImage}
                             disabled={saveStatus !== 'idle'}
                             className="w-full flex items-center justify-center py-2.5 px-5 rounded-lg shadow-sm text-base font-medium text-brand-primary bg-white border border-brand-primary hover:bg-surface-100 disabled:opacity-50 transition-all"
-                         >
+                        >
                             {saveStatus === 'saved' ? <><Check className="mr-2 h-5 w-5 text-brand-primary" /> Saved</> : <><Save className="mr-2 h-5 w-5" /> Save to Media</>}
-                         </button>
-                     </div>
+                        </button>
+                    </div>
                 </div>
             )}
         </div>
     );
 };
 
-const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt }) => {
+const VideoGenerator: React.FC<{ initialPrompt?: string; onOpenAuth: () => void }> = ({ initialPrompt, onOpenAuth }) => {
     const navigate = useNavigate();
+    const { user } = useAuth();
     const { subscription, canGenerateType, deductCredits } = useSubscription();
 
     const [prompt, setPrompt] = useState(initialPrompt || '');
@@ -349,8 +365,8 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
     const isMultiImageMode = uploadedImages.length > 1;
 
     const checkApiKey = useCallback(async () => {
-      const keySelected = await (window as any).aistudio?.hasSelectedApiKey();
-      setHasApiKey(keySelected);
+        const keySelected = await (window as any).aistudio?.hasSelectedApiKey();
+        setHasApiKey(keySelected);
     }, []);
 
     useEffect(() => {
@@ -416,7 +432,7 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
         setGeneratedVideoUrl(null);
         setSaveStatus('idle');
     }
-    
+
     const handleGenerate = async () => {
         if (!prompt.trim() && uploadedImages.length === 0) {
             setError('Please enter a prompt or upload an image.');
@@ -427,15 +443,29 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
             return;
         }
 
+        // Check authentication
+        if (!user) {
+            onOpenAuth();
+            return;
+        }
+
         // Check if user can access video generation (blocked for free tier)
         if (!subscription?.canAccessVideo) {
-            setCreditError('Video generation requires Starter plan or higher. Upgrade to unlock this feature.');
+            if (confirm('Video generation requires a Starter plan or higher. Would you like to upgrade?')) {
+                navigate('/pricing');
+            } else {
+                setCreditError('Video generation requires Starter plan or higher. Upgrade to unlock this feature.');
+            }
             return;
         }
 
         // Check if user can afford video generation
         if (!canGenerateType('video')) {
-            setCreditError('Insufficient credits for video generation. Please top up your credits.');
+            if (confirm('Insufficient credits for video generation. Would you like to view pricing plans?')) {
+                navigate('/pricing');
+            } else {
+                setCreditError('Insufficient credits for video generation. Please top up your credits.');
+            }
             return;
         }
 
@@ -459,7 +489,7 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
             const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';
             setError(errorMessage);
             setIsLoading(false);
-            if(errorMessage.includes("API key not found or invalid")) {
+            if (errorMessage.includes("API key not found or invalid")) {
                 setHasApiKey(false);
             }
         }
@@ -481,7 +511,7 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
             setTimeout(() => setSaveStatus('idle'), 2000);
         }
     };
-    
+
     useEffect(() => {
         if (operation && !operation.done && isLoading) {
             const interval = setInterval(async () => {
@@ -506,7 +536,7 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
                     setError(errorMessage);
                     setIsLoading(false);
                     clearInterval(interval);
-                     if(errorMessage.includes("API key not found or invalid")) {
+                    if (errorMessage.includes("API key not found or invalid")) {
                         setHasApiKey(false);
                     }
                 }
@@ -514,7 +544,7 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
             return () => clearInterval(interval);
         }
     }, [operation, isLoading]);
-    
+
     return (
         <div className="glass-card rounded-lg p-8 space-y-6">
             {!hasApiKey ? (
@@ -553,7 +583,7 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
                             ))}
                         </div>
                         {uploadedImages.length < 5 && (
-                             <label className="w-full flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-surface-100/50 transition-colors">
+                            <label className="w-full flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-surface-100/50 transition-colors">
                                 <UploadCloud className="h-8 w-8 text-surface-900" />
                                 <span className="mt-2 text-sm text-surface-900">Click to upload or drag and drop</span>
                                 <span className="text-xs text-surface-900">PNG, JPG, WEBP (Max {MAX_FILE_SIZE_MB}MB)</span>
@@ -562,22 +592,22 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
                         )}
                     </div>
 
-                     <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
                         <div className={`flex-grow ${isMultiImageMode ? 'opacity-50' : ''}`}>
                             <label className="block text-sm font-medium text-surface-900 mb-2">Aspect Ratio:</label>
                             <div className="grid grid-cols-2 gap-2">
                                 {(['16:9', '9:16'] as AspectRatioVideo[]).map(ar => (
-                                     <button key={ar} onClick={() => setAspectRatio(ar)} disabled={isMultiImageMode} className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${aspectRatio === ar ? 'bg-brand-primary text-white' : 'bg-white hover:bg-surface-100'} disabled:cursor-not-allowed`}>
+                                    <button key={ar} onClick={() => setAspectRatio(ar)} disabled={isMultiImageMode} className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${aspectRatio === ar ? 'bg-brand-primary text-white' : 'bg-white hover:bg-surface-100'} disabled:cursor-not-allowed`}>
                                         {ar}
                                     </button>
                                 ))}
                             </div>
                         </div>
-                         <div className={`flex-grow ${isMultiImageMode ? 'opacity-50' : ''}`}>
+                        <div className={`flex-grow ${isMultiImageMode ? 'opacity-50' : ''}`}>
                             <label className="block text-sm font-medium text-surface-900 mb-2">Resolution:</label>
                             <div className="grid grid-cols-2 gap-2">
                                 {(['720p', '1080p'] as ResolutionVideo[]).map(res => (
-                                     <button key={res} onClick={() => setResolution(res)} disabled={isMultiImageMode} className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${resolution === res ? 'bg-brand-primary text-white' : 'bg-white hover:bg-surface-100'} disabled:cursor-not-allowed`}>
+                                    <button key={res} onClick={() => setResolution(res)} disabled={isMultiImageMode} className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${resolution === res ? 'bg-brand-primary text-white' : 'bg-white hover:bg-surface-100'} disabled:cursor-not-allowed`}>
                                         {res}
                                     </button>
                                 ))}
@@ -590,7 +620,7 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
                         </div>
                     )}
 
-                    {error && <p className="text-status-error text-sm text-center flex items-center justify-center"><AlertTriangle size={16} className="mr-2"/>{error}</p>}
+                    {error && <p className="text-status-error text-sm text-center flex items-center justify-center"><AlertTriangle size={16} className="mr-2" />{error}</p>}
 
                     {/* Video Access Restriction for Free Tier */}
                     {!subscription?.canAccessVideo && (
@@ -651,32 +681,32 @@ const VideoGenerator: React.FC<{ initialPrompt?: string }> = ({ initialPrompt })
                             <><Sparkles className="mr-2 h-5 w-5" /> Generate Video</>
                         )}
                     </button>
-                </>
-            )}
 
-             {generatedVideoUrl && (
-                <div className="mt-6 border-t pt-6 animate-fade-in">
-                     <h3 className="text-lg font-semibold text-surface-900 mb-4">Generated Video</h3>
-                     <video src={generatedVideoUrl} controls className="rounded-lg w-full mb-4" />
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                         <a
-                            href={generatedVideoUrl}
-                            download={`socialcraft-ai-video-${new Date().getTime()}.mp4`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-full flex items-center justify-center py-2.5 px-5 rounded-lg shadow-sm text-base font-medium btn-secondary"
-                         >
-                            <Download className="mr-2 h-5 w-5" /> Download Video
-                         </a>
-                         <button
-                            onClick={handleSaveVideo}
-                            disabled={saveStatus !== 'idle'}
-                            className="w-full flex items-center justify-center py-2.5 px-5 rounded-lg shadow-sm text-base font-medium text-brand-primary bg-white border border-brand-primary hover:bg-surface-100 disabled:opacity-50 transition-all"
-                         >
-                            {saveStatus === 'saved' ? <><Check className="mr-2 h-5 w-5 text-brand-primary" /> Saved</> : <><Save className="mr-2 h-5 w-5" /> Save to Media</>}
-                         </button>
-                     </div>
-                </div>
+                    {generatedVideoUrl && (
+                        <div className="mt-6 border-t pt-6 animate-fade-in">
+                            <h3 className="text-lg font-semibold text-surface-900 mb-4">Generated Video</h3>
+                            <video src={generatedVideoUrl} controls className="rounded-lg w-full mb-4" />
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <a
+                                    href={generatedVideoUrl}
+                                    download={`socialcraft-ai-video-${new Date().getTime()}.mp4`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full flex items-center justify-center py-2.5 px-5 rounded-lg shadow-sm text-base font-medium btn-secondary"
+                                >
+                                    <Download className="mr-2 h-5 w-5" /> Download Video
+                                </a>
+                                <button
+                                    onClick={handleSaveVideo}
+                                    disabled={saveStatus !== 'idle'}
+                                    className="w-full flex items-center justify-center py-2.5 px-5 rounded-lg shadow-sm text-base font-medium text-brand-primary bg-white border border-brand-primary hover:bg-surface-100 disabled:opacity-50 transition-all"
+                                >
+                                    {saveStatus === 'saved' ? <><Check className="mr-2 h-5 w-5 text-brand-primary" /> Saved</> : <><Save className="mr-2 h-5 w-5" /> Save to Media</>}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </>
             )}
         </div>
     );

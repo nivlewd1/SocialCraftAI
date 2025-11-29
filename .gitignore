@@ -47,3 +47,4 @@ build_log.txt
 install_log*.txt
 test_output*.txt
 tsc_log.txt
+vite_log.txt

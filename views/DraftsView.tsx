@@ -5,31 +5,40 @@ import { Save, Trash2, Clock, Edit, Eye, Image as ImageIcon, Video, AlertTriangl
 import DraftViewerModal from '../components/DraftViewerModal';
 import { draftsService } from '../services/draftsService';
 import { mediaService } from '../services/mediaService';
+import { useAuth } from '../contexts/AuthContext';
 
 const TabButton: React.FC<{ label: string; icon: React.ReactNode; isActive: boolean; onClick: () => void }> = ({ label, icon, isActive, onClick }) => (
     <button
         onClick={onClick}
-        className={`flex items-center space-x-2 px-4 py-3 font-medium text-sm transition-colors border-b-2 -mb-px ${
-            isActive
-                ? 'border-brand-primary text-brand-primary'
-                : 'border-transparent text-surface-900 hover:text-brand-primary hover:border-surface-200'
-        }`}
+        className={`flex items-center space-x-2 px-4 py-3 font-medium text-sm transition-colors border-b-2 -mb-px ${isActive
+            ? 'border-brand-primary text-brand-primary'
+            : 'border-transparent text-surface-900 hover:text-brand-primary hover:border-surface-200'
+            }`}
     >
         {icon}
         <span>{label}</span>
     </button>
 );
 
+interface DraftsViewProps {
+    onOpenAuth: () => void;
+}
 
-const DraftsView: React.FC = () => {
+const DraftsView: React.FC<DraftsViewProps> = ({ onOpenAuth }) => {
     const [drafts, setDrafts] = useState<Draft[]>([]);
     const [savedMedia, setSavedMedia] = useState<SavedMedia[]>([]);
     const [viewingDraft, setViewingDraft] = useState<Draft | null>(null);
     const [activeTab, setActiveTab] = useState<'content' | 'media'>('content');
     const [confirmingDelete, setConfirmingDelete] = useState<{ id: string; type: 'content' | 'media' } | null>(null);
     const navigate = useNavigate();
+    const { user } = useAuth();
 
     useEffect(() => {
+        if (!user) {
+            setDrafts([]);
+            setSavedMedia([]);
+            return;
+        }
         const loadContent = async () => {
             try {
                 const [fetchedDrafts, fetchedMedia] = await Promise.all([
@@ -45,7 +54,7 @@ const DraftsView: React.FC = () => {
             }
         };
         loadContent();
-    }, []);
+    }, [user]);
 
     const handleConfirmDelete = async () => {
         if (!confirmingDelete) return;
@@ -76,6 +85,34 @@ const DraftsView: React.FC = () => {
         });
     }
 
+    if (!user) {
+        return (
+            <div className="space-y-8">
+                <div className="text-center">
+                    <h1 className="text-4xl md:text-5xl font-extrabold font-display tracking-tight">
+                        Content <span className="gradient-text">Library</span>
+                    </h1>
+                    <p className="mt-4 max-w-2xl mx-auto text-lg text-surface-900">
+                        Review, load, or delete your saved content drafts and generated media assets.
+                    </p>
+                </div>
+                <div className="max-w-2xl mx-auto glass-card rounded-lg p-12 text-center">
+                    <Save size={48} className="mx-auto text-surface-900 mb-4" />
+                    <h2 className="text-2xl font-bold text-surface-900 mb-2">Sign in to view your library</h2>
+                    <p className="text-surface-900 mb-6">
+                        You need to be signed in to access your saved drafts and media.
+                    </p>
+                    <button
+                        onClick={onOpenAuth}
+                        className="px-6 py-3 rounded-lg shadow-sm text-base font-medium btn-primary"
+                    >
+                        Sign In / Sign Up
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-8">
             <div className="text-center">
@@ -88,11 +125,11 @@ const DraftsView: React.FC = () => {
             </div>
 
             <div className="max-w-4xl mx-auto">
-                 <div className="flex border-b border-gray-300 mb-6">
+                <div className="flex border-b border-gray-300 mb-6">
                     <TabButton label="Content Drafts" icon={<Save size={16} />} isActive={activeTab === 'content'} onClick={() => setActiveTab('content')} />
                     <TabButton label="Saved Media" icon={<ImageIcon size={16} />} isActive={activeTab === 'media'} onClick={() => setActiveTab('media')} />
                 </div>
-                
+
                 {activeTab === 'content' && (
                     <div className="animate-fade-in">
                         {drafts.length > 0 ? (
@@ -107,7 +144,7 @@ const DraftsView: React.FC = () => {
                                             </p>
                                         </div>
                                         <div className="flex items-center space-x-2 ml-4">
-                                             <button
+                                            <button
                                                 onClick={() => setViewingDraft(draft)}
                                                 className="p-2 rounded-md hover:bg-surface-100 text-surface-900 transition-colors"
                                                 title="View Draft"
@@ -143,21 +180,21 @@ const DraftsView: React.FC = () => {
                         )}
                     </div>
                 )}
-                
+
                 {activeTab === 'media' && (
-                     <div className="animate-fade-in">
+                    <div className="animate-fade-in">
                         {savedMedia.length > 0 ? (
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {savedMedia.map((item) => (
                                     <div key={item.id} className="glass-card rounded-lg overflow-hidden group relative transition-shadow hover:shadow-md">
                                         {item.type === 'image' ? (
-                                            <img src={item.url} alt={item.prompt} className="w-full h-48 object-cover"/>
+                                            <img src={item.url} alt={item.prompt} className="w-full h-48 object-cover" />
                                         ) : (
                                             <div className="relative w-full h-48 bg-black">
-                                                 <video src={item.url} controls muted className="w-full h-full object-cover"/>
-                                                 <div className="absolute top-2 left-2 bg-black/50 text-white rounded-full p-1">
-                                                     <Video size={14} />
-                                                 </div>
+                                                <video src={item.url} controls muted className="w-full h-full object-cover" />
+                                                <div className="absolute top-2 left-2 bg-black/50 text-white rounded-full p-1">
+                                                    <Video size={14} />
+                                                </div>
                                             </div>
                                         )}
                                         <div className="p-3">
@@ -189,7 +226,7 @@ const DraftsView: React.FC = () => {
                 )}
             </div>
             <DraftViewerModal draft={viewingDraft} onClose={() => setViewingDraft(null)} />
-            
+
             {confirmingDelete && (
                 <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4 animate-fade-in" onClick={() => setConfirmingDelete(null)}>
                     <div className="bg-surface-100 rounded-2xl p-8 shadow-2xl max-w-md w-full text-center" onClick={(e) => e.stopPropagation()}>
