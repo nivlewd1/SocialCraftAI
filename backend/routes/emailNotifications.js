@@ -2,9 +2,20 @@ const express = require('express');
 const nodemailer = require('nodemailer');
 const router = express.Router();
 
+// Check if SMTP is configured
+const isEmailConfigured = () => {
+    return !!(process.env.SMTP_USER && process.env.SMTP_PASSWORD);
+};
+
 // Email transporter configuration
 // In production, use environment variables for credentials
 const createTransporter = () => {
+    if (!isEmailConfigured()) {
+        console.warn('⚠️  SMTP not configured. Email notifications are disabled.');
+        console.warn('   Set SMTP_USER and SMTP_PASSWORD environment variables to enable emails.');
+        return null;
+    }
+
     return nodemailer.createTransport({
         host: process.env.SMTP_HOST || 'smtp.gmail.com',
         port: parseInt(process.env.SMTP_PORT || '587'),
@@ -17,6 +28,18 @@ const createTransporter = () => {
 };
 
 /**
+ * Check if email notifications are available
+ */
+router.get('/status', (req, res) => {
+    res.json({
+        enabled: isEmailConfigured(),
+        message: isEmailConfigured()
+            ? 'Email notifications are enabled'
+            : 'SMTP not configured. Email notifications are disabled.'
+    });
+});
+
+/**
  * Send email notification for failed post
  */
 router.post('/failed-post', async (req, res) => {
@@ -26,8 +49,24 @@ router.post('/failed-post', async (req, res) => {
         return res.status(400).json({ error: 'User email is required' });
     }
 
+    // Check if SMTP is configured
+    if (!isEmailConfigured()) {
+        console.log(`📧 Email notification skipped (SMTP not configured) for ${userEmail}`);
+        return res.json({
+            success: false,
+            message: 'Email notifications are disabled. Configure SMTP to enable.'
+        });
+    }
+
     try {
         const transporter = createTransporter();
+
+        if (!transporter) {
+            return res.json({
+                success: false,
+                message: 'Email transporter not available'
+            });
+        }
 
         const mailOptions = {
             from: `"SocialCraft AI" <${process.env.SMTP_USER}>`,
@@ -117,8 +156,24 @@ router.post('/token-expiration', async (req, res) => {
         return res.status(400).json({ error: 'User email is required' });
     }
 
+    // Check if SMTP is configured
+    if (!isEmailConfigured()) {
+        console.log(`📧 Token expiration email skipped (SMTP not configured) for ${userEmail}`);
+        return res.json({
+            success: false,
+            message: 'Email notifications are disabled. Configure SMTP to enable.'
+        });
+    }
+
     try {
         const transporter = createTransporter();
+
+        if (!transporter) {
+            return res.json({
+                success: false,
+                message: 'Email transporter not available'
+            });
+        }
 
         const mailOptions = {
             from: `"SocialCraft AI" <${process.env.SMTP_USER}>`,
