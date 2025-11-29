@@ -8,6 +8,12 @@ import Spinner from '../components/Spinner';
 import { BookOpenCheck, UserCheck } from 'lucide-react';
 import SearchIntentSelector from '../components/SearchIntentSelector';
 
+declare global {
+    interface Window {
+        showNotification: (message: string, type: 'success' | 'error' | 'info') => void;
+    }
+}
+
 const AcademicModeView: React.FC = () => {
     const [sourceContent, setSourceContent] = useState('');
     const [authorsVoice, setAuthorsVoice] = useState('');
@@ -58,17 +64,17 @@ const AcademicModeView: React.FC = () => {
                     />
                 </div>
 
-                 <div>
+                <div>
                     <label className="block text-sm font-medium text-surface-900 mb-2 flex items-center">
-                        <UserCheck size={14} className="mr-2 text-green-600"/> 2. Researcher's Perspective (Optional):
+                        <UserCheck size={14} className="mr-2 text-green-600" /> 2. Researcher's Perspective (Optional):
                     </label>
-                     <textarea
+                    <textarea
                         value={authorsVoice}
                         onChange={(e) => setAuthorsVoice(e.target.value)}
                         placeholder="Add a personal insight, the 'aha!' moment of the discovery, or the real-world implication of this research..."
                         className="w-full h-24 p-4 rounded-lg transition-all text-surface-900 placeholder-surface-700 resize-none input-field"
                     />
-                     <p className="text-xs text-surface-900 mt-1">This helps humanize your research and demonstrate first-hand experience (E-E-A-T).</p>
+                    <p className="text-xs text-surface-900 mt-1">This helps humanize your research and demonstrate first-hand experience (E-E-A-T).</p>
                 </div>
 
 
@@ -77,7 +83,7 @@ const AcademicModeView: React.FC = () => {
                         <label className="block text-sm font-medium text-surface-900 mb-2">3. Select Platforms & Formats:</label>
                         <AdvancedPlatformSelector selections={platformSelections} onSelectionChange={setPlatformSelections} />
                     </div>
-                     <div>
+                    <div>
                         <label className="block text-sm font-medium text-surface-900 mb-2">4. Select a Tone (Optional):</label>
                         <ToneSelector selectedTone={tone} onToneChange={setTone} />
                     </div>
@@ -86,7 +92,7 @@ const AcademicModeView: React.FC = () => {
                         <SearchIntentSelector selectedIntent={searchIntent} onIntentChange={setSearchIntent} />
                     </div>
                 </div>
-                
+
                 <button
                     onClick={handleGenerate}
                     disabled={isLoading}
@@ -98,22 +104,23 @@ const AcademicModeView: React.FC = () => {
                             <span>Translating Research...</span>
                         </>
                     ) : (
-                       <>
-                           <BookOpenCheck className="mr-2 h-5 w-5" />
-                           <span>Analyze & Generate Posts</span>
-                       </>
+                        <>
+                            <BookOpenCheck className="mr-2 h-5 w-5" />
+                            <span>Analyze & Generate Posts</span>
+                        </>
                     )}
                 </button>
             </div>
-            
+
             {generatedContent.length > 0 && (
                 <ResultsDisplay
                     results={generatedContent}
                     sourceContent={sourceContent}
-                    authorsVoice={authorsVoice}
+                    authorsVoice=""
                     platformSelections={platformSelections}
-                    tone={tone}
-                    searchIntent={searchIntent}
+                    tone="Professional"
+                    searchIntent="Informational"
+                    onContentUpdate={() => { }}
                 />
             )}
         </div>

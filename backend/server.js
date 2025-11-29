@@ -17,6 +17,7 @@ app.use(express.json()); // Parse JSON bodies
 // OAuth routes - authentication handled per-route basis
 app.use('/api/oauth', oauthRoutes);
 app.use('/api/analytics', verifySupabaseToken, analyticsRoutes);
+app.use('/api/link-preview', require('./routes/linkPreview'));
 
 // Health check endpoint
 app.get('/', (req, res) => {

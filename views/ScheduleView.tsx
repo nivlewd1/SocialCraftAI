@@ -1,22 +1,24 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-    Calendar, Clock, CheckCircle, Trash2, Twitter, Linkedin, Instagram, 
+import {
+    Calendar, Clock, CheckCircle, Trash2, Twitter, Linkedin, Instagram,
     Music, Pin, Layout, Filter, MoreHorizontal, Info, Grid, List,
     ChevronDown, X, Download, Edit2, AlertCircle, Briefcase, Search,
     CheckSquare, Square, RefreshCw, ExternalLink, Image
 } from 'lucide-react';
 import { Platform } from '../types';
 import { useAuth } from '../contexts/AuthContext';
-import { 
-    scheduleService, 
-    UnifiedScheduledPost, 
+import {
+    scheduleService,
+    UnifiedScheduledPost,
     ScheduleFilters,
-    ScheduleStats 
+    ScheduleStats
 } from '../services/scheduleService';
 import ScheduleCalendar from '../components/ScheduleCalendar';
 import Spinner from '../components/Spinner';
+import OptimalTimeSuggestions from '../components/OptimalTimeSuggestions';
+import QuickPostModal from '../components/QuickPostModal';
 
 const platformIcons: { [key in Platform]: React.ReactNode } = {
     [Platform.Twitter]: <Twitter size={18} />,
@@ -41,7 +43,7 @@ interface ScheduleViewProps {
 const ScheduleView: React.FC<ScheduleViewProps> = ({ onOpenAuth }) => {
     const { user } = useAuth();
     const navigate = useNavigate();
-    
+
     // Data state
     const [posts, setPosts] = useState<UnifiedScheduledPost[]>([]);
     const [stats, setStats] = useState<ScheduleStats | null>(null);
@@ -63,13 +65,15 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onOpenAuth }) => {
 
     // Menu state
     const [showActionsMenu, setShowActionsMenu] = useState(false);
-    
+
     // Modal state
     const [showRescheduleModal, setShowRescheduleModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [rescheduleDate, setRescheduleDate] = useState('');
     const [rescheduleTime, setRescheduleTime] = useState('');
     const [isProcessing, setIsProcessing] = useState(false);
+    const [showQuickPostModal, setShowQuickPostModal] = useState(false);
+    const [quickPostDate, setQuickPostDate] = useState<Date | undefined>(undefined);
 
     // Load data
     useEffect(() => {
@@ -82,7 +86,7 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onOpenAuth }) => {
 
     const loadSchedule = async () => {
         if (!user) return;
-        
+
         setIsLoading(true);
         setError(null);
 
@@ -105,7 +109,7 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onOpenAuth }) => {
     // Apply filters
     const applyFilters = () => {
         const newFilters: ScheduleFilters = {};
-        
+
         if (filterPlatforms.length > 0) {
             newFilters.platforms = filterPlatforms;
         }
@@ -187,7 +191,7 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onOpenAuth }) => {
                     currentScheduledAt: p.scheduledAt
                 }));
 
-            const newDateTime = rescheduleTime 
+            const newDateTime = rescheduleTime
                 ? `${rescheduleDate}T${rescheduleTime}:00.000Z`
                 : `${rescheduleDate}T12:00:00.000Z`;
 
@@ -243,10 +247,10 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onOpenAuth }) => {
     };
 
     const handleExportCSV = () => {
-        const postsToExport = selectedPosts.size > 0 
+        const postsToExport = selectedPosts.size > 0
             ? filteredPosts.filter(p => selectedPosts.has(p.id))
             : filteredPosts;
-        
+
         scheduleService.downloadScheduleCSV(postsToExport);
         setShowActionsMenu(false);
     };
@@ -321,11 +325,8 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onOpenAuth }) => {
     };
 
     const handleDateClick = (date: Date) => {
-        if (selectedDate && date.toISOString().split('T')[0] === selectedDate.toISOString().split('T')[0]) {
-            setSelectedDate(null);
-        } else {
-            setSelectedDate(date);
-        }
+        setQuickPostDate(date);
+        setShowQuickPostModal(true);
     };
 
     // Render post card
@@ -345,9 +346,8 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onOpenAuth }) => {
                 layout
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`bg-white rounded-xl border-2 transition-all ${
-                    isSelected ? 'border-brand-primary shadow-lg' : 'border-gray-200 hover:border-gray-300'
-                }`}
+                className={`bg-white rounded-xl border-2 transition-all ${isSelected ? 'border-brand-primary shadow-lg' : 'border-gray-200 hover:border-gray-300'
+                    }`}
             >
                 {/* Media Preview */}
                 {post.hasMedia && post.mediaUrl && (
@@ -797,178 +797,230 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onOpenAuth }) => {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-4xl font-bold font-display text-surface-900 mb-2">Content Schedule</h1>
                     <p className="text-xl text-gray-600">Your upcoming posts and timeline.</p>
                 </div>
-                <div className="flex items-center gap-3 relative">
-                    <button 
-                        onClick={() => setShowFilters(!showFilters)}
-                        className={`p-2 rounded-lg transition-colors ${showFilters ? 'bg-brand-primary text-white' : 'hover:bg-gray-100 text-gray-600'}`}
-                    >
-                        <Filter className="w-5 h-5" />
-                    </button>
-                    <button 
+                <div className="flex items-center gap-3">
+                    <button
                         onClick={() => setShowActionsMenu(!showActionsMenu)}
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600"
+                        className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg relative"
                     >
                         <MoreHorizontal className="w-5 h-5" />
                     </button>
-                    {renderActionsMenu()}
-                </div>
-            </div>
-
-            {/* Stats */}
-            {stats && (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-white rounded-xl border border-gray-200 p-4">
-                        <div className="text-2xl font-bold text-surface-900">{stats.total}</div>
-                        <div className="text-sm text-gray-500">Total Scheduled</div>
-                    </div>
-                    <div className="bg-white rounded-xl border border-gray-200 p-4">
-                        <div className="text-2xl font-bold text-yellow-600">{stats.scheduled}</div>
-                        <div className="text-sm text-gray-500">Pending</div>
-                    </div>
-                    <div className="bg-white rounded-xl border border-gray-200 p-4">
-                        <div className="text-2xl font-bold text-blue-600">{stats.today}</div>
-                        <div className="text-sm text-gray-500">Today</div>
-                    </div>
-                    <div className="bg-white rounded-xl border border-gray-200 p-4">
-                        <div className="text-2xl font-bold text-green-600">{stats.thisWeek}</div>
-                        <div className="text-sm text-gray-500">This Week</div>
-                    </div>
-                </div>
-            )}
-
-            {/* Filters Panel */}
-            <AnimatePresence>
-                {showFilters && renderFiltersPanel()}
-            </AnimatePresence>
-
-            {/* Error */}
-            {error && (
-                <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-red-500 mt-0.5" />
-                    <div className="flex-1">
-                        <p className="font-medium text-red-900">{error}</p>
-                        <button onClick={() => setError(null)} className="text-sm text-red-700 underline mt-1">Dismiss</button>
-                    </div>
-                </div>
-            )}
-
-            {/* View Toggle & Selection Info */}
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                    <div className="flex items-center border border-gray-200 rounded-lg bg-white">
-                        <button
-                            onClick={() => setViewMode('list')}
-                            className={`p-2 ${viewMode === 'list' ? 'bg-gray-100' : ''}`}
-                        >
-                            <List className="w-4 h-4" />
-                        </button>
-                        <button
-                            onClick={() => setViewMode('calendar')}
-                            className={`p-2 ${viewMode === 'calendar' ? 'bg-gray-100' : ''}`}
-                        >
-                            <Calendar className="w-4 h-4" />
-                        </button>
-                    </div>
-
-                    {selectedDate && (
-                        <div className="flex items-center gap-2 text-sm bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg">
-                            <Calendar className="w-4 h-4" />
-                            {selectedDate.toLocaleDateString()}
-                            <button onClick={() => setSelectedDate(null)} className="ml-1 hover:text-blue-900">
-                                <X className="w-4 h-4" />
-                            </button>
-                        </div>
-                    )}
-
-                    {Object.keys(filters).length > 0 && (
-                        <div className="flex items-center gap-2 text-sm bg-purple-50 text-purple-700 px-3 py-1.5 rounded-lg">
-                            <Filter className="w-4 h-4" />
-                            Filters active
-                            <button onClick={clearFilters} className="ml-1 hover:text-purple-900">
-                                <X className="w-4 h-4" />
-                            </button>
-                        </div>
-                    )}
-                </div>
-
-                <div className="flex items-center gap-3">
-                    {selectedPosts.size > 0 && (
-                        <span className="text-sm text-gray-600">{selectedPosts.size} selected</span>
-                    )}
                     <button
-                        onClick={loadSchedule}
-                        disabled={isLoading}
-                        className="p-2 hover:bg-gray-100 rounded-lg text-gray-600"
-                        title="Refresh"
+                        onClick={() => setViewMode(viewMode === 'list' ? 'calendar' : 'list')}
+                        className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-surface-900"
                     >
-                        <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+                        {viewMode === 'list' ? <Grid className="w-4 h-4" /> : <List className="w-4 h-4" />}
+                        {viewMode === 'list' ? 'Calendar View' : 'List View'}
+                    </button>
+                    <button
+                        onClick={() => navigate('/generator')}
+                        className="btn-primary px-4 py-2 rounded-lg flex items-center gap-2 shadow-lg shadow-brand-primary/20"
+                    >
+                        <Edit2 className="w-4 h-4" />
+                        Create Post
                     </button>
                 </div>
             </div>
 
-            {/* Loading */}
-            {isLoading && (
-                <div className="flex justify-center py-20">
-                    <Spinner size="lg" />
+            {/* Optimal Time Suggestions */}
+            <div className="mb-6">
+                <OptimalTimeSuggestions
+                    platform={filterPlatforms.length > 0 ? filterPlatforms[0] : Platform.Twitter}
+                    onSelectTime={(time) => {
+                        // For now, just log or maybe open a modal to schedule
+                        console.log('Selected time:', time);
+                        // TODO: Open quick schedule modal with this time
+                    }}
+                />
+            </div>
+            <div className="flex items-center gap-3 relative">
+                <button
+                    onClick={() => setShowFilters(!showFilters)}
+                    className={`p-2 rounded-lg transition-colors ${showFilters ? 'bg-brand-primary text-white' : 'hover:bg-gray-100 text-gray-600'}`}
+                >
+                    <Filter className="w-5 h-5" />
+                </button>
+                <button
+                    onClick={() => setShowActionsMenu(!showActionsMenu)}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600"
+                >
+                    <MoreHorizontal className="w-5 h-5" />
+                </button>
+                {renderActionsMenu()}
+            </div>
+{/* Stats */ }
+{
+    stats && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
+                <div className="text-2xl font-bold text-surface-900">{stats.total}</div>
+                <div className="text-sm text-gray-500">Total Scheduled</div>
+            </div>
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
+                <div className="text-2xl font-bold text-yellow-600">{stats.scheduled}</div>
+                <div className="text-sm text-gray-500">Pending</div>
+            </div>
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
+                <div className="text-2xl font-bold text-blue-600">{stats.today}</div>
+                <div className="text-sm text-gray-500">Today</div>
+            </div>
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
+                <div className="text-2xl font-bold text-green-600">{stats.thisWeek}</div>
+                <div className="text-sm text-gray-500">This Week</div>
+            </div>
+        </div>
+    )
+}
+
+{/* Filters Panel */ }
+<AnimatePresence>
+    {showFilters && renderFiltersPanel()}
+</AnimatePresence>
+
+{/* Error */ }
+{
+    error && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-500 mt-0.5" />
+            <div className="flex-1">
+                <p className="font-medium text-red-900">{error}</p>
+                <button onClick={() => setError(null)} className="text-sm text-red-700 underline mt-1">Dismiss</button>
+            </div>
+        </div>
+    )
+}
+
+{/* View Toggle & Selection Info */ }
+<div className="flex items-center justify-between">
+    <div className="flex items-center gap-4">
+        <div className="flex items-center border border-gray-200 rounded-lg bg-white">
+            <button
+                onClick={() => setViewMode('list')}
+                className={`p-2 ${viewMode === 'list' ? 'bg-gray-100' : ''}`}
+            >
+                <List className="w-4 h-4" />
+            </button>
+            <button
+                onClick={() => setViewMode('calendar')}
+                className={`p-2 ${viewMode === 'calendar' ? 'bg-gray-100' : ''}`}
+            >
+                <Calendar className="w-4 h-4" />
+            </button>
+        </div>
+
+        {selectedDate && (
+            <div className="flex items-center gap-2 text-sm bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg">
+                <Calendar className="w-4 h-4" />
+                {selectedDate.toLocaleDateString()}
+                <button onClick={() => setSelectedDate(null)} className="ml-1 hover:text-blue-900">
+                    <X className="w-4 h-4" />
+                </button>
+            </div>
+        )}
+
+        {Object.keys(filters).length > 0 && (
+            <div className="flex items-center gap-2 text-sm bg-purple-50 text-purple-700 px-3 py-1.5 rounded-lg">
+                <Filter className="w-4 h-4" />
+                Filters active
+                <button onClick={clearFilters} className="ml-1 hover:text-purple-900">
+                    <X className="w-4 h-4" />
+                </button>
+            </div>
+        )}
+    </div>
+
+    <div className="flex items-center gap-3">
+        {selectedPosts.size > 0 && (
+            <span className="text-sm text-gray-600">{selectedPosts.size} selected</span>
+        )}
+        <button
+            onClick={loadSchedule}
+            disabled={isLoading}
+            className="p-2 hover:bg-gray-100 rounded-lg text-gray-600"
+            title="Refresh"
+        >
+            <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+        </button>
+    </div>
+</div>
+
+{/* Loading */ }
+{
+    isLoading && (
+        <div className="flex justify-center py-20">
+            <Spinner size="lg" />
+        </div>
+    )
+}
+
+{/* Calendar View */ }
+{
+    !isLoading && viewMode === 'calendar' && (
+        <ScheduleCalendar
+            posts={posts}
+            onPostClick={handleCalendarPostClick}
+            onDateClick={handleDateClick}
+            selectedDate={selectedDate}
+        />
+    )
+}
+
+{/* List View */ }
+{
+    !isLoading && viewMode === 'list' && (
+        <>
+            {filteredPosts.length === 0 ? (
+                <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Calendar className="w-8 h-8 text-gray-400" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900">No scheduled posts</h3>
+                    <p className="text-gray-500 mt-2 max-w-md mx-auto">
+                        {Object.keys(filters).length > 0 || selectedDate
+                            ? 'No posts match your current filters.'
+                            : 'Schedule posts from the Generator or create a Campaign to get started.'}
+                    </p>
+                    <div className="mt-6 flex gap-3 justify-center">
+                        <button
+                            onClick={() => navigate('/generator')}
+                            className="px-6 py-2 bg-brand-primary text-white rounded-lg font-medium hover:bg-brand-primary/90"
+                        >
+                            Create Content
+                        </button>
+                        <button
+                            onClick={() => navigate('/campaigns')}
+                            className="px-6 py-2 border border-gray-200 rounded-lg font-medium hover:bg-gray-50"
+                        >
+                            View Campaigns
+                        </button>
+                    </div>
+                </div>
+            ) : (
+                <div className="space-y-4">
+                    {filteredPosts.map(renderPostCard)}
                 </div>
             )}
+        </>
+    )
+}
 
-            {/* Calendar View */}
-            {!isLoading && viewMode === 'calendar' && (
-                <ScheduleCalendar
-                    posts={posts}
-                    onPostClick={handleCalendarPostClick}
-                    onDateClick={handleDateClick}
-                    selectedDate={selectedDate}
-                />
-            )}
+{/* Modals */ }
+<AnimatePresence>
+    {showRescheduleModal && renderRescheduleModal()}
+    {showDeleteModal && renderDeleteModal()}
 
-            {/* List View */}
-            {!isLoading && viewMode === 'list' && (
-                <>
-                    {filteredPosts.length === 0 ? (
-                        <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
-                            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <Calendar className="w-8 h-8 text-gray-400" />
-                            </div>
-                            <h3 className="text-xl font-semibold text-gray-900">No scheduled posts</h3>
-                            <p className="text-gray-500 mt-2 max-w-md mx-auto">
-                                {Object.keys(filters).length > 0 || selectedDate
-                                    ? 'No posts match your current filters.'
-                                    : 'Schedule posts from the Generator or create a Campaign to get started.'}
-                            </p>
-                            <div className="mt-6 flex gap-3 justify-center">
-                                <button
-                                    onClick={() => navigate('/generator')}
-                                    className="px-6 py-2 bg-brand-primary text-white rounded-lg font-medium hover:bg-brand-primary/90"
-                                >
-                                    Create Content
-                                </button>
-                                <button
-                                    onClick={() => navigate('/campaigns')}
-                                    className="px-6 py-2 border border-gray-200 rounded-lg font-medium hover:bg-gray-50"
-                                >
-                                    View Campaigns
-                                </button>
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="space-y-4">
-                            {filteredPosts.map(renderPostCard)}
-                        </div>
-                    )}
-                </>
-            )}
-
-            {/* Modals */}
-            <AnimatePresence>
-                {showRescheduleModal && renderRescheduleModal()}
-                {showDeleteModal && renderDeleteModal()}
-            </AnimatePresence>
-        </div>
+    <QuickPostModal
+        isOpen={showQuickPostModal}
+        onClose={() => setShowQuickPostModal(false)}
+        onSuccess={() => {
+            loadSchedule();
+            setShowQuickPostModal(false);
+        }}
+        initialDate={quickPostDate}
+    />
+</AnimatePresence>
+        </div >
     );
 };
 

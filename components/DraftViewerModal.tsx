@@ -45,7 +45,7 @@ const DraftViewerModal: React.FC<DraftViewerModalProps> = ({ draft, onClose }) =
                         </div>
 
                         {draft.authorsVoice && (
-                             <div>
+                            <div>
                                 <h3 className="text-lg font-semibold font-display text-surface-900 mb-2">Author's Voice & Experience</h3>
                                 <div className="bg-white rounded-lg p-4 border border-surface-100 max-h-40 overflow-y-auto">
                                     <p className="text-surface-900 whitespace-pre-wrap font-sans text-base">{draft.authorsVoice}</p>
@@ -54,15 +54,15 @@ const DraftViewerModal: React.FC<DraftViewerModalProps> = ({ draft, onClose }) =
                         )}
 
                         <div>
-                             <h3 className="text-lg font-semibold font-display text-surface-900 mb-4">Generated Content</h3>
-                             <ResultsDisplay
+                            <h3 className="text-lg font-semibold font-display text-surface-900 mb-4">Generated Content</h3>
+                            <ResultsDisplay
                                 results={draft.results}
                                 sourceContent={draft.sourceContent}
-                                authorsVoice={draft.authorsVoice}
+                                authorsVoice={draft.authorsVoice || ''}
                                 platformSelections={draft.platformSelections}
                                 tone={draft.tone}
                                 searchIntent={draft.searchIntent || 'Auto'}
-                                showSaveButton={false}
+                                onContentUpdate={() => { }}
                             />
                         </div>
                     </div>

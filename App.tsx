@@ -27,6 +27,7 @@ import Footer from './components/Footer';
 import { useAuth } from "./contexts/AuthContext";
 import { TrendReport, AmplifierNavigationState } from "./types";
 import { Menu, X, Sparkles, Book, TrendingUp, Zap, LogOut, User, Layout, Calendar, Settings, Image, GraduationCap, LayoutGrid } from 'lucide-react';
+import ErrorNotification from './components/ErrorNotification';
 
 // Wrapper component to pass navigation state to BrandAmplifier
 const BrandAmplifierWrapper: React.FC<{ onOpenAuth: () => void }> = ({ onOpenAuth }) => {
@@ -54,6 +55,7 @@ function App() {
 
     return (
         <div className="min-h-screen bg-surface-50 font-sans text-surface-900">
+            <ErrorNotification />
             {/* Navigation */}
             <nav className="fixed w-full z-50 bg-white/80 backdrop-blur-xl border-b border-surface-200">
                 <div className="container mx-auto px-6 py-4">
@@ -200,11 +202,10 @@ function App() {
 const NavLink = ({ href, icon, label, active }: { href: string; icon: React.ReactNode; label: string; active: boolean }) => (
     <a
         href={href}
-        className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-            active
+        className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${active
             ? 'bg-surface-100 text-brand-primary shadow-sharp border border-surface-200'
             : 'text-surface-600 hover:text-surface-900 hover:bg-white/50'
-        }`}
+            }`}
     >
         <span className={active ? "text-brand-primary" : "text-surface-400"}>{icon}</span>
         <span>{label}</span>

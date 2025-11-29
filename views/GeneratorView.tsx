@@ -40,10 +40,10 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
     const [isFindingTrends, setIsFindingTrends] = useState(false);
     const [trendResults, setTrendResults] = useState<TrendAnalysisResult | null>(null);
     const [trendError, setTrendError] = useState<string | null>(null);
-    
+
     // Store the original search topic for reference
     const [searchTopic, setSearchTopic] = useState<string>('');
-    
+
     // Brand Persona state
     const [selectedPersona, setSelectedPersona] = useState<BrandPersona | null>(null);
 
@@ -97,6 +97,10 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
 
+    const handleContentUpdate = useCallback((updatedContent: GeneratedContent) => {
+        setGeneratedContent(prev => prev.map(c => c.platform === updatedContent.platform ? updatedContent : c));
+    }, []);
+
     const handleGenerate = useCallback(async () => {
         if (!sourceContent.trim() || Object.keys(platformSelections).length === 0) {
             alert('Please provide content and select at least one platform.');
@@ -132,11 +136,11 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
 
             // Generate content with optional brand persona
             const results = await generateViralContent(
-                sourceContent, 
-                platformSelections, 
-                'general', 
-                tone, 
-                searchIntent, 
+                sourceContent,
+                platformSelections,
+                'general',
+                tone,
+                searchIntent,
                 authorsVoice,
                 selectedPersona  // Pass the brand persona
             );
@@ -256,7 +260,7 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                                 <strong>Example:</strong> "As a SaaS founder who grew from 0 to $1M ARR..." or "In my 10 years of marketing experience..."
                             </p>
                         </motion.div>
-                        
+
                         {/* Section 2.5: Brand Persona (Collapsible) */}
                         <motion.div variants={itemVariants}>
                             <BrandPersonaSelector
@@ -297,9 +301,9 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                                                     </span>
                                                 )}
                                             </label>
-                                            <ToneSelector 
-                                                selectedTone={tone} 
-                                                onToneChange={setTone} 
+                                            <ToneSelector
+                                                selectedTone={tone}
+                                                onToneChange={setTone}
                                             />
                                         </div>
                                         <div>
@@ -454,6 +458,7 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                             transition={{ duration: 0.6, type: "spring" }}
                         >
                             <ResultsDisplay
+                                onContentUpdate={handleContentUpdate}
                                 results={generatedContent}
                                 sourceContent={sourceContent}
                                 authorsVoice={authorsVoice}
@@ -461,14 +466,14 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                                 tone={tone}
                                 searchIntent={searchIntent}
                             />
-                            
+
                             {/* Post-Generation Actions */}
                             <div className="max-w-4xl mx-auto mt-8 p-6 glass-card rounded-lg">
                                 <h3 className="text-lg font-bold text-surface-900 mb-4">Continue Your Content Journey</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <button
-                                        onClick={() => navigate('/campaigns', { 
-                                            state: { 
+                                        onClick={() => navigate('/campaigns', {
+                                            state: {
                                                 fromGenerator: true,
                                                 generatedContent,
                                                 sourceContent,
@@ -481,7 +486,7 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                                                         summary: trendResults.overallSummary
                                                     }
                                                 })
-                                            } 
+                                            }
                                         })}
                                         className="flex items-center justify-center gap-2 px-4 py-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors font-medium"
                                     >
@@ -489,8 +494,8 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                                         Plan a Campaign
                                     </button>
                                     <button
-                                        onClick={() => navigate('/amplifier', { 
-                                            state: { 
+                                        onClick={() => navigate('/amplifier', {
+                                            state: {
                                                 fromGenerator: true,
                                                 ...(trendResults && {
                                                     report: {
@@ -505,7 +510,7 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                                                         overallSummary: trendResults.overallSummary
                                                     }
                                                 })
-                                            } 
+                                            }
                                         })}
                                         className="flex items-center justify-center gap-2 px-4 py-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors font-medium"
                                     >
@@ -525,7 +530,7 @@ const GeneratorView: React.FC<GeneratorViewProps> = ({ onOpenAuth }) => {
                     )}
                 </AnimatePresence>
             </div>
-        </div>
+        </div >
     );
 };
 

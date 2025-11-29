@@ -1,4 +1,4 @@
-import { supabase } from '../config/supabase';
+﻿import { supabase } from '../config/supabase';
 import { Platform, GeneratedContent } from '../types';
 
 // =====================================================
@@ -130,7 +130,7 @@ export const getUnifiedSchedule = async (
     } else if (campaignPosts) {
         for (const post of campaignPosts) {
             const textContent = post.text_content as GeneratedContent | null;
-            
+
             // Create GeneratedContent from campaign post
             const content: GeneratedContent = textContent || {
                 platform: post.platform as Platform,
@@ -200,7 +200,7 @@ export const getUnifiedSchedule = async (
  */
 export const getScheduleStats = async (userId: string): Promise<ScheduleStats> => {
     const posts = await getUnifiedSchedule(userId);
-    
+
     const now = new Date();
     const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const startOfWeek = new Date(startOfToday);
@@ -484,6 +484,40 @@ export const downloadScheduleCSV = (posts: UnifiedScheduledPost[], filename?: st
     document.body.removeChild(link);
 };
 
+/**
+ * Create a quick post
+ */
+export const createQuickPost = async (
+    userId: string,
+    post: {
+        platform: Platform;
+        content: string;
+        scheduledAt: string;
+        source: 'quick_post';
+    }
+): Promise<UnifiedScheduledPost> => {
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    const newPost: UnifiedScheduledPost = {
+        id: Math.random().toString(36).substring(7),
+        userId,
+        platform: post.platform,
+        content: {
+            primaryContent: post.content
+        },
+        scheduledAt: post.scheduledAt,
+        status: 'scheduled',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        source: post.source,
+        sourceName: 'Quick Post',
+        hasMedia: false
+    };
+
+    return newPost;
+};
+
 export const scheduleService = {
     getUnifiedSchedule,
     getScheduleStats,
@@ -496,4 +530,5 @@ export const scheduleService = {
     bulkRetryPosts,
     exportScheduleToCSV,
     downloadScheduleCSV,
+    createQuickPost,
 };

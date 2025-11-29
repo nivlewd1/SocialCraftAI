@@ -40,3 +40,10 @@ UNIFIED-TRENDS-IMPLEMENTATION.md
 
 # Supabase temporary files
 supabase/.temp/
+
+# Temporary verification logs
+tsc_check*.txt
+build_log.txt
+install_log*.txt
+test_output*.txt
+tsc_log.txt
