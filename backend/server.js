@@ -18,6 +18,7 @@ app.use(express.json()); // Parse JSON bodies
 app.use('/api/oauth', oauthRoutes);
 app.use('/api/analytics', verifySupabaseToken, analyticsRoutes);
 app.use('/api/link-preview', require('./routes/linkPreview'));
+app.use('/api/notifications', require('./routes/emailNotifications'));
 
 // Health check endpoint
 app.get('/', (req, res) => {

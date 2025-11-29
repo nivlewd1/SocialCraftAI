@@ -2,6 +2,7 @@ const cron = require('node-cron');
 const { createClient } = require('@supabase/supabase-js');
 const { publishToPlatform } = require('./publisher');
 const { decryptToken } = require('./socialAuthService');
+const axios = require('axios');
 
 // ⚠️ CRITICAL: Uses Service Role Key to bypass RLS
 const supabaseAdmin = createClient(
@@ -100,6 +101,66 @@ const processPost = async (post) => {
             status: 'failed',
             error_message: err.message
         }).eq('id', post.id);
+
+        // Send email notification if enabled
+        await sendFailedPostNotification(post, err.message);
+    }
+};
+
+/**
+ * Send email notification for failed post
+ */
+const sendFailedPostNotification = async (post, errorMessage) => {
+    try {
+        // Get user's email notification settings
+        const { data: settings } = await supabaseAdmin
+            .from('email_notification_settings')
+            .select('*')
+            .eq('user_id', post.user_id)
+            .single();
+
+        // Check if user has email notifications enabled for failed posts
+        if (!settings || !settings.failed_posts_enabled || !settings.email) {
+            return; // User has disabled notifications or no email set
+        }
+
+        // Get user email from auth if not in settings
+        const { data: { user } } = await supabaseAdmin.auth.admin.getUserById(post.user_id);
+        const userEmail = settings.email || user?.email;
+
+        if (!userEmail) {
+            console.log('No email found for user:', post.user_id);
+            return;
+        }
+
+        // Extract content text
+        let contentText = 'No content';
+        if (post.content) {
+            if (typeof post.content === 'string') {
+                contentText = post.content;
+            } else if (post.content.primaryContent) {
+                contentText = post.content.primaryContent;
+            } else if (post.content.text) {
+                contentText = post.content.text;
+            }
+        }
+
+        // Send email notification via API
+        await axios.post(`http://localhost:${process.env.PORT || 3001}/api/notifications/failed-post`, {
+            postId: post.id,
+            platform: post.platform,
+            content: contentText,
+            scheduledAt: post.scheduled_at,
+            errorMessage: errorMessage,
+            userEmail: userEmail,
+        }).catch(emailErr => {
+            console.error('Failed to send email notification:', emailErr.message);
+        });
+
+        console.log(`📧 Email notification sent to ${userEmail} for failed post ${post.id}`);
+    } catch (err) {
+        // Don't fail the entire process if email notification fails
+        console.error('Error sending failed post notification:', err.message);
     }
 };
 
